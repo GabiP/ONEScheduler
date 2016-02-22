@@ -1,0 +1,43 @@
+<HOST_POOL xmlns="http://opennebula.org/XMLSchema">
+  <!--Zero or more repetitions:-->
+  <HOST>
+    <ID>100</ID>
+    <NAME>string</NAME>
+    <STATE>100</STATE>
+    <IM_MAD>string</IM_MAD>
+    <VM_MAD>string</VM_MAD>
+    <VN_MAD>string</VN_MAD>
+    <LAST_MON_TIME>100</LAST_MON_TIME>
+    <CLUSTER_ID>100</CLUSTER_ID>
+    <CLUSTER>string</CLUSTER>
+    <HOST_SHARE>
+      <DISK_USAGE>100</DISK_USAGE>
+      <MEM_USAGE>100</MEM_USAGE>
+      <CPU_USAGE>100</CPU_USAGE>
+      <MAX_DISK>100</MAX_DISK>
+      <MAX_MEM>100</MAX_MEM>
+      <MAX_CPU>100</MAX_CPU>
+      <FREE_DISK>100</FREE_DISK>
+      <FREE_MEM>100</FREE_MEM>
+      <FREE_CPU>100</FREE_CPU>
+      <USED_DISK>100</USED_DISK>
+      <USED_MEM>100</USED_MEM>
+      <USED_CPU>100</USED_CPU>
+      <RUNNING_VMS>100</RUNNING_VMS>
+      <DATASTORES>
+        <!--Zero or more repetitions:-->
+        <DS>
+          <ID>100</ID>
+          <FREE_MB>100</FREE_MB>
+          <TOTAL_MB>100</TOTAL_MB>
+          <USED_MB>100</USED_MB>
+        </DS>
+      </DATASTORES>
+    </HOST_SHARE>
+    <VMS>
+      <!--Zero or more repetitions:-->
+      <ID>100</ID>
+    </VMS>
+    <TEMPLATE>anyType</TEMPLATE>
+  </HOST>
+</HOST_POOL>
