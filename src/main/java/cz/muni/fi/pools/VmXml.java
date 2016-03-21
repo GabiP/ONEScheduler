@@ -5,9 +5,6 @@
  */
 package cz.muni.fi.pools;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.opennebula.client.Client;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
@@ -15,92 +12,81 @@ import org.opennebula.client.vm.VirtualMachine;
  * 
  * @author Gabriela Podolnikova
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Vm {
+public class VmXml {
     
-    @JacksonXmlProperty(localName = "ID")
     private int vmId;
      
-    @JacksonXmlProperty(localName = "UID")
     private Integer uid;
     
-    @JacksonXmlProperty(localName = "GID")
     private Integer gid;
     
-    @JacksonXmlProperty(localName = "UNAME")
     private String uname;
     
-    @JacksonXmlProperty(localName = "GNAME")
     private String gname;
     
-    @JacksonXmlProperty(localName = "NAME")
     private String name;
     
-    @JacksonXmlProperty(localName = "LAST_POLL")
     private Integer last_poll;
     
     /**
     * STATE values,
         see http://opennebula.org/_media/documentation:rel3.6:states-complete.png
     */
-    @JacksonXmlProperty(localName = "STATE")
     private Integer state;
     
     /**
     * LCM_STATE this sub-state is relevant only when STATE is ACTIVE (4)
     * for values see vm.xsd
     */
-    @JacksonXmlProperty(localName = "LCM_STATE")
     private Integer lcm_state;
     
-    @JacksonXmlProperty(localName = "PREV_STATE")
     private Integer prev_state;
     
-    @JacksonXmlProperty(localName = "PREV_LCM_STATE")
     private Integer prev_lcm_state;
     
-    @JacksonXmlProperty(localName = "RESCHED")
     private Integer resched;
     
-    @JacksonXmlProperty(localName = "STIME")
     private Integer stime;
     
-    @JacksonXmlProperty(localName = "ETIME")
     private Integer etime;
     
-    @JacksonXmlProperty(localName = "DEPLOY_ID")
     private String deploy_id;
     
-    /**
-      *MEMORY consumption in kilobytes
-    */
-    @JacksonXmlProperty(localName = "MEMORY")
-    private Integer memory;
+    private Float cpu;
     
-    /**
-     * Percentage of 1 CPU consumed (two fully consumed cpu is 200)
-    */
-    @JacksonXmlProperty(localName = "CPU")
-    private Integer cpu;
+    private Float memory;
     
-    /***
-     * Sent bytes to the network
-     */
-    @JacksonXmlProperty(localName = "NET_TX")
-    private Integer net_tx;
+    private Integer datastore_id;
     
+    private Integer disk_id;
     
-    /***
-     * Received bytes from the network
-     */
-    @JacksonXmlProperty(localName = "NET_RX")
-    private Integer net_rx;
+    private Integer network_id;
+    
+    private final VirtualMachine vm;
 
-    /*@JacksonXmlProperty(localName = "TEMPLATE")
-    private Object template;
-    
-    @JacksonXmlProperty(localName = "USER_TEMPLATE")
-    private String user_template;*/
+    public VmXml(VirtualMachine vm) {
+        this.vm = vm;
+        vm.info();
+        System.out.println("constructor");
+        System.out.println(vm.xpath("/VM/ID"));
+        this.init();
+    }
+
+    private void init() {
+        vmId = Integer.parseInt(getVm().xpath("/VM/ID"));
+        uid  = Integer.parseInt(getVm().xpath("/VM/UID"));
+        gid  = Integer.parseInt(getVm().xpath("/VM/GID"));
+        name = getVm().xpath("/VM/NAME");
+        state  = Integer.parseInt(getVm().xpath("/VM/STATE"));
+        lcm_state  = Integer.parseInt(getVm().xpath("/VM/LCM_STATE"));
+        resched  = Integer.parseInt(getVm().xpath("/VM/RESCHED"));
+        deploy_id = getVm().xpath("/VM/DEPLOY_ID");
+        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
+        setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
+        datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
+        disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
+        network_id = Integer.parseInt(getVm().xpath("/VM/NIC/NETWORK_ID"));
+    }
 
     /**
      * @return the uid
@@ -285,76 +271,6 @@ public class Vm {
     }
 
     /**
-     * @return the memory
-     */
-    public Integer getMemory() {
-        return memory;
-    }
-
-    /**
-     * @param memory the memory to set
-     */
-    public void setMemory(Integer memory) {
-        this.memory = memory;
-    }
-
-    /**
-     * @return the cpu
-     */
-    public Integer getCpu() {
-        return cpu;
-    }
-
-    /**
-     * @param cpu the cpu to set
-     */
-    public void setCpu(Integer cpu) {
-        this.cpu = cpu;
-    }
-
-    /**
-     * @return the net_tx
-     */
-    public Integer getNet_tx() {
-        return net_tx;
-    }
-
-    /**
-     * @param net_tx the net_tx to set
-     */
-    public void setNet_tx(Integer net_tx) {
-        this.net_tx = net_tx;
-    }
-
-    /**
-     * @return the net_rx
-     */
-    public Integer getNet_rx() {
-        return net_rx;
-    }
-
-    /**
-     * @param net_rx the net_rx to set
-     */
-    public void setNet_rx(Integer net_rx) {
-        this.net_rx = net_rx;
-    }
-
-    /**
-     * @return the template
-     */
-    /*public Object getTemplate() {
-        return template;
-    }
-
-    /**
-     * @param template the template to set
-     */
-    /*public void setTemplate(Object template) {
-        this.template = template;
-    }
-
-    /**
      * @return the user_template
      */
     /*public String getUser_template() {
@@ -396,9 +312,8 @@ public class Vm {
                 ", name='" + name + '\'' +
                 ", state=" + state +
                 ", lcm_state='" + lcm_state + '\'' +
-                ", memory='" + memory + '\'' +
-                ", cpu='" + cpu + '\'' +
- //               ", template=" + template + '\'' +
+                ", cpu=" + getCpu() + '\'' +
+                ", memory=" + getMemory() + '\'' +
                 '}';
     }
 
@@ -408,5 +323,42 @@ public class Vm {
     public int getVmId() {
         return vmId;
     }
+
+    /**
+     * @return the cpu
+     */
+    public Float getCpu() {
+        return cpu;
+    }
+
+    /**
+     * @param cpu the cpu to set
+     */
+    public void setCpu(Float cpu) {
+        this.cpu = cpu;
+    }
+
+    /**
+     * @return the memory
+     */
+    public Float getMemory() {
+        return memory;
+    }
+
+    /**
+     * @param memory the memory to set
+     */
+    public void setMemory(Float memory) {
+        this.memory = memory;
+    }
+
+    /**
+     * @return the vm
+     */
+    public VirtualMachine getVm() {
+        return vm;
+    }
+
+    
 
 }
