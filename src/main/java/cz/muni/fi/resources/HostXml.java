@@ -1,4 +1,4 @@
-package cz.muni.fi.pools;
+package cz.muni.fi.resources;
 
 import org.opennebula.client.host.Host;
 

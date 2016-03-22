@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.pools;
+package cz.muni.fi.resources;
 
 import java.util.ArrayList;
 import org.opennebula.client.cluster.Cluster;

@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import scheduler.Scheduler;
+import cz.muni.fi.scheduler.Scheduler;
 
 
 /**

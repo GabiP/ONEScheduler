@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.pools;
+package cz.muni.fi.resources;
 
 import org.opennebula.client.vm.VirtualMachine;
 
@@ -62,6 +62,14 @@ public class VmXml {
     
     private Integer network_id;
     
+    private String schedRank;
+    
+    private String schedDsRank;
+    
+    private String schedRequirements;
+    
+    private String schedDsRequirements;
+    
     private final VirtualMachine vm;
 
     public VmXml(VirtualMachine vm) {
@@ -85,7 +93,11 @@ public class VmXml {
         setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
         datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
         disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
-        network_id = Integer.parseInt(getVm().xpath("/VM/NIC/NETWORK_ID"));
+        network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
+        schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
+        schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
+        schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");
+        schedDsRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS");
     }
 
     /**
