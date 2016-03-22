@@ -91,9 +91,11 @@ public class VmXml {
         deploy_id = getVm().xpath("/VM/DEPLOY_ID");
         setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
         setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
-        datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
-        disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
-        network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
+        if (state != 1) {
+            datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
+            disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
+            network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
+        }
         schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
         schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
         schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");

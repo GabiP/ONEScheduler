@@ -115,8 +115,8 @@ public class Scheduler {
             }
             // flush Hosts
             // flush VMs
-          System.out.println("New cycle will start in 60 seconds");
-          TimeUnit.SECONDS.sleep(60);
+          System.out.println("New cycle will start in 10 seconds");
+          TimeUnit.SECONDS.sleep(10);
         }
     }
 }
