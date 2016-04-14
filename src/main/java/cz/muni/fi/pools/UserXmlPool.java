@@ -23,9 +23,15 @@ public class UserXmlPool {
     
     private ArrayList<UserXml> users;
     
-    public ArrayList<UserXml> loadUsers(Client oneClient) {
-        setUsers(new ArrayList<>());
-        setUp(new UserPool(oneClient));
+    private final Client oneClient;
+    
+    public UserXmlPool(Client oneClient) {
+        this.oneClient = oneClient;
+    }
+    
+    public ArrayList<UserXml> loadUsers() {
+        users = new ArrayList<>();
+        up = new UserPool(oneClient);
         OneResponse upr = getUp().info();
         if (upr.isError()) {
             //TODO: log it

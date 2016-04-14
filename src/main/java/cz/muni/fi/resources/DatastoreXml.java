@@ -47,6 +47,9 @@ public class DatastoreXml {
         this.init();
     }
     
+    public DatastoreXml() {
+    }
+    
     public void init() {
         id = Integer.parseInt(ds.xpath("/DATASTORE/ID"));
         uid = Integer.parseInt(ds.xpath("/DATASTORE/UID"));

@@ -5,6 +5,9 @@
  */
 package cz.muni.fi.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.opennebula.client.PoolElement;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
@@ -58,17 +61,33 @@ public class VmXml {
     
     private Integer datastore_id;
     
-    private Integer disk_id;
+    private ArrayList<Integer> diskSizes;
     
-    private Integer network_id;
+    private ArrayList<Integer> networkIds;
     
+    private Integer templateId;
+    
+    /**
+     * Possible values:
+     * RUNNING_VMS : packing
+     * -RUNNING_VMS : stripping
+     * FREE_CPU : load aware
+     */
     private String schedRank;
     
+    /**
+     * Possible values:
+     * -FREE_MB : packing
+     * FREE_MB : striping
+     */
     private String schedDsRank;
     
     private String schedRequirements;
     
     private String schedDsRequirements;
+    
+    //nacist template? nenacist template?
+    private TemplateXml template;
     
     private final VirtualMachine vm;
 
@@ -91,17 +110,83 @@ public class VmXml {
         deploy_id = getVm().xpath("/VM/DEPLOY_ID");
         setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
         setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
-        if (state != 1) {
+        try {
             datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
-            disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
-            network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
+            //disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
+            //network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
+        } catch (Exception e) {
+            datastore_id = null;
         }
+        getDiskSizes("/VM/TEMPLATE");
+        getNetworks("/VM/TEMPLATE");
         schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
         schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
         schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");
         schedDsRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS");
+        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));
+        /*try {
+            diskSize = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/SIZE"));
+        } catch (NumberFormatException e) {
+            diskSize = 0;
+        }*/
+        
     }
-
+    
+    public void getDiskSizes(String xpathExpr) {
+        diskSizes = new ArrayList<>();
+        System.out.println("Inside get diskSizes: " + xpathExpr);
+        int i = 1;
+        String node = vm.xpath(xpathExpr + "/DISK["+i+"]");
+        System.out.println("node: " + node);
+        while (!node.equals("")) {
+            Integer diskSize = Integer.parseInt(vm.xpath(xpathExpr + "/DISK["+i+"]" + "/SIZE"));
+            System.out.println("disk size: " + diskSize);
+            i++;
+            node = vm.xpath(xpathExpr + "/DISK["+i+"]");
+            diskSizes.add(diskSize);
+        }
+    }
+    
+    public void getNetworks(String xpathExpr) {
+        networkIds = new ArrayList<>();
+        int i = 1;
+        String node = vm.xpath(xpathExpr + "/NIC["+i+"]");
+        System.out.println("node: " + node);
+        while (!node.equals("")) {
+            Integer networkId = Integer.parseInt(vm.xpath(xpathExpr + "/NIC["+i+"]" + "/NETWORK_ID"));
+            System.out.println("network id: " + networkId);
+            i++;
+            node = vm.xpath(xpathExpr + "/NIC["+i+"]");
+            diskSizes.add(networkId);
+        }
+    }
+    
+    public boolean evaluateSchedReqs(HostXml host) {
+        String[] reqs = schedRequirements.split("\\|");
+        boolean fits = false;
+        if (schedRequirements.equals("")) {
+            return true;
+        }
+        for (String req: reqs) {
+            req = req.trim();
+            System.out.println("inside reqs: " + req);
+            Integer id = Integer.parseInt(req.substring(req.indexOf("=")+2, req.length()-1));
+            System.out.println("Evaluate sched reqs: " + id);
+            if (req.contains("ID")) {
+                if (host.getId() == id) {
+                    fits = true;
+                }
+            }
+            if (req.contains("CLUSTER")) {
+                if (host.getClusterId() == id) {
+                    fits = true;
+                }
+            }
+        }
+        return fits;
+    }
+    
+    
     /**
      * @return the uid
      */
@@ -328,6 +413,10 @@ public class VmXml {
                 ", lcm_state='" + lcm_state + '\'' +
                 ", cpu=" + getCpu() + '\'' +
                 ", memory=" + getMemory() + '\'' +
+                ", schedRank=" + schedRank + '\'' +
+                ", schedDsRank=" + schedDsRank + '\'' +
+                ", schedRequirements=" + schedRequirements + '\'' +
+                ", schedDsRequirements=" + schedDsRequirements + '\'' +
                 '}';
     }
 
@@ -371,6 +460,118 @@ public class VmXml {
      */
     public VirtualMachine getVm() {
         return vm;
+    }
+
+    /**
+     * @return the datastore_id
+     */
+    public Integer getDatastore_id() {
+        return datastore_id;
+    }
+
+    /**
+     * @param datastore_id the datastore_id to set
+     */
+    public void setDatastore_id(Integer datastore_id) {
+        this.datastore_id = datastore_id;
+    }
+
+    /**
+     * @return the network_id
+     */
+    public ArrayList<Integer> getNetwork_ids() {
+        return networkIds;
+    }
+
+    /**
+     * @param network_ids the network_id to set
+     */
+    public void setNetwork_ids(ArrayList<Integer> network_ids) {
+        this.networkIds = network_ids;
+    }
+
+    /**
+     * @return the schedRank
+     */
+    public String getSchedRank() {
+        return schedRank;
+    }
+
+    /**
+     * @param schedRank the schedRank to set
+     */
+    public void setSchedRank(String schedRank) {
+        this.schedRank = schedRank;
+    }
+
+    /**
+     * @return the schedDsRank
+     */
+    public String getSchedDsRank() {
+        return schedDsRank;
+    }
+
+    /**
+     * @param schedDsRank the schedDsRank to set
+     */
+    public void setSchedDsRank(String schedDsRank) {
+        this.schedDsRank = schedDsRank;
+    }
+
+    /**
+     * @return the schedRequirements
+     */
+    public String getSchedRequirements() {
+        return schedRequirements;
+    }
+
+    /**
+     * @param schedRequirements the schedRequirements to set
+     */
+    public void setSchedRequirements(String schedRequirements) {
+        this.schedRequirements = schedRequirements;
+    }
+
+    /**
+     * @return the schedDsRequirements
+     */
+    public String getSchedDsRequirements() {
+        return schedDsRequirements;
+    }
+
+    /**
+     * @param schedDsRequirements the schedDsRequirements to set
+     */
+    public void setSchedDsRequirements(String schedDsRequirements) {
+        this.schedDsRequirements = schedDsRequirements;
+    }
+
+    /**
+     * @return the diskSize
+     */
+    public ArrayList<Integer> getDiskSizes() {
+        return diskSizes;
+    }
+
+    /**
+     * @param diskSizes the diskSize to set
+     */
+    public void setDiskSizes(ArrayList<Integer> diskSizes) {
+        this.diskSizes = diskSizes;
+    }
+
+    /**
+     * @return the templateId
+     */
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    /**
+     * @param templateId the templateId to set
+     */
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
     }
 
     

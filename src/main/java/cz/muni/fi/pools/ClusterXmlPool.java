@@ -23,7 +23,13 @@ public class ClusterXmlPool {
     
     private ArrayList<ClusterXml> clusters;
     
-    public ArrayList<ClusterXml> loadClusters(Client oneClient) {
+    private final Client oneClient;
+    
+    public ClusterXmlPool(Client oneClient) {
+        this.oneClient = oneClient;
+    }
+    
+    public ArrayList<ClusterXml> loadClusters() {
         clusters = new ArrayList<>();
         cp = new ClusterPool(oneClient);
         OneResponse cpr = cp.info();
@@ -39,6 +45,13 @@ public class ClusterXmlPool {
             System.out.println("Cluster: " + c);
             clusters.add(c);
         }
+        return clusters;
+    }
+
+    /**
+     * @return the clusters
+     */
+    public ArrayList<ClusterXml> getClusters() {
         return clusters;
     }
 }

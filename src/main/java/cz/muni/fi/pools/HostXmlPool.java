@@ -23,8 +23,19 @@ public class HostXmlPool {
     
     private ArrayList<HostXml> hosts;
     
-    public ArrayList<HostXml> loadHosts(Client oneClient) {
-        setHosts(new ArrayList<>());
+    private final Client oneClient;
+    
+    public HostXmlPool(Client oneClient) {
+        this.oneClient = oneClient;
+    }
+    
+    /**
+     * Loads all hosts from OpenNebula HostPool.
+     * Retrieves and store the xml representation as HostXml object into an array of hosts.
+     * @return array of hosts
+     */
+    public ArrayList<HostXml> loadHosts() {
+        hosts = new ArrayList<>();
         hp = new HostPool(oneClient);
         OneResponse hpr = hp.info();
         if (hpr.isError()) {
@@ -34,13 +45,27 @@ public class HostXmlPool {
         Iterator<Host> itr = hp.iterator();
         while (itr.hasNext()) {
             Host element = itr.next();
-            System.out.println("Host: " + element + "   state: " + element.state());
-            if (element.state() == 1 || element.state() == 2) {
-                HostXml h = new HostXml(element);
-                getHosts().add(h);
+            System.out.println("Host: " + element + "   state: " + element.state() + " id: " + element.getId());
+            HostXml h = new HostXml(element);
+            getHosts().add(h);
+        }
+        return hosts;
+    }
+    
+    /**
+     * Gets hosts that are active.
+     * Host states:  1 = monitoring-monitored
+     *               2 = monitored
+     * @return array of active hosts
+     */
+    public ArrayList<HostXml> getActiveHosts() {
+        ArrayList<HostXml> activeHosts = new ArrayList<>();
+        for (HostXml host: activeHosts) {
+            if (host.getState() == 1 || host.getState() == 2) {
+                activeHosts.add(host);
             }
         }
-        return getHosts();
+        return activeHosts;
     }
 
     /**

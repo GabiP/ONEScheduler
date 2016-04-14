@@ -8,6 +8,7 @@ package cz.muni.fi.pools;
 import cz.muni.fi.resources.DatastoreXml;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.datastore.Datastore;
@@ -23,7 +24,13 @@ public class DatastoreXmlPool {
     
     private ArrayList<DatastoreXml> datastores;
     
-    public ArrayList<DatastoreXml> loadDatastores(Client oneClient) {
+    private final Client oneClient;
+    
+    public DatastoreXmlPool(Client oneClient) {
+        this.oneClient = oneClient;
+    }
+    
+    public ArrayList<DatastoreXml> loadDatastores() {
         datastores = new ArrayList<>();
         dp = new DatastorePool(oneClient);
         OneResponse dpr = dp.info();
@@ -54,5 +61,14 @@ public class DatastoreXmlPool {
      */
     public void setDatastores(ArrayList<DatastoreXml> datastores) {
         this.datastores = datastores;
+    }
+    
+    public DatastoreXml findById(Integer id) {
+        for (DatastoreXml ds: datastores) {
+            if (Objects.equals(ds.getId(), id)) {
+                return ds;
+            }
+        }
+        return null;
     }
 }

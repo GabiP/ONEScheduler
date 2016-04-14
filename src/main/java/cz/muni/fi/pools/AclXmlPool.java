@@ -26,7 +26,13 @@ public class AclXmlPool {
     
     private ArrayList<Acl> acls;
     
-    public ArrayList<Acl> loadAcl(Client oneClient) {
+    private Client oneClient;
+    
+    public AclXmlPool(Client oneClient) {
+        this.oneClient = oneClient;
+    }
+    
+    public ArrayList<Acl> loadAcl() {
         acls = new ArrayList<>();
         aclpool = new AclPool(oneClient);
         OneResponse aclpr = aclpool.info();
