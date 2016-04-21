@@ -6,13 +6,11 @@
 package cz.muni.fi.pools;
 
 import cz.muni.fi.resources.VmXml;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
+import org.opennebula.client.Pool;
 import org.opennebula.client.vm.VirtualMachine;
 import org.opennebula.client.vm.VirtualMachinePool;
 
@@ -23,55 +21,67 @@ import org.opennebula.client.vm.VirtualMachinePool;
 public class VmXmlPool {
 
     private VirtualMachinePool vmp;
-
-    private ArrayList<VmXml> vms;
-
-    private final Client oneClient;
+    
+    // TODO: add caching to improve performance
 
     public VmXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        vmp = new VirtualMachinePool(oneClient);
+    }
+    
+    public ArrayList<VmXml> getVms() {
+        return getVms(Pool.ALL, VirtualMachinePool.NOT_DONE); 
+    }
+    
+    public ArrayList<VmXml> getAllVms() {
+        return getVms(Pool.ALL, VirtualMachinePool.ALL_VM); 
+    }
+    
+    public ArrayList<VmXml> getVmsByUser(int userId) {
+        return getVms(userId, VirtualMachinePool.NOT_DONE); 
+    }
+    
+    public ArrayList<VmXml> getAllVmsByUser(int userId) {
+        return getVms(userId, VirtualMachinePool.ALL_VM); 
+    }
+    
+    public ArrayList<VmXml> getVmsByState(int state) {
+        return getVms(Pool.ALL, state); 
     }
     
     /**
-     * Loads all hosts from OpenNebula VirtualMachinePool.
-     * Retrieves and store the xml representation as VmXml object into an array of vms
-     * @return array of vms
+     * Gets virtual machines by user and state.
+     * User ids:   >= 0            = UID User's Virtual Machines
+     *             Pool.ALL        = All Virtual Machines
+     *             Pool.MINE       = Connected user's Virtual Machines
+     *             Pool.MINE_GROUP = Connected user's Virtual Machines, and the ones in his group
+     *             
+     * Vm states:  1 = pending
+     *             2 = hold
+     *             3 = active
+     *             4 = stopped
+     *             5 = suspended
+     *             6 = done
+     *             8 = poweroff
+     *             9 = undeployed
+     *             VirtualMachinePool.ALL_VM   = Flag for Virtual Machines in any state.
+     *             VirtualMachinePool.NOT_DONE = Flag for Virtual Machines in any state, except for DONE.
+     * @return array of virtual machines
      */
-    public ArrayList<VmXml> loadVms() throws IOException {
-        vms = new ArrayList<>();
-        vmp = new VirtualMachinePool(oneClient);
-        OneResponse vmpr = getVmp().info();
+    public ArrayList<VmXml> getVms(int userId, int state) {
+        ArrayList<VmXml> vms = new ArrayList<>();
+        OneResponse vmpr = vmp.info(userId, Integer.MIN_VALUE, Integer.MAX_VALUE, state);
         if (vmpr.isError()) {
             //TODO: log it
             System.out.println(vmpr.getErrorMessage());
         }
-        Iterator<VirtualMachine> itr = getVmp().iterator();
+        Iterator<VirtualMachine> itr = vmp.iterator();
         while (itr.hasNext()) {
             VirtualMachine element = itr.next();
-            System.out.println("VirtualMachine: " + element + "   state: " + element.state() + "   lcm_state: " + element.lcmState() + " ");
-            //getting pendings
             VmXml vm = new VmXml(element);
-            System.out.println("Vm: " + vm);
             vms.add(vm);
         }
         return vms;
-    }
-
-    /**
-     * Gets virtual machines that are pending.
-     * Vm states:  1 = pending
-     *             2 = hold
-     * @return array of pending virtual machines
-     */
-    public ArrayList<VmXml> getPendings() {
-        ArrayList<VmXml> pendings = new ArrayList<>();
-        for (VmXml vm: vms) {
-            if (vm.getState() == 1 || vm.getState() == 2) {
-                pendings.add(vm);
-            }
-        }
-        return pendings;
-    }
+    }    
 
     /**
      * @return the vmp
@@ -85,19 +95,5 @@ public class VmXmlPool {
      */
     public void setVmp(VirtualMachinePool vmp) {
         this.vmp = vmp;
-    }
-
-    /**
-     * @return the pendingVms
-     */
-    public ArrayList<VmXml> getVms() {
-        return vms;
-    }
-
-    /**
-     * @param vms the pendingVms to set
-     */
-    public void setPendingVms(ArrayList<VmXml> vms) {
-        this.vms = vms;
     }
 }

@@ -232,9 +232,9 @@ public class HostXml {
             return false;
         } else {
             for (DatastoreXml ds: datastores) {
-                ArrayList<Integer> diskSizes =  vm.getDiskSizes();
-                for (Integer diskSize: diskSizes) {
-                    if (ds.getFree_mb() > diskSize) {
+                List<DiskNode> disks =  vm.getDisks();
+                for (DiskNode disk: disks) {
+                    if (ds.getFree_mb() > disk.getSize()) {
                         fits = true;
                     }
                 }
