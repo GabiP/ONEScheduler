@@ -19,6 +19,9 @@ public class DatastoreXml {
     
     private String name;
     
+    //0 - image, 1 - system, 2 - file
+    private Integer type;
+    
     private Integer owner_u;
     private Integer owner_m;
     private Integer owner_a;
@@ -55,6 +58,7 @@ public class DatastoreXml {
         uid = Integer.parseInt(ds.xpath("/DATASTORE/UID"));
         gid = Integer.parseInt(ds.xpath("/DATASTORE/GID"));
         name = ds.xpath("/DATASTORE/NAME");
+        type = Integer.parseInt(ds.xpath("/DATASTORE/TYPE"));
         owner_u = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_U"));
         owner_m = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_M"));
         owner_a = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_A"));
@@ -320,5 +324,19 @@ public class DatastoreXml {
      */
     public void setDs(Datastore ds) {
         this.ds = ds;
+    }
+
+    /**
+     * @return the type
+     */
+    public Integer getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

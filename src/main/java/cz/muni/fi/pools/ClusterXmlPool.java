@@ -47,7 +47,15 @@ public class ClusterXmlPool {
         }
         return clusters;
     }
-
+    
+    public ClusterXml getById(Integer id) {
+        for (ClusterXml cluster: clusters) {
+            if (cluster.getId() == id) {
+                return cluster;
+            }
+        }
+        return null;
+    }
     /**
      * @return the clusters
      */

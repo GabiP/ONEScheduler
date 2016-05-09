@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler;
 
+import authorization.AuthorizationManager;
 import cz.muni.fi.pools.AclXmlPool;
 import cz.muni.fi.resources.ClusterXml;
 import cz.muni.fi.pools.ClusterXmlPool;
@@ -26,7 +27,9 @@ import org.opennebula.client.acl.Acl;
  */
 public class Scheduler {
     
-    Client oneClient;   
+    Client oneClient;
+    
+    AuthorizationManager authorizationManager;
     
     HostXmlPool hostPool;
     
@@ -90,7 +93,10 @@ public class Scheduler {
     
     public void body() throws InterruptedException, IOException {
         while(true) {
+            //load all pools - must be the first call
             loadPools();
+            //instantiate the Authorizationmanager
+            authorizationManager = new AuthorizationManager(aclPool, clusterPool, hostPool, dsPool, userPool);
             //get pendings
             pendingVms = vmPool.getPendings();
             
@@ -105,6 +111,9 @@ public class Scheduler {
             // Run several algorithms. Write the results. Compare. Choose the best --> criteria. Then deploy in hostId.
             while(!queue.isEmpty()) {
               VmXml vm = (VmXml) queue.peek();
+              //check the authorization for this VM
+              ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
+              
               System.out.println(vm);
               // check limits
               // filter hosts - whether the vm can be hosted - testCapacity...
@@ -127,8 +136,6 @@ public class Scheduler {
               }
               queue.poll();
             }
-            // flush Hosts
-            // flush VMs
           System.out.println("New cycle will start in 10 seconds");
           TimeUnit.SECONDS.sleep(10);
         }

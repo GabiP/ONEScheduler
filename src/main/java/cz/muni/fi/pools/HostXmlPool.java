@@ -95,4 +95,21 @@ public class HostXmlPool {
     public void setHosts(ArrayList<HostXml> hosts) {
         this.hosts = hosts;
     }
+    
+    public HostXml getById(Integer id) {
+        for (HostXml host: hosts) {
+            if (host.getId() == id) {
+                return host;
+            }
+        }
+        return null;
+    }
+    
+    public ArrayList<Integer> getHostsIds() {
+        ArrayList<Integer> hostsIds = new ArrayList<>();
+        for(HostXml h: hosts) {
+            hostsIds.add(h.getId());
+        }
+        return hostsIds;
+    }
 }

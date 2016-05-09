@@ -24,6 +24,8 @@ public class DatastoreXmlPool {
     
     private ArrayList<DatastoreXml> datastores;
     
+    private ArrayList<Integer> datastoresIds;
+    
     private final Client oneClient;
     
     public DatastoreXmlPool(Client oneClient) {
@@ -32,6 +34,7 @@ public class DatastoreXmlPool {
     
     public ArrayList<DatastoreXml> loadDatastores() {
         datastores = new ArrayList<>();
+        datastoresIds = new ArrayList<>();
         dp = new DatastorePool(oneClient);
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
@@ -45,6 +48,7 @@ public class DatastoreXmlPool {
             DatastoreXml d = new DatastoreXml(element);
             System.out.println("Datastore: " + d);
             datastores.add(d);
+            datastoresIds.add(d.getId());
         }
         return datastores;
     }
@@ -70,5 +74,22 @@ public class DatastoreXmlPool {
             }
         }
         return null;
+    }
+    
+    public ArrayList<Integer> getSystemDs() {
+        ArrayList<Integer> systemDs = new ArrayList<>();
+        for (DatastoreXml ds: datastores) {
+            if (ds.getType() == 1) {
+                systemDs.add(ds.getId());
+            }
+        }
+        return systemDs;
+    }
+
+    /**
+     * @return the datastoresIds
+     */
+    public ArrayList<Integer> getDatastoresIds() {
+        return datastoresIds;
     }
 }

@@ -1,5 +1,6 @@
 package cz.muni.fi.resources;
 
+import java.util.ArrayList;
 import org.opennebula.client.user.User;
 
 /**
@@ -11,6 +12,8 @@ public class UserXml {
     private Integer id;
     
     private Integer gid;
+    
+    private ArrayList<Integer> groups;
 
     private User user;
     
@@ -23,6 +26,20 @@ public class UserXml {
     public void init() {
         id = Integer.parseInt(user.xpath("/USER/ID"));
         gid = Integer.parseInt(user.xpath("/USER/ID"));
+        getGroups("/USER/GROUPS");
+    }
+    
+    public void getGroups(String xpathExpr) {
+        groups = new ArrayList<>();
+        int i = 1;
+        String node = user.xpath(xpathExpr + "/ID["+i+"]");
+        while (!node.equals("")) {
+            Integer id= Integer.parseInt(user.xpath(xpathExpr + "/ID["+i+"]"));
+            System.out.println("gorup id: " + id);
+            i++;
+            node = user.xpath(xpathExpr + "/ID["+i+"]");
+            groups.add(id);
+        }
     }
     
     @Override
@@ -58,6 +75,13 @@ public class UserXml {
      */
     public void setGid(Integer gid) {
         this.gid = gid;
+    }
+
+    /**
+     * @return the groups
+     */
+    public ArrayList<Integer> getGroups() {
+        return groups;
     }
 
 }

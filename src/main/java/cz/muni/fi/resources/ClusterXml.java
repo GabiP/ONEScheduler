@@ -20,6 +20,10 @@ public class ClusterXml {
     
     private Cluster cluster;
     
+    private ArrayList<Integer> hosts;
+    
+    private ArrayList<Integer> datastores;
+    
     public ClusterXml(Cluster cluster) {
         this.cluster = cluster;
         cluster.info();
@@ -29,8 +33,36 @@ public class ClusterXml {
     public void init() {
         id = Integer.parseInt(cluster.xpath("/CLUSTER/ID"));
         name = cluster.xpath("/CLUSTER/NAME");
+        get_hosts("/CLUSTER/HOSTS/ID");
+        get_ds("/CLUSTER/DATASTORES/ID");
     }
 
+    public void get_hosts(String xpathExpr) {
+        hosts = new ArrayList<>();
+        System.out.println("Inside get hosts: " + xpathExpr);
+        int i = 1;
+        String idnode = cluster.xpath(xpathExpr + "["+i+"]");
+        while (!idnode.equals("")) {
+            System.out.println("host id: " + idnode);
+            hosts.add(Integer.parseInt(idnode));
+            i++;
+            idnode = cluster.xpath(xpathExpr + "["+i+"]");
+        }
+    }
+    
+    public void get_ds(String xpathExpr) {
+        datastores = new ArrayList<>();
+        System.out.println("Inside get ds: " + xpathExpr);
+        int i = 1;
+        String idnode = cluster.xpath(xpathExpr + "["+i+"]");
+        while (!idnode.equals("")) {
+            System.out.println("host id: " + idnode);
+            datastores.add(Integer.parseInt(idnode));
+            i++;
+            idnode = cluster.xpath(xpathExpr + "["+i+"]");
+        }
+    }
+    
     /**
      * @return the id
      */
@@ -71,6 +103,20 @@ public class ClusterXml {
      */
     public void setCluster(Cluster cluster) {
         this.cluster = cluster;
+    }
+
+    /**
+     * @return the hosts
+     */
+    public ArrayList<Integer> getHosts() {
+        return hosts;
+    }
+
+    /**
+     * @return the datastores
+     */
+    public ArrayList<Integer> getDatastores() {
+        return datastores;
     }
     
     

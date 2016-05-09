@@ -1,5 +1,6 @@
 package cz.muni.fi.resources;
 
+import cz.muni.fi.pools.AclXmlPool;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.PoolElement;
@@ -210,22 +211,6 @@ public class HostXml {
         }
     }
     
-    public <T> List<T> getNodes(Class klazz, String xpathExpr, PoolElement el) {
-        List<T> list = new ArrayList<>();
-        int i = 0;
-        String node = el.xpath(xpathExpr + "["+i+"]");
-        while (!node.equals("")) {
-            try {
-                list.add((T) klazz.getConstructor().newInstance()); // If default constructor
-            } catch (Exception e) {
-                System.err.println("Could not load specified node: " + node + e);
-            }
-            i++;
-            node = el.xpath(xpathExpr + "["+i+"]");
-        }
-        return list;
-    }
-    
     public boolean testDs(VmXml vm) {
         boolean fits = false;
         if (!dsIds.contains(vm.getDatastore_id())) {
@@ -241,15 +226,6 @@ public class HostXml {
             }
         }
         return fits;
-    }
-    
-    public void checkHost(UserXml user, ArrayList<Acl> acls, VmXml vm) {
-        Integer uid = vm.getUid();
-        Integer gid = vm.getGid();
-    }
-    
-    public boolean checkVmReqs(VmXml vm) {
-        return false;
     }
     
     /**

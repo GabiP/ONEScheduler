@@ -21,17 +21,23 @@ import cz.muni.fi.scheduler.Scheduler;
  * @author Gabriela Podolnikova
  */
 public class AclXmlPool {
-    
+
     private AclPool aclpool;
-    
+
     private ArrayList<Acl> acls;
-    
+
     private Client oneClient;
     
+    private final long INDIVIDUAL_ID  = 0x0000000100000000L;
+    private final long GROUP_ID       = 0x0000000200000000L;
+    private final long ALL_ID         = 0x0000000400000000L;
+    private final long CLUSTER_ID     = 0x0000000800000000L;
+    private final long NONE_ID        = 0x1000000000000000L;
+
     public AclXmlPool(Client oneClient) {
         this.oneClient = oneClient;
     }
-    
+
     public ArrayList<Acl> loadAcl() {
         acls = new ArrayList<>();
         aclpool = new AclPool(oneClient);
@@ -53,11 +59,12 @@ public class AclXmlPool {
             System.out.println(parsedRule[0]);
             System.out.println(parsedRule[1]);
             System.out.println(parsedRule[2]);
+            System.out.println("#" + el.getId());
             acls.add(el);
         }
         return acls;
     }
-    
+
     /**
      * @return the acls
      */
@@ -71,4 +78,5 @@ public class AclXmlPool {
     public void setAcls(ArrayList<Acl> acls) {
         this.acls = acls;
     }
+
 }

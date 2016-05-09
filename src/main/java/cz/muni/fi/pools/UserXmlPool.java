@@ -47,6 +47,15 @@ public class UserXmlPool {
         }
         return getUsers();
     }
+    
+    public UserXml getById(Integer id) {
+        for (UserXml user: users) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        return null;
+    }
 
     /**
      * @return the up
