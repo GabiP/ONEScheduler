@@ -62,7 +62,9 @@ public class VmXml {
     
     private Integer datastore_id;
     
-    private List<DiskNode> disks;
+    private List<DiskNode> disks;    
+    
+    private List<HistoryNode> histories;
     
     private ArrayList<Integer> networkIds;        
     
@@ -120,6 +122,7 @@ public class VmXml {
         }
         try {
             disks = NodeElementLoader.getNodeElements(vm, DiskNode.class);
+            histories = NodeElementLoader.getNodeElements(vm, HistoryNode.class);
         } catch (InstantiationException | IllegalAccessException ex) {
             // TODO: react on failure if needed
             Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
@@ -176,7 +179,22 @@ public class VmXml {
         }
         return fits;
     }
-    
+        
+    public int getRunTime() {        
+        int runTime = 0;  
+        for (int i=0; i<histories.size(); i++) {
+            HistoryNode history = histories.get(i);
+            boolean isActive = (state == 3);
+            boolean isLast = (i == histories.size() - 1);
+            if (history.isClosed() || (isActive && isLast)) {
+                runTime += history.getRunTime();
+            } else {     
+                // There is a history record that should have been closed
+                // TODO : calculate runtime
+            }
+        }
+        return runTime;
+    }
     
     /**
      * @return the uid
@@ -557,6 +575,14 @@ public class VmXml {
 
     public void setDisks(List<DiskNode> disks) {
         this.disks = disks;
+    }
+
+    public List<HistoryNode> getHistories() {
+        return histories;
+    }
+
+    public void setHistories(List<HistoryNode> histories) {
+        this.histories = histories;
     }
 
     

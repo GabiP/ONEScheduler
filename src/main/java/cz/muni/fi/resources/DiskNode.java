@@ -11,7 +11,7 @@ import org.opennebula.client.PoolElement;
  *
  * @author Andras Urge
  */
-class DiskNode extends NodeElement {
+public class DiskNode extends NodeElement {
     
     private static final String XPATH_EXPR = "/VM/TEMPLATE/DISK";
     
