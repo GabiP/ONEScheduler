@@ -7,7 +7,8 @@ package cz.muni.fi.resources;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.opennebula.client.PoolElement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
@@ -61,9 +62,9 @@ public class VmXml {
     
     private Integer datastore_id;
     
-    private ArrayList<Integer> diskSizes;
+    private List<DiskNode> disks;
     
-    private ArrayList<Integer> networkIds;
+    private ArrayList<Integer> networkIds;        
     
     private Integer templateId;
     
@@ -117,7 +118,12 @@ public class VmXml {
         } catch (Exception e) {
             datastore_id = null;
         }
-        getDiskSizes("/VM/TEMPLATE");
+        try {
+            disks = NodeElementLoader.getNodeElements(vm, DiskNode.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
+        }
         getNetworks("/VM/TEMPLATE");
         schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
         schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
@@ -130,22 +136,7 @@ public class VmXml {
             diskSize = 0;
         }*/
         
-    }
-    
-    public void getDiskSizes(String xpathExpr) {
-        diskSizes = new ArrayList<>();
-        System.out.println("Inside get diskSizes: " + xpathExpr);
-        int i = 1;
-        String node = vm.xpath(xpathExpr + "/DISK["+i+"]");
-        System.out.println("node: " + node);
-        while (!node.equals("")) {
-            Integer diskSize = Integer.parseInt(vm.xpath(xpathExpr + "/DISK["+i+"]" + "/SIZE"));
-            System.out.println("disk size: " + diskSize);
-            i++;
-            node = vm.xpath(xpathExpr + "/DISK["+i+"]");
-            diskSizes.add(diskSize);
-        }
-    }
+    } 
     
     public void getNetworks(String xpathExpr) {
         networkIds = new ArrayList<>();
@@ -157,7 +148,7 @@ public class VmXml {
             System.out.println("network id: " + networkId);
             i++;
             node = vm.xpath(xpathExpr + "/NIC["+i+"]");
-            diskSizes.add(networkId);
+            networkIds.add(networkId);
         }
     }
     
@@ -547,20 +538,6 @@ public class VmXml {
     }
 
     /**
-     * @return the diskSize
-     */
-    public ArrayList<Integer> getDiskSizes() {
-        return diskSizes;
-    }
-
-    /**
-     * @param diskSizes the diskSize to set
-     */
-    public void setDiskSizes(ArrayList<Integer> diskSizes) {
-        this.diskSizes = diskSizes;
-    }
-
-    /**
      * @return the templateId
      */
     public Integer getTemplateId() {
@@ -572,6 +549,14 @@ public class VmXml {
      */
     public void setTemplateId(Integer templateId) {
         this.templateId = templateId;
+    }
+
+    public List<DiskNode> getDisks() {
+        return disks;
+    }
+
+    public void setDisks(List<DiskNode> disks) {
+        this.disks = disks;
     }
 
     
