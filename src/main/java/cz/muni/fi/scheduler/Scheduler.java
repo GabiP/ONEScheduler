@@ -45,23 +45,9 @@ public class Scheduler {
     
     DatastoreXmlPool dsPool;
     
-    private ArrayList<HostXml> hosts = new ArrayList<>();
-    
-    private ArrayList<UserXml> users = new ArrayList<>();
-    
-    private ArrayList<TemplateXml> templates = new ArrayList<>();
-    
-    private ArrayList<ClusterXml> clusters = new ArrayList<>();
-    
     private ArrayList<HostXml> filteredHosts = new ArrayList<>();
     
-    private ArrayList<DatastoreXml> ds = new ArrayList<>();
-    
-    private ArrayList<VmXml> pendingVms = new ArrayList<>();
-    
-    private ArrayList<VmXml> vms = new ArrayList<>();
-    
-    private ArrayList<Acl> acls = new ArrayList<>();
+    private ArrayList<VmXml> pendingVms = new ArrayList<>();  
     
     /**
      * Queues with waiting VMs.
@@ -78,13 +64,6 @@ public class Scheduler {
 
             oneClient = new Client(SECRET, ENDPOINT);
             // Pass on the oneClient connection to pools
-            vmPool = new VmXmlPool(oneClient);
-            hostPool = new HostXmlPool(oneClient);
-            userPool = new UserXmlPool(oneClient);
-            templatePool = new TemplateXmlPool(oneClient);
-            aclPool = new AclXmlPool(oneClient);
-            clusterPool = new ClusterXmlPool(oneClient);
-            dsPool = new DatastoreXmlPool(oneClient);
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -97,9 +76,8 @@ public class Scheduler {
             loadPools();
             //instantiate the Authorizationmanager
             authorizationManager = new AuthorizationManager(aclPool, clusterPool, hostPool, dsPool, userPool);
-            //get pendings
-            pendingVms = vmPool.getPendings();
-            
+            //get pendings, state = 1 is pending
+            pendingVms = vmPool.getVmsByState(1);           
             if (pendingVms.isEmpty()) {
                 System.out.println("No pendings");
                 break;
@@ -117,12 +95,13 @@ public class Scheduler {
               System.out.println(vm);
               // check limits
               // filter hosts - whether the vm can be hosted - testCapacity...
-              for (HostXml h: hosts) {
-                  System.out.println(h + " id " + h.getId());
-                  
-                  boolean canBeHosted  = h.testCapacity(vm);
+              for (Integer hostId: authorizedHosts) {
+                  System.out.println("Host id " + hostId);
+                  HostXml h = hostPool.getById(hostId);
+                  boolean enoughCapacity  = h.testCapacity(vm);
+                  boolean enoughCapacityDs = h.testDs(vm);
                   boolean reqs = vm.evaluateSchedReqs(h);
-                  if (canBeHosted && reqs) {
+                  if (enoughCapacity && reqs && enoughCapacityDs) {
                       filteredHosts.add(h);
                   }
               }
@@ -142,19 +121,20 @@ public class Scheduler {
     }
     
     public void loadPools() throws IOException {
-        // Load Hosts
-        hosts = hostPool.loadHosts();
-        // Load VMs
-        vms = vmPool.loadVms();
-        //Load users
-        users = userPool.loadUsers();
-        // Load acls       
-        acls = aclPool.loadAcl();
-        // Load clusters
-        clusters = clusterPool.loadClusters();
-        // Load datastores   
-        ds = dsPool.loadDatastores();
-        //Load templates
-        templates = templatePool.loadTemplates();
+        vmPool = new VmXmlPool(oneClient);
+        hostPool = new HostXmlPool(oneClient);
+        userPool = new UserXmlPool(oneClient);
+        templatePool = new TemplateXmlPool(oneClient);
+        aclPool = new AclXmlPool(oneClient);
+        clusterPool = new ClusterXmlPool(oneClient);
+        dsPool = new DatastoreXmlPool(oneClient);
+
+        hostPool.loadHosts();
+        vmPool.getAllVms();
+        userPool.loadUsers();       
+        aclPool.loadAcl();
+        clusterPool.loadClusters();   
+        dsPool.loadDatastores();
+        templatePool.loadTemplates();
     }
 }

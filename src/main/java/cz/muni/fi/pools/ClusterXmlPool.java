@@ -19,19 +19,16 @@ import org.opennebula.client.cluster.ClusterPool;
  */
 public class ClusterXmlPool {
     
-    private ClusterPool cp;
+    private final ClusterPool cp;
     
     private ArrayList<ClusterXml> clusters;
     
-    private final Client oneClient;
-    
     public ClusterXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        cp = new ClusterPool(oneClient);
     }
     
-    public ArrayList<ClusterXml> loadClusters() {
+    public void loadClusters() {
         clusters = new ArrayList<>();
-        cp = new ClusterPool(oneClient);
         OneResponse cpr = cp.info();
         if (cpr.isError()) {
             //TODO: log it
@@ -45,7 +42,6 @@ public class ClusterXmlPool {
             System.out.println("Cluster: " + c);
             clusters.add(c);
         }
-        return clusters;
     }
     
     public ClusterXml getById(Integer id) {

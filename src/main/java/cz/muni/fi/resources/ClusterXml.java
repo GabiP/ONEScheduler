@@ -6,6 +6,9 @@
 package cz.muni.fi.resources;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opennebula.client.cluster.Cluster;
 
 /**
@@ -20,9 +23,9 @@ public class ClusterXml {
     
     private Cluster cluster;
     
-    private ArrayList<Integer> hosts;
+    private List<Integer> hosts;
     
-    private ArrayList<Integer> datastores;
+    private List<Integer> datastores;
     
     public ClusterXml(Cluster cluster) {
         this.cluster = cluster;
@@ -33,36 +36,28 @@ public class ClusterXml {
     public void init() {
         id = Integer.parseInt(cluster.xpath("/CLUSTER/ID"));
         name = cluster.xpath("/CLUSTER/NAME");
-        get_hosts("/CLUSTER/HOSTS/ID");
-        get_ds("/CLUSTER/DATASTORES/ID");
+        try {
+            hosts = NodeElementLoader.getNodeId(cluster, "/CLUSTER/HOSTS/ID");
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            datastores = NodeElementLoader.getNodeId(cluster, "/CLUSTER/DATASTORES/ID");
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    @Override
+    public String toString() {
+        return "Cluster{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 
-    public void get_hosts(String xpathExpr) {
-        hosts = new ArrayList<>();
-        System.out.println("Inside get hosts: " + xpathExpr);
-        int i = 1;
-        String idnode = cluster.xpath(xpathExpr + "["+i+"]");
-        while (!idnode.equals("")) {
-            System.out.println("host id: " + idnode);
-            hosts.add(Integer.parseInt(idnode));
-            i++;
-            idnode = cluster.xpath(xpathExpr + "["+i+"]");
-        }
-    }
-    
-    public void get_ds(String xpathExpr) {
-        datastores = new ArrayList<>();
-        System.out.println("Inside get ds: " + xpathExpr);
-        int i = 1;
-        String idnode = cluster.xpath(xpathExpr + "["+i+"]");
-        while (!idnode.equals("")) {
-            System.out.println("host id: " + idnode);
-            datastores.add(Integer.parseInt(idnode));
-            i++;
-            idnode = cluster.xpath(xpathExpr + "["+i+"]");
-        }
-    }
-    
     /**
      * @return the id
      */
@@ -108,14 +103,14 @@ public class ClusterXml {
     /**
      * @return the hosts
      */
-    public ArrayList<Integer> getHosts() {
+    public List<Integer> getHosts() {
         return hosts;
     }
 
     /**
      * @return the datastores
      */
-    public ArrayList<Integer> getDatastores() {
+    public List<Integer> getDatastores() {
         return datastores;
     }
     

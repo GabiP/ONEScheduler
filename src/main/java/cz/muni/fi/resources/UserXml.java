@@ -1,6 +1,8 @@
 package cz.muni.fi.resources;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opennebula.client.user.User;
 
 /**
@@ -13,9 +15,9 @@ public class UserXml {
     
     private Integer gid;
     
-    private ArrayList<Integer> groups;
+    private List<Integer> groups;
 
-    private User user;
+    private final User user;
     
     public UserXml (User user) {
         this.user = user;
@@ -26,19 +28,11 @@ public class UserXml {
     public void init() {
         id = Integer.parseInt(user.xpath("/USER/ID"));
         gid = Integer.parseInt(user.xpath("/USER/ID"));
-        getGroups("/USER/GROUPS");
-    }
-    
-    public void getGroups(String xpathExpr) {
-        groups = new ArrayList<>();
-        int i = 1;
-        String node = user.xpath(xpathExpr + "/ID["+i+"]");
-        while (!node.equals("")) {
-            Integer id= Integer.parseInt(user.xpath(xpathExpr + "/ID["+i+"]"));
-            System.out.println("gorup id: " + id);
-            i++;
-            node = user.xpath(xpathExpr + "/ID["+i+"]");
-            groups.add(id);
+        try {
+            groups = NodeElementLoader.getNodeId(user, "/USER/GROUPS/ID");
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -80,7 +74,7 @@ public class UserXml {
     /**
      * @return the groups
      */
-    public ArrayList<Integer> getGroups() {
+    public List<Integer> getGroups() {
         return groups;
     }
 

@@ -23,10 +23,8 @@ public class HostXmlPool {
     
     private ArrayList<HostXml> hosts;
     
-    private final Client oneClient;
-    
     public HostXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        hp = new HostPool(oneClient);
     }
     
     /**
@@ -34,9 +32,8 @@ public class HostXmlPool {
      * Retrieves and store the xml representation as HostXml object into an array of hosts.
      * @return array of hosts
      */
-    public ArrayList<HostXml> loadHosts() {
+    public void loadHosts() {
         hosts = new ArrayList<>();
-        hp = new HostPool(oneClient);
         OneResponse hpr = hp.info();
         if (hpr.isError()) {
             //TODO: log it
@@ -49,7 +46,6 @@ public class HostXmlPool {
             HostXml h = new HostXml(element);
             getHosts().add(h);
         }
-        return hosts;
     }
     
     /**

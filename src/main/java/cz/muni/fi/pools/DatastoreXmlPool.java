@@ -20,22 +20,19 @@ import org.opennebula.client.datastore.DatastorePool;
  */
 public class DatastoreXmlPool {
     
-    private DatastorePool dp;
+    private final DatastorePool dp;
     
     private ArrayList<DatastoreXml> datastores;
     
     private ArrayList<Integer> datastoresIds;
     
-    private final Client oneClient;
-    
     public DatastoreXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        dp = new DatastorePool(oneClient);
     }
     
-    public ArrayList<DatastoreXml> loadDatastores() {
+    public void loadDatastores() {
         datastores = new ArrayList<>();
         datastoresIds = new ArrayList<>();
-        dp = new DatastorePool(oneClient);
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
             //TODO: log it
@@ -44,13 +41,10 @@ public class DatastoreXmlPool {
         Iterator<Datastore> itr = dp.iterator();
         while (itr.hasNext()) {
             Datastore element = itr.next();
-            System.out.println("Datastore: " + element);
             DatastoreXml d = new DatastoreXml(element);
-            System.out.println("Datastore: " + d);
             datastores.add(d);
             datastoresIds.add(d.getId());
         }
-        return datastores;
     }
 
     /**

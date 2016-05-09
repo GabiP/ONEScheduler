@@ -15,6 +15,7 @@ import cz.muni.fi.resources.DatastoreXml;
 import cz.muni.fi.resources.HostXml;
 import cz.muni.fi.resources.VmXml;
 import java.util.ArrayList;
+import java.util.List;
 import org.opennebula.client.acl.Acl;
 
 /**
@@ -45,7 +46,7 @@ public class AuthorizationManager {
      */
     public ArrayList<Integer> authorize(VmXml vm) {
         Integer uid = vm.getUid();
-        ArrayList<Integer> userGroups = userPool.getById(uid).getGroups();
+        List<Integer> userGroups = userPool.getById(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
         userGroups.add(vm.getGid());
         ArrayList<String> groups = new ArrayList<>();
@@ -54,7 +55,6 @@ public class AuthorizationManager {
             groups.add(gidstring);
         }
         ArrayList<Acl> acls = aclPool.getAcls();
-        ArrayList<Integer> systemDsIds = datastorePool.getSystemDs();
         ArrayList<Integer> authorizedHosts = new ArrayList<>();
         ArrayList<Integer> authorizedDatastores = new ArrayList<>();
         String uidstring = "#" + uid;
@@ -107,7 +107,7 @@ public class AuthorizationManager {
             HostXml host = hostPool.getById(hostId);
             Integer hostClusterId = host.getClusterId();
             ClusterXml cluster = clusterPool.getById(hostClusterId);
-            ArrayList<Integer> clusterDatastores = cluster.getDatastores();
+            List<Integer> clusterDatastores = cluster.getDatastores();
             for (Integer datastoreId: clusterDatastores) {
                 DatastoreXml ds = datastorePool.findById(datastoreId);
                 // the ds on cluster is system and the user is authorized to use that ds

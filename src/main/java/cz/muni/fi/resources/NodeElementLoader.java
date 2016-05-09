@@ -26,5 +26,17 @@ public class NodeElementLoader {
         }
         return list;
     }
+     
+      public static List<Integer> getNodeId(PoolElement element, String XPATH_EXPR) throws InstantiationException, IllegalAccessException {
+        List<Integer> list = new ArrayList<>();
+        int i = 1;        
+        while (!element.xpath(XPATH_EXPR +"["+i+"]").equals("")) {
+            Integer id = Integer.parseInt(element.xpath(XPATH_EXPR +"["+i+"]"));
+            System.out.println(id);
+            list.add(id);
+            i++;           
+        }
+        return list;
+    }
     
 }
