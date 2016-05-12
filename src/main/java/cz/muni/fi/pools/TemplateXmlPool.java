@@ -24,15 +24,12 @@ public class TemplateXmlPool {
     
     private ArrayList<TemplateXml> templates;
     
-    private final Client oneClient;
-    
     public TemplateXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        tp = new TemplatePool(oneClient);
     }
     
-    public ArrayList<TemplateXml> loadTemplates() {
+    public void loadTemplates() {
         templates = new ArrayList<>();
-        tp = new TemplatePool(oneClient);
         OneResponse tpr = tp.info();
         if (tpr.isError()) {
             //TODO: log it
@@ -41,12 +38,9 @@ public class TemplateXmlPool {
         Iterator<Template> itr = tp.iterator();
         while (itr.hasNext()) {
             Template element = itr.next();
-            System.out.println("Template: " + element);
             TemplateXml t = new TemplateXml(element);
-            System.out.println("Template: " + t);
             templates.add(t);
         }
-        return templates;
     }
     
      public TemplateXml findById(Integer id) {

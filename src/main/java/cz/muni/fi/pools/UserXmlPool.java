@@ -23,15 +23,12 @@ public class UserXmlPool {
     
     private ArrayList<UserXml> users;
     
-    private final Client oneClient;
-    
     public UserXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        up = new UserPool(oneClient);
     }
     
-    public ArrayList<UserXml> loadUsers() {
+    public void loadUsers() {
         users = new ArrayList<>();
-        up = new UserPool(oneClient);
         OneResponse upr = getUp().info();
         if (upr.isError()) {
             //TODO: log it
@@ -45,7 +42,15 @@ public class UserXmlPool {
             System.out.println("User: " + u);
             getUsers().add(u);
         }
-        return getUsers();
+    }
+    
+    public UserXml getById(Integer id) {
+        for (UserXml user: users) {
+            if (user.getId() == id) {
+                return user;
+            }
+        }
+        return null;
     }
 
     /**

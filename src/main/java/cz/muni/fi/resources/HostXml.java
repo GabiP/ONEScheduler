@@ -1,7 +1,10 @@
 package cz.muni.fi.resources;
 
+import cz.muni.fi.pools.AclXmlPool;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.opennebula.client.PoolElement;
 import org.opennebula.client.acl.Acl;
 import org.opennebula.client.host.Host;
@@ -53,11 +56,11 @@ public class HostXml {
     
     private ArrayList<Integer> dsIds;
     
-    private ArrayList<String> pcis;
+    private List<PciNode> pcis;
     
     private final Host host;
     
-    private ArrayList<DatastoreXml> datastores;
+    private List<DatastoreNode> datastores;
 
     public HostXml(Host host) {
         this.host = host;
@@ -89,14 +92,18 @@ public class HostXml {
         if (!host.xpath("/HOST/TEMPLATE/RESERVED_MEM").equals("")) {
             reservedMemory= Integer.parseInt(host.xpath("/HOST/TEMPLATE/RESERVED_MEM"));
         }
-        //pcis = host.xpath("/HOST/HOST_SHARE/PCI_DEVICES");
-        if (!host.xpath("/HOST/HOST_SHARE/PCI_DEVICES").equals("")) {
-            get_pcis("/HOST/HOST_SHARE/PCI_DEVICES");
+        try {
+            pcis = NodeElementLoader.getNodeElements(host, PciNode.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (!host.xpath("/HOST/HOST_SHARE/DATASTORES").equals("")) {
-            get_ds("/HOST/HOST_SHARE/DATASTORES");
+        try {
+            datastores = NodeElementLoader.getNodeElements(host, DatastoreNode.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Pcis: " + pcis);
     }
     
     public int getId() {
@@ -151,87 +158,38 @@ public class HostXml {
      */
     public boolean testCapacity(VmXml vm) {
         System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu);
-        if (((max_cpu - cpu_usage) >= vm.getCpu().intValue()) && ((max_mem - mem_usage) >= vm.getMemory())) {
-            return true;
-        } else {
-            return false;
-        }
+        return ((max_cpu - cpu_usage) >= vm.getCpu().intValue()) && ((max_mem - mem_usage) >= vm.getMemory());
     }
     
     /**
      * Increases cpu and memory on current host.
-     * @param vm virtual machine with information for increasing capacity
+     * @param vm virtual machine with information for increasing the capacity
      */
     public void addCapacity(VmXml vm) {
          cpu_usage += vm.getCpu().intValue();
          mem_usage += vm.getMemory().intValue();
     }
     
+    /**
+     * Decreases cpu and memory on current host.
+     * @param vm virtual machine with information for increasing the capacity
+     */
     public void delCapacity(VmXml vm) {
          cpu_usage -= vm.getCpu().intValue();
          mem_usage -= vm.getMemory().intValue();
     }
     
-    public void get_ds(String xpathExpr) {
-        datastores = new ArrayList<>();
-        dsIds = new ArrayList<>();
-        int i = 1;
-        String node = host.xpath(xpathExpr + "/DS["+i+"]");
-        DatastoreXml ds;
-        while (!node.equals("")) {
-            ds = new DatastoreXml();
-            Integer id_ds = Integer.parseInt(host.xpath(xpathExpr + "/DS["+i+"]" + "/ID"));
-            Integer free_mb = Integer.parseInt(host.xpath(xpathExpr + "/DS["+i+"]" + "/FREE_MB"));
-            Integer total_mb = Integer.parseInt(host.xpath(xpathExpr + "/DS["+i+"]" + "/TOTAL_MB"));
-            Integer used_mb = Integer.parseInt(host.xpath(xpathExpr + "/DS["+i+"]" + "/USED_MB"));
-            ds.setId(id_ds);
-            ds.setFree_mb(free_mb);
-            ds.setTotal_mb(total_mb);
-            ds.setUsed_mb(used_mb);
-            i++;
-            node = host.xpath(xpathExpr + "/DS["+i+"]");
-            datastores.add(ds);
-            dsIds.add(ds.getId());
-        }
-    }
-    
-    public void get_pcis(String xpathExpr) {
-        pcis = new ArrayList<>();
-        System.out.println("Inside get pcis: " + xpathExpr);
-        int i = 1;
-        String node = host.xpath(xpathExpr + "/PCI["+i+"]");
-        System.out.println("node: " + node);
-        while (!node.equals("")) {
-            String device_name = host.xpath(xpathExpr + "/PCI["+i+"]" + "/DEVICE_NAME");
-            System.out.println("device name: " + device_name);
-            i++;
-            node = host.xpath(xpathExpr + "/PCI["+i+"]");
-            pcis.add(device_name);
-        }
-    }
-    
-    public <T> List<T> getNodes(Class klazz, String xpathExpr, PoolElement el) {
-        List<T> list = new ArrayList<>();
-        int i = 0;
-        String node = el.xpath(xpathExpr + "["+i+"]");
-        while (!node.equals("")) {
-            try {
-                list.add((T) klazz.getConstructor().newInstance()); // If default constructor
-            } catch (Exception e) {
-                System.err.println("Could not load specified node: " + node + e);
-            }
-            i++;
-            node = el.xpath(xpathExpr + "["+i+"]");
-        }
-        return list;
-    }
-    
+    /**
+     * Tests whether current host has enough free space(mb) in datastores to host the specified vm.
+     * @param vm to be tested
+     * @return true if the vm fits, false otherwise
+     */
     public boolean testDs(VmXml vm) {
         boolean fits = false;
         if (!dsIds.contains(vm.getDatastore_id())) {
             return false;
         } else {
-            for (DatastoreXml ds: datastores) {
+            for (DatastoreNode ds: datastores) {
                 List<DiskNode> disks =  vm.getDisks();
                 for (DiskNode disk: disks) {
                     if (ds.getFree_mb() > disk.getSize()) {
@@ -241,15 +199,6 @@ public class HostXml {
             }
         }
         return fits;
-    }
-    
-    public void checkHost(UserXml user, ArrayList<Acl> acls, VmXml vm) {
-        Integer uid = vm.getUid();
-        Integer gid = vm.getGid();
-    }
-    
-    public boolean checkVmReqs(VmXml vm) {
-        return false;
     }
     
     /**
@@ -472,7 +421,7 @@ public class HostXml {
     /**
      * @return the pcis
      */
-    public ArrayList<String> getPcis() {
+    public List<PciNode> getPcis() {
         return pcis;
     }
 
@@ -486,7 +435,7 @@ public class HostXml {
     /**
      * @return the datastores
      */
-    public ArrayList<DatastoreXml> getDatastores() {
+    public List<DatastoreNode> getDatastores() {
         return datastores;
     }
 

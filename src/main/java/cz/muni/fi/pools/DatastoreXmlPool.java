@@ -20,19 +20,19 @@ import org.opennebula.client.datastore.DatastorePool;
  */
 public class DatastoreXmlPool {
     
-    private DatastorePool dp;
+    private final DatastorePool dp;
     
     private ArrayList<DatastoreXml> datastores;
     
-    private final Client oneClient;
+    private ArrayList<Integer> datastoresIds;
     
     public DatastoreXmlPool(Client oneClient) {
-        this.oneClient = oneClient;
+        dp = new DatastorePool(oneClient);
     }
     
-    public ArrayList<DatastoreXml> loadDatastores() {
+    public void loadDatastores() {
         datastores = new ArrayList<>();
-        dp = new DatastorePool(oneClient);
+        datastoresIds = new ArrayList<>();
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
             //TODO: log it
@@ -41,12 +41,10 @@ public class DatastoreXmlPool {
         Iterator<Datastore> itr = dp.iterator();
         while (itr.hasNext()) {
             Datastore element = itr.next();
-            System.out.println("Datastore: " + element);
             DatastoreXml d = new DatastoreXml(element);
-            System.out.println("Datastore: " + d);
             datastores.add(d);
+            datastoresIds.add(d.getId());
         }
-        return datastores;
     }
 
     /**
@@ -70,5 +68,22 @@ public class DatastoreXmlPool {
             }
         }
         return null;
+    }
+    
+    public ArrayList<Integer> getSystemDs() {
+        ArrayList<Integer> systemDs = new ArrayList<>();
+        for (DatastoreXml ds: datastores) {
+            if (ds.getType() == 1) {
+                systemDs.add(ds.getId());
+            }
+        }
+        return systemDs;
+    }
+
+    /**
+     * @return the datastoresIds
+     */
+    public ArrayList<Integer> getDatastoresIds() {
+        return datastoresIds;
     }
 }

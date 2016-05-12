@@ -5,7 +5,6 @@
  */
 package cz.muni.fi.resources;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,7 +65,7 @@ public class VmXml {
     
     private List<HistoryNode> histories;
     
-    private ArrayList<Integer> networkIds;        
+    private List<NicNode> nics;        
     
     private Integer templateId;
     
@@ -89,16 +88,11 @@ public class VmXml {
     
     private String schedDsRequirements;
     
-    //nacist template? nenacist template?
-    private TemplateXml template;
-    
     private final VirtualMachine vm;
 
     public VmXml(VirtualMachine vm) {
         this.vm = vm;
         vm.info();
-        System.out.println("constructor");
-        System.out.println(vm.xpath("/VM/ID"));
         this.init();
     }
 
@@ -115,8 +109,6 @@ public class VmXml {
         setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
         try {
             datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
-            //disk_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DISK_ID"));
-            //network_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/NIC/NETWORK_ID"));
         } catch (Exception e) {
             datastore_id = null;
         }
@@ -127,33 +119,18 @@ public class VmXml {
             // TODO: react on failure if needed
             Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
         }
-        getNetworks("/VM/TEMPLATE");
+        try {
+            nics = NodeElementLoader.getNodeElements(vm, NicNode.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
+        }
         schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
         schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
         schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");
         schedDsRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS");
-        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));
-        /*try {
-            diskSize = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/SIZE"));
-        } catch (NumberFormatException e) {
-            diskSize = 0;
-        }*/
-        
+        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));        
     } 
-    
-    public void getNetworks(String xpathExpr) {
-        networkIds = new ArrayList<>();
-        int i = 1;
-        String node = vm.xpath(xpathExpr + "/NIC["+i+"]");
-        System.out.println("node: " + node);
-        while (!node.equals("")) {
-            Integer networkId = Integer.parseInt(vm.xpath(xpathExpr + "/NIC["+i+"]" + "/NETWORK_ID"));
-            System.out.println("network id: " + networkId);
-            i++;
-            node = vm.xpath(xpathExpr + "/NIC["+i+"]");
-            networkIds.add(networkId);
-        }
-    }
     
     public boolean evaluateSchedReqs(HostXml host) {
         String[] reqs = schedRequirements.split("\\|");
@@ -379,20 +356,6 @@ public class VmXml {
     }
 
     /**
-     * @return the user_template
-     */
-    /*public String getUser_template() {
-        return user_template;
-    }
-
-    /**
-     * @param user_template the user_template to set
-     */
-    /*public void setUser_template(String user_template) {
-        this.user_template = user_template;
-    }
-
-    /**
      * @param id the id to set
      */
     public void setVmId(int id) {
@@ -488,15 +451,15 @@ public class VmXml {
     /**
      * @return the network_id
      */
-    public ArrayList<Integer> getNetwork_ids() {
-        return networkIds;
+    public List<NicNode> getNetwork_ids() {
+        return nics;
     }
 
     /**
-     * @param network_ids the network_id to set
+     * @param nics the network_id to set
      */
-    public void setNetwork_ids(ArrayList<Integer> network_ids) {
-        this.networkIds = network_ids;
+    public void setNetwork_ids(List<NicNode> nics) {
+        this.nics= nics;
     }
 
     /**
