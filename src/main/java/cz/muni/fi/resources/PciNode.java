@@ -15,11 +15,15 @@ public class PciNode extends NodeElement {
 
     private static final String XPATH_EXPR = "/HOST/HOST_SHARE/PCI_DEVICES/PCI";
     
-    private String device_name;
+    private String pci_class;
+    private String device;
+    private String vendor;
     
     @Override
     void load(PoolElement host, int i) {
-        device_name = host.xpath(XPATH_EXPR + "["+i+"]" + "/DEVICE_NAME");
+        pci_class = host.xpath(XPATH_EXPR + "["+i+"]" + "/CLASS");
+        device = host.xpath(XPATH_EXPR + "["+i+"]" + "/DEVICE");
+        vendor = host.xpath(XPATH_EXPR + "["+i+"]" + "/VENDOR");
     }
 
     @Override
@@ -28,17 +32,47 @@ public class PciNode extends NodeElement {
     }
 
     /**
-     * @return the device_name
+     * @param pci_class the pci_class to set
      */
-    public String getDevice_name() {
-        return device_name;
+    public void setPci_class(String pci_class) {
+        this.pci_class = pci_class;
     }
 
     /**
-     * @param device_name the device_name to set
+     * @param device the device to set
      */
-    public void setDevice_name(String device_name) {
-        this.device_name = device_name;
+    public void setDevice(String device) {
+        this.device = device;
     }
+
+    /**
+     * @param vendor the vendor to set
+     */
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    /**
+     * @return the pci_class
+     */
+    public String getPci_class() {
+        return pci_class;
+    }
+
+    /**
+     * @return the device
+     */
+    public String getDevice() {
+        return device;
+    }
+
+    /**
+     * @return the vendor
+     */
+    public String getVendor() {
+        return vendor;
+    }
+
+    
     
 }

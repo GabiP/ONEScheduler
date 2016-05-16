@@ -59,11 +59,10 @@ public class Scheduler {
     
     public void init() {
         try {
-            String SECRET = "oneadmin:opennebula";
-            String ENDPOINT = "http://one-sendbox:2633/RPC2";
+            String SECRET = "";
+            String ENDPOINT = "";
 
             oneClient = new Client(SECRET, ENDPOINT);
-            // Pass on the oneClient connection to pools
             
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -91,6 +90,9 @@ public class Scheduler {
               VmXml vm = (VmXml) queue.peek();
               //check the authorization for this VM
               ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
+              if (authorizedHosts.isEmpty()) {
+                  System.out.println("Empty authorized hosts");
+              }
               
               System.out.println(vm);
               // check limits
@@ -99,9 +101,10 @@ public class Scheduler {
                   System.out.println("Host id " + hostId);
                   HostXml h = hostPool.getById(hostId);
                   boolean enoughCapacity  = h.testCapacity(vm);
-                  boolean enoughCapacityDs = h.testDs(vm);
+                  boolean enoughCapacityDs = h.testDs(vm, clusterPool, dsPool);
                   boolean reqs = vm.evaluateSchedReqs(h);
-                  if (enoughCapacity && reqs && enoughCapacityDs) {
+                  boolean pciFits = h.checkPci(vm);
+                  if (enoughCapacity && reqs && enoughCapacityDs && pciFits) {
                       filteredHosts.add(h);
                   }
               }

@@ -88,6 +88,8 @@ public class VmXml {
     
     private String schedDsRequirements;
     
+    private List<PciNodeVm> pcis;
+    
     private final VirtualMachine vm;
 
     public VmXml(VirtualMachine vm) {
@@ -105,7 +107,7 @@ public class VmXml {
         lcm_state  = Integer.parseInt(getVm().xpath("/VM/LCM_STATE"));
         resched  = Integer.parseInt(getVm().xpath("/VM/RESCHED"));
         deploy_id = getVm().xpath("/VM/DEPLOY_ID");
-        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
+        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU"))*100);
         setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
         try {
             datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
@@ -129,13 +131,20 @@ public class VmXml {
         schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
         schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");
         schedDsRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS");
-        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));        
+        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));
+        try {
+            pcis = NodeElementLoader.getNodeElements(vm, PciNodeVm.class);
+        } catch (InstantiationException | IllegalAccessException ex) {
+            // TODO: react on failure if needed
+            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
+        }
     } 
     
     public boolean evaluateSchedReqs(HostXml host) {
         String[] reqs = schedRequirements.split("\\|");
         boolean fits = false;
         if (schedRequirements.equals("")) {
+            System.out.println("Vm does not have any requirements");
             return true;
         }
         for (String req: reqs) {
@@ -389,6 +398,7 @@ public class VmXml {
                 ", schedDsRank=" + schedDsRank + '\'' +
                 ", schedRequirements=" + schedRequirements + '\'' +
                 ", schedDsRequirements=" + schedDsRequirements + '\'' +
+                ", pcis=" + pcis + '\'' +
                 '}';
     }
 
@@ -546,6 +556,13 @@ public class VmXml {
 
     public void setHistories(List<HistoryNode> histories) {
         this.histories = histories;
+    }
+
+    /**
+     * @return the pcis
+     */
+    public List<PciNodeVm> getPcis() {
+        return pcis;
     }
 
     

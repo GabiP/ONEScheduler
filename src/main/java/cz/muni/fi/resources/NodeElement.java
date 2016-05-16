@@ -13,7 +13,7 @@ import org.opennebula.client.PoolElement;
  */
 public abstract class NodeElement {
     
-    abstract void load(PoolElement element, int index); 
+    abstract void load(PoolElement element, int index);
     
     abstract String getXpathExpr();
     
@@ -21,5 +21,4 @@ public abstract class NodeElement {
         String node = element.xpath(getXpathExpr()+"["+index+"]");
         return !node.equals("");
     }
-    
 }

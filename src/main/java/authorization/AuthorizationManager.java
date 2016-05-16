@@ -62,7 +62,7 @@ public class AuthorizationManager {
             String rule = acl.toString();
             String[] splittedRule = rule.split("\\s+");
             // check if the rule contains the user's id or one of the user's group id
-            if ((splittedRule[0].trim().equals(uidstring) || groups.contains(splittedRule[0].trim()))) {
+            if ((splittedRule[0].trim().equals(uidstring) || groups.contains(splittedRule[0].trim())) ||splittedRule[0].trim().equals("*")) {
                 // affected resources hosts with rights to manage
                 if (splittedRule[2].contains("MANAGE") && splittedRule[1].contains("HOST")) {
                     if (splittedRule[1].contains("*")) {
@@ -109,7 +109,7 @@ public class AuthorizationManager {
             ClusterXml cluster = clusterPool.getById(hostClusterId);
             List<Integer> clusterDatastores = cluster.getDatastores();
             for (Integer datastoreId: clusterDatastores) {
-                DatastoreXml ds = datastorePool.findById(datastoreId);
+                DatastoreXml ds = datastorePool.getById(datastoreId);
                 // the ds on cluster is system and the user is authorized to use that ds
                 if (ds.getType() == 1 && authorizedDatastores.contains(ds.getId())) {
                     hasSystemDs = true;

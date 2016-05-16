@@ -1,6 +1,8 @@
 package cz.muni.fi.resources;
 
 import cz.muni.fi.pools.AclXmlPool;
+import cz.muni.fi.pools.ClusterXmlPool;
+import cz.muni.fi.pools.DatastoreXmlPool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -157,7 +159,7 @@ public class HostXml {
      * @return true if VM can be hosted, false otherwise
      */
     public boolean testCapacity(VmXml vm) {
-        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu);
+        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu().intValue());
         return ((max_cpu - cpu_usage) >= vm.getCpu().intValue()) && ((max_mem - mem_usage) >= vm.getMemory());
     }
     
@@ -182,23 +184,48 @@ public class HostXml {
     /**
      * Tests whether current host has enough free space(mb) in datastores to host the specified vm.
      * @param vm to be tested
+     * @param clusterPool
+     * @param dsPool
      * @return true if the vm fits, false otherwise
      */
-    public boolean testDs(VmXml vm) {
+    public boolean testDs(VmXml vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
         boolean fits = false;
-        if (!dsIds.contains(vm.getDatastore_id())) {
-            return false;
-        } else {
-            for (DatastoreNode ds: datastores) {
-                List<DiskNode> disks =  vm.getDisks();
-                for (DiskNode disk: disks) {
-                    if (ds.getFree_mb() > disk.getSize()) {
-                        fits = true;
-                    }
+        ClusterXml cluster = clusterPool.getById(this.clusterId);
+        List<Integer> datastoresIds = cluster.getDatastores();
+        List<DiskNode> disks = vm.getDisks();
+        for (Integer dsId : datastoresIds) {
+            DatastoreXml ds = dsPool.getById(dsId);
+            for (DiskNode disk : disks) {
+                if (ds.getFree_mb() > disk.getSize()) {
+                    fits = true;
                 }
             }
         }
-        return fits;
+        if (fits == false) {
+            System.out.println("Datastore does not have enough capacity to host the vm");
+        }
+        return fits ;
+    }
+    
+    public boolean checkPci(VmXml vm) {
+        boolean pciFits = false;
+        if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
+            return true;
+        }
+        if (!pcis.isEmpty() && vm.getPcis().isEmpty()) {
+            return true;
+        }
+        if (pcis.isEmpty() && !vm.getPcis().isEmpty()) {
+            return false;
+        }
+        for (PciNode pci: pcis) {
+            for (PciNodeVm pciVm: vm.getPcis()) {
+                if ((pci.getPci_class().equals(pciVm.getPci_class())) && (pci.getDevice().equals(pciVm.getDevice())) && (pci.getVendor().equals(pciVm.getVendor()))) {
+                    pciFits = true;
+                }
+            }
+        }
+        return pciFits;
     }
     
     /**

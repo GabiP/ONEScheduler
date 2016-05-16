@@ -61,7 +61,7 @@ public class DatastoreXmlPool {
         this.datastores = datastores;
     }
     
-    public DatastoreXml findById(Integer id) {
+    public DatastoreXml getById(Integer id) {
         for (DatastoreXml ds: datastores) {
             if (Objects.equals(ds.getId(), id)) {
                 return ds;
