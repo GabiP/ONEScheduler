@@ -88,33 +88,47 @@ public class Scheduler {
             // Run several algorithms. Write the results. Compare. Choose the best --> criteria. Then deploy in hostId.
             while(!queue.isEmpty()) {
               VmXml vm = (VmXml) queue.peek();
+              System.out.println("Checking for vm: " + vm.getVmId());
               //check the authorization for this VM
               ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
               if (authorizedHosts.isEmpty()) {
-                  System.out.println("Empty authorized hosts");
+                  System.out.println("Empty authorized hosts.");
               }
-              
-              System.out.println(vm);
               // check limits
               // filter hosts - whether the vm can be hosted - testCapacity...
               for (Integer hostId: authorizedHosts) {
                   System.out.println("Host id " + hostId);
                   HostXml h = hostPool.getById(hostId);
                   boolean enoughCapacity  = h.testCapacity(vm);
+                  if (enoughCapacity ==  false) {
+                      System.out.println("Host does not have enough capacity - CPU, MEM to host the vm.");
+                  }
                   boolean enoughCapacityDs = h.testDs(vm, clusterPool, dsPool);
+                  if (enoughCapacityDs ==  false) {
+                      System.out.println("Host does not have enough capacity in DATASTORES to host the vm.");
+                  }
                   boolean reqs = vm.evaluateSchedReqs(h);
+                  if (reqs ==  false) {
+                      System.out.println("Host does not satisfy the scheduling requirements.");
+                  }
                   boolean pciFits = h.checkPci(vm);
+                  if (reqs ==  false) {
+                      System.out.println("Host does not have the specied PCI.");
+                  }
                   if (enoughCapacity && reqs && enoughCapacityDs && pciFits) {
                       filteredHosts.add(h);
                   }
               }
               // deploy if filtered hosts is not empty
               if (!filteredHosts.isEmpty()) {
+                  //we wont be deploying here. Just 
                   vm.getVm().deploy(filteredHosts.get(0).getId());
                   filteredHosts.get(0).addCapacity(vm);
                   System.out.println("Deploying vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
-                // addCapacity - is this necessary?
+                // addCapacity - id I add capacity, won't there be a problem with the parameters when it is actually deployed?
+                // Should I make a copy of this parameters and ask for that parameter. And When I update the pools I also update the copy.
                 // poll VM from queue
+                // Will I be polling? - I should maybe use LinkedList and iterate through it. The poll queue deletes the value. I will be needing that in threads. 
               }
               queue.poll();
             }

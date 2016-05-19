@@ -1,14 +1,11 @@
 package cz.muni.fi.resources;
 
-import cz.muni.fi.pools.AclXmlPool;
 import cz.muni.fi.pools.ClusterXmlPool;
 import cz.muni.fi.pools.DatastoreXmlPool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.opennebula.client.PoolElement;
-import org.opennebula.client.acl.Acl;
 import org.opennebula.client.host.Host;
 
 /**
@@ -30,19 +27,19 @@ public class HostXml {
     
     private Integer mem_usage;
     
-    private Integer cpu_usage;
+    private Float cpu_usage;
 
     private Integer max_disk;
 
     private Integer max_mem;
 
-    private Integer max_cpu;
+    private Float max_cpu;
 
     private Integer free_disk;
     
     private Integer free_mem;
 
-    private Integer free_cpu;
+    private Float free_cpu;
 
     private Integer used_disk;
     
@@ -77,13 +74,13 @@ public class HostXml {
         clusterId = Integer.parseInt(host.xpath("/HOST/CLUSTER_ID")); ;
         setDisk_usage((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/DISK_USAGE")));
         setMem_usage((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MEM_USAGE")));
-        setCpu_usage((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/CPU_USAGE")));
+        setCpu_usage((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/CPU_USAGE"))/100);
         setMax_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MAX_DISK")));
         setMax_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MAX_MEM")));
-        setMax_cpu((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MAX_CPU")));
+        setMax_cpu((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/MAX_CPU"))/100);
         setFree_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/FREE_DISK")));
         setFree_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/FREE_MEM")));
-        setFree_cpu((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/FREE_CPU")));
+        setFree_cpu((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/FREE_CPU"))/100);
         setUsed_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_DISK")));
         setUsed_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_MEM")));
         setUsed_cpu((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_CPU")));
@@ -154,13 +151,14 @@ public class HostXml {
     
     /**
      * Tests whether a VM can be hosted by the host.
+     * Checks the memory and capacity on host.
      * 
      * @param vm virtual machine to be tested
      * @return true if VM can be hosted, false otherwise
      */
     public boolean testCapacity(VmXml vm) {
-        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu().intValue());
-        return ((max_cpu - cpu_usage) >= vm.getCpu().intValue()) && ((max_mem - mem_usage) >= vm.getMemory());
+        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
+        return ((max_cpu - cpu_usage) >= vm.getCpu()) && ((max_mem - mem_usage) >= vm.getMemory());
     }
     
     /**
@@ -168,8 +166,8 @@ public class HostXml {
      * @param vm virtual machine with information for increasing the capacity
      */
     public void addCapacity(VmXml vm) {
-         cpu_usage += vm.getCpu().intValue();
-         mem_usage += vm.getMemory().intValue();
+         cpu_usage += vm.getCpu();
+         mem_usage += vm.getMemory();
     }
     
     /**
@@ -177,15 +175,17 @@ public class HostXml {
      * @param vm virtual machine with information for increasing the capacity
      */
     public void delCapacity(VmXml vm) {
-         cpu_usage -= vm.getCpu().intValue();
-         mem_usage -= vm.getMemory().intValue();
+         cpu_usage -= vm.getCpu();
+         mem_usage -= vm.getMemory();
     }
     
     /**
-     * Tests whether current host has enough free space(mb) in datastores to host the specified vm.
+     * Tests whether current host has enough free space(mb) in datastores to host the specified vm disks.
+     * Simplified version: firstly it adds up the sizes(mb) of vm's disks. Then this value is checked on cluster's datastores.
+     * TODO: It can divide the sizes of disks and try if it will fit somehow on the available datastores.
      * @param vm to be tested
-     * @param clusterPool
-     * @param dsPool
+     * @param clusterPool all clusters to find the host cluster
+     * @param dsPool all datastore to find the ds to be checked
      * @return true if the vm fits, false otherwise
      */
     public boolean testDs(VmXml vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
@@ -193,20 +193,28 @@ public class HostXml {
         ClusterXml cluster = clusterPool.getById(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
         List<DiskNode> disks = vm.getDisks();
+        int sizeValue = 0;
+        for (DiskNode disk : disks) {
+            sizeValue += disk.getSize();
+        }
         for (Integer dsId : datastoresIds) {
             DatastoreXml ds = dsPool.getById(dsId);
-            for (DiskNode disk : disks) {
-                if (ds.getFree_mb() > disk.getSize()) {
-                    fits = true;
-                }
+            if (ds.getFree_mb() > sizeValue) {
+                fits = true;
             }
         }
         if (fits == false) {
             System.out.println("Datastore does not have enough capacity to host the vm");
         }
-        return fits ;
+        return fits;
     }
     
+    /**
+     * Checks whether the host has the specified pci that the vm requires.
+     * Note: the hosts in OpenNebule must be configured, that this functionality works.
+     * @param vm the vm to be checked
+     * @return true if vm can be hosted, false otherwise
+     */
     public boolean checkPci(VmXml vm) {
         boolean pciFits = false;
         if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
@@ -259,14 +267,14 @@ public class HostXml {
     /**
      * @return the cpu_usage
      */
-    public Integer getCpu_usage() {
+    public Float getCpu_usage() {
         return cpu_usage;
     }
 
     /**
      * @param cpu_usage the cpu_usage to set
      */
-    public void setCpu_usage(Integer cpu_usage) {
+    public void setCpu_usage(Float cpu_usage) {
         this.cpu_usage = cpu_usage;
     }
 
@@ -301,14 +309,14 @@ public class HostXml {
     /**
      * @return the max_cpu
      */
-    public Integer getMax_cpu() {
+    public Float getMax_cpu() {
         return max_cpu;
     }
 
     /**
      * @param max_cpu the max_cpu to set
      */
-    public void setMax_cpu(Integer max_cpu) {
+    public void setMax_cpu(Float max_cpu) {
         this.max_cpu = max_cpu;
     }
 
@@ -343,14 +351,14 @@ public class HostXml {
     /**
      * @return the free_cpu
      */
-    public Integer getFree_cpu() {
+    public Float getFree_cpu() {
         return free_cpu;
     }
 
     /**
      * @param free_cpu the free_cpu to set
      */
-    public void setFree_cpu(Integer free_cpu) {
+    public void setFree_cpu(Float free_cpu) {
         this.free_cpu = free_cpu;
     }
 

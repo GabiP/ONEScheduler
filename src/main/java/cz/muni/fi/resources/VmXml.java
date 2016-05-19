@@ -57,7 +57,7 @@ public class VmXml {
     
     private Float cpu;
     
-    private Float memory;
+    private Integer memory;
     
     private Integer datastore_id;
     
@@ -107,8 +107,8 @@ public class VmXml {
         lcm_state  = Integer.parseInt(getVm().xpath("/VM/LCM_STATE"));
         resched  = Integer.parseInt(getVm().xpath("/VM/RESCHED"));
         deploy_id = getVm().xpath("/VM/DEPLOY_ID");
-        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU"))*100);
-        setMemory(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/MEMORY")));
+        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
+        setMemory(Integer.parseInt(getVm().xpath("/VM/TEMPLATE/MEMORY")));
         try {
             datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
         } catch (Exception e) {
@@ -426,14 +426,14 @@ public class VmXml {
     /**
      * @return the memory
      */
-    public Float getMemory() {
+    public Integer getMemory() {
         return memory;
     }
 
     /**
      * @param memory the memory to set
      */
-    public void setMemory(Float memory) {
+    public void setMemory(Integer memory) {
         this.memory = memory;
     }
 
