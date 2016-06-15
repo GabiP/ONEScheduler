@@ -2,6 +2,8 @@ package cz.muni.fi.scheduler.resources;
 
 import cz.muni.fi.one.pools.ClusterXmlPool;
 import cz.muni.fi.one.pools.DatastoreXmlPool;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -188,9 +190,9 @@ public class HostXml {
      * @param dsPool all datastore to find the ds to be checked
      * @return true if the vm fits, false otherwise
      */
-    public boolean testDs(VmXml vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
+    public boolean testDs(VmXml vm, IClusterPool clusterPool, IDatastorePool dsPool) {
         boolean fits = false;
-        ClusterXml cluster = clusterPool.getById(this.clusterId);
+        ClusterXml cluster = clusterPool.getCluster(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
         List<DiskNode> disks = vm.getDisks();
         int sizeValue = 0;
@@ -198,7 +200,7 @@ public class HostXml {
             sizeValue += disk.getSize();
         }
         for (Integer dsId : datastoresIds) {
-            DatastoreXml ds = dsPool.getById(dsId);
+            DatastoreXml ds = dsPool.getDatastore(dsId);
             if (ds.getFree_mb() > sizeValue) {
                 fits = true;
             }

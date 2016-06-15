@@ -5,9 +5,11 @@
  */
 package cz.muni.fi.one.pools;
 
+import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.UserXml;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.user.User;
@@ -17,24 +19,23 @@ import org.opennebula.client.user.UserPool;
  *
  * @author Gabriela Podolnikova
  */
-public class UserXmlPool {
+public class UserXmlPool implements IUserPool{
     
     private UserPool up;
-    
-    private ArrayList<UserXml> users;
     
     public UserXmlPool(Client oneClient) {
         up = new UserPool(oneClient);
     }
     
-    public void loadUsers() {
-        users = new ArrayList<>();
-        OneResponse upr = getUp().info();
+    @Override
+    public List<UserXml> getUsers() {
+        List<UserXml> users = new ArrayList<>();
+        OneResponse upr = up.info();
         if (upr.isError()) {
             //TODO: log it
             System.out.println(upr.getErrorMessage());
         }
-        Iterator<User> itr = getUp().iterator();
+        Iterator<User> itr = up.iterator();
         while (itr.hasNext()) {
             User element = itr.next();
             System.out.println("User: " + element);
@@ -42,42 +43,12 @@ public class UserXmlPool {
             System.out.println("User: " + u);
             getUsers().add(u);
         }
-    }
-    
-    public UserXml getById(Integer id) {
-        for (UserXml user: users) {
-            if (user.getId() == id) {
-                return user;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return the up
-     */
-    public UserPool getUp() {
-        return up;
-    }
-
-    /**
-     * @param up the up to set
-     */
-    public void setUp(UserPool up) {
-        this.up = up;
-    }
-
-    /**
-     * @return the users
-     */
-    public ArrayList<UserXml> getUsers() {
         return users;
     }
-
-    /**
-     * @param users the users to set
-     */
-    public void setUsers(ArrayList<UserXml> users) {
-        this.users = users;
+    
+    @Override
+    public UserXml getById(int id) {
+        return new UserXml(up.getById(id));
     }
+
 }

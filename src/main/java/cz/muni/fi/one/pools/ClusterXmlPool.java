@@ -5,9 +5,11 @@
  */
 package cz.muni.fi.one.pools;
 
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.resources.ClusterXml;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.cluster.Cluster;
@@ -17,18 +19,20 @@ import org.opennebula.client.cluster.ClusterPool;
  *
  * @author Gabriela Podolnikova
  */
-public class ClusterXmlPool {
+public class ClusterXmlPool implements IClusterPool {
     
     private final ClusterPool cp;
-    
-    private ArrayList<ClusterXml> clusters;
     
     public ClusterXmlPool(Client oneClient) {
         cp = new ClusterPool(oneClient);
     }
-    
-    public void loadClusters() {
-        clusters = new ArrayList<>();
+
+    /**
+     * @return the clusters
+     */
+    @Override
+    public List<ClusterXml> getClusters() {
+        List<ClusterXml> clusters = new ArrayList<>();
         OneResponse cpr = cp.info();
         if (cpr.isError()) {
             //TODO: log it
@@ -42,20 +46,11 @@ public class ClusterXmlPool {
             System.out.println("Cluster: " + c);
             clusters.add(c);
         }
-    }
-    
-    public ClusterXml getById(Integer id) {
-        for (ClusterXml cluster: clusters) {
-            if (cluster.getId() == id) {
-                return cluster;
-            }
-        }
-        return null;
-    }
-    /**
-     * @return the clusters
-     */
-    public ArrayList<ClusterXml> getClusters() {
         return clusters;
+    }
+
+    @Override
+    public ClusterXml getCluster(int id) {
+        return new ClusterXml(cp.getById(id));
     }
 }

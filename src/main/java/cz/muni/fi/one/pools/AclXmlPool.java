@@ -15,23 +15,24 @@ import org.opennebula.client.acl.Acl;
 import org.opennebula.client.acl.AclPool;
 import org.opennebula.client.acl.RuleParseException;
 import cz.muni.fi.scheduler.Scheduler;
+import cz.muni.fi.scheduler.elementpools.IAclPool;
+import java.util.List;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
-public class AclXmlPool {
+public class AclXmlPool implements IAclPool{
 
     private final AclPool aclpool;
-
-    private ArrayList<Acl> acls;
 
     public AclXmlPool(Client oneClient) {
         aclpool = new AclPool(oneClient);
     }
 
-    public void loadAcl() {
-        acls = new ArrayList<>();
+    @Override
+    public List<Acl> getAcls() {
+        List<Acl> acls = new ArrayList<>();
         OneResponse aclpr = aclpool.info();
         if (aclpr.isError()) {
             //TODO: log it
@@ -40,33 +41,10 @@ public class AclXmlPool {
         Iterator<Acl> itr = aclpool.iterator();
         while (itr.hasNext()) {
             Acl el = itr.next();
-            System.out.println("Acl rule number: " + el.getId() + " resources: " + el.resource() + " rights: " + el.rights() + " users: " + el.user() + " toString: " + el.toString());
-            String[] parsedRule = null;
-            try {
-                parsedRule = Acl.parseRule(el.toString());
-            } catch (RuleParseException ex) {
-                Logger.getLogger(Scheduler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            System.out.println(parsedRule[0]);
-            System.out.println(parsedRule[1]);
-            System.out.println(parsedRule[2]);
-            System.out.println("#" + el.getId());
+            System.out.println("Acl rule number: " + el.getId() + " toString: " + el.toString());
             acls.add(el);
         }
-    }
-
-    /**
-     * @return the acls
-     */
-    public ArrayList<Acl> getAcls() {
         return acls;
-    }
-
-    /**
-     * @param acls the acls to set
-     */
-    public void setAcls(ArrayList<Acl> acls) {
-        this.acls = acls;
     }
 
 }

@@ -5,9 +5,11 @@
  */
 package cz.muni.fi.one.pools;
 
+import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.HostXml;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
@@ -17,11 +19,9 @@ import org.opennebula.client.host.HostPool;
  *
  * @author Gabriela Podolnikova
  */
-public class HostXmlPool {
+public class HostXmlPool implements IHostPool{
     
     private HostPool hp;
-    
-    private ArrayList<HostXml> hosts;
     
     public HostXmlPool(Client oneClient) {
         hp = new HostPool(oneClient);
@@ -32,8 +32,9 @@ public class HostXmlPool {
      * Retrieves and store the xml representation as HostXml object into an array of hosts.
      * @return array of hosts
      */
-    public void loadHosts() {
-        hosts = new ArrayList<>();
+    @Override
+    public List<HostXml> getHosts() {
+        List<HostXml> hosts = new ArrayList<>();
         OneResponse hpr = hp.info();
         if (hpr.isError()) {
             //TODO: log it
@@ -46,6 +47,7 @@ public class HostXmlPool {
             HostXml h = new HostXml(element);
             getHosts().add(h);
         }
+        return hosts;
     }
     
     /**
@@ -54,56 +56,26 @@ public class HostXmlPool {
      *               2 = monitored
      * @return array of active hosts
      */
-    public ArrayList<HostXml> getActiveHosts() {
-        ArrayList<HostXml> activeHosts = new ArrayList<>();
-        for (HostXml host: activeHosts) {
+    @Override
+    public List<HostXml> getActiveHosts() {
+        List<HostXml> activeHosts = new ArrayList<>();
+        for (HostXml host: getHosts()) {
             if (host.getState() == 1 || host.getState() == 2) {
                 activeHosts.add(host);
             }
         }
         return activeHosts;
     }
-
-    /**
-     * @return the hp
-     */
-    public HostPool getHp() {
-        return hp;
-    }
-
-    /**
-     * @param hp the hp to set
-     */
-    public void setHp(HostPool hp) {
-        this.hp = hp;
-    }
-
-    /**
-     * @return the hosts
-     */
-    public ArrayList<HostXml> getHosts() {
-        return hosts;
-    }
-
-    /**
-     * @param hosts the hosts to set
-     */
-    public void setHosts(ArrayList<HostXml> hosts) {
-        this.hosts = hosts;
+    
+    @Override
+    public HostXml getHost(int id) {
+        return new HostXml(hp.getById(id));
     }
     
-    public HostXml getById(Integer id) {
-        for (HostXml host: hosts) {
-            if (host.getId() == id) {
-                return host;
-            }
-        }
-        return null;
-    }
-    
-    public ArrayList<Integer> getHostsIds() {
-        ArrayList<Integer> hostsIds = new ArrayList<>();
-        for(HostXml h: hosts) {
+    @Override
+    public List<Integer> getHostsIds() {
+        List<Integer> hostsIds = new ArrayList<>();
+        for(HostXml h: getHosts()) {
             hostsIds.add(h.getId());
         }
         return hostsIds;

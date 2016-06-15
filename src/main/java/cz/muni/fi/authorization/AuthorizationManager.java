@@ -10,6 +10,11 @@ import cz.muni.fi.one.pools.ClusterXmlPool;
 import cz.muni.fi.one.pools.DatastoreXmlPool;
 import cz.muni.fi.one.pools.HostXmlPool;
 import cz.muni.fi.one.pools.UserXmlPool;
+import cz.muni.fi.scheduler.elementpools.IAclPool;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IHostPool;
+import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.ClusterXml;
 import cz.muni.fi.scheduler.resources.DatastoreXml;
 import cz.muni.fi.scheduler.resources.HostXml;
@@ -24,13 +29,13 @@ import org.opennebula.client.acl.Acl;
  */
 public class AuthorizationManager {
     
-    private final AclXmlPool aclPool;
-    private final ClusterXmlPool clusterPool;
-    private final HostXmlPool hostPool;
-    private final DatastoreXmlPool datastorePool;
-    private final UserXmlPool userPool;
+    private final IAclPool aclPool;
+    private final IClusterPool clusterPool;
+    private final IHostPool hostPool;
+    private final IDatastorePool datastorePool;
+    private final IUserPool userPool;
     
-    public AuthorizationManager(AclXmlPool acls, ClusterXmlPool clusters, HostXmlPool hosts, DatastoreXmlPool datastores, UserXmlPool userPool) {
+    public AuthorizationManager(IAclPool acls, IClusterPool clusters, IHostPool hosts, IDatastorePool datastores, IUserPool userPool) {
         this.aclPool = acls;
         this.clusterPool = clusters;
         this.hostPool = hosts;
@@ -54,7 +59,7 @@ public class AuthorizationManager {
             String gidstring = "@" + gid;
             groups.add(gidstring);
         }
-        ArrayList<Acl> acls = aclPool.getAcls();
+        List<Acl> acls = aclPool.getAcls();
         ArrayList<Integer> authorizedHosts = new ArrayList<>();
         ArrayList<Integer> authorizedDatastores = new ArrayList<>();
         String uidstring = "#" + uid;
@@ -71,13 +76,13 @@ public class AuthorizationManager {
                     if (splittedRule[1].contains("#")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("#") + 1);
                         Integer hostId  = Integer.valueOf(s);
-                        HostXml host = hostPool.getById(hostId);
+                        HostXml host = hostPool.getHost(hostId);
                         authorizedHosts.add(host.getId());
                     }
                     if (splittedRule[1].contains("%")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
                         Integer clusterId  = Integer.valueOf(s);
-                        ClusterXml cl = clusterPool.getById(clusterId);
+                        ClusterXml cl = clusterPool.getCluster(clusterId);
                         authorizedHosts.addAll(cl.getHosts());
                     }
                     
@@ -95,7 +100,7 @@ public class AuthorizationManager {
                     if (splittedRule[1].contains("%")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
                         Integer clusterId  = Integer.valueOf(s);
-                        ClusterXml cl = clusterPool.getById(clusterId);
+                        ClusterXml cl = clusterPool.getCluster(clusterId);
                         authorizedDatastores.addAll(cl.getDatastores());
                     }
                 }
@@ -104,12 +109,12 @@ public class AuthorizationManager {
         //match authorizedHosts and authorizedDatastores
         for (Integer hostId: authorizedHosts) {
             boolean hasSystemDs = false;
-            HostXml host = hostPool.getById(hostId);
+            HostXml host = hostPool.getHost(hostId);
             Integer hostClusterId = host.getClusterId();
-            ClusterXml cluster = clusterPool.getById(hostClusterId);
+            ClusterXml cluster = clusterPool.getCluster(hostClusterId);
             List<Integer> clusterDatastores = cluster.getDatastores();
             for (Integer datastoreId: clusterDatastores) {
-                DatastoreXml ds = datastorePool.getById(datastoreId);
+                DatastoreXml ds = datastorePool.getDatastore(datastoreId);
                 // the ds on cluster is system and the user is authorized to use that ds
                 if (ds.getType() == 1 && authorizedDatastores.contains(ds.getId())) {
                     hasSystemDs = true;

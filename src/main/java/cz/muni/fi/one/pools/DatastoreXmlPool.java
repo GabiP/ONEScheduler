@@ -5,10 +5,11 @@
  */
 package cz.muni.fi.one.pools;
 
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.resources.DatastoreXml;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Objects;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.datastore.Datastore;
@@ -18,21 +19,20 @@ import org.opennebula.client.datastore.DatastorePool;
  *
  * @author Gabriela Podolnikova
  */
-public class DatastoreXmlPool {
+public class DatastoreXmlPool implements IDatastorePool {
     
     private final DatastorePool dp;
-    
-    private ArrayList<DatastoreXml> datastores;
-    
-    private ArrayList<Integer> datastoresIds;
     
     public DatastoreXmlPool(Client oneClient) {
         dp = new DatastorePool(oneClient);
     }
-    
-    public void loadDatastores() {
-        datastores = new ArrayList<>();
-        datastoresIds = new ArrayList<>();
+
+    /**
+     * @return the datastores
+     */
+    @Override
+    public List<DatastoreXml> getDatastores() {
+        List<DatastoreXml> datastores = new ArrayList<>();
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
             //TODO: log it
@@ -43,38 +43,21 @@ public class DatastoreXmlPool {
             Datastore element = itr.next();
             DatastoreXml d = new DatastoreXml(element);
             datastores.add(d);
-            datastoresIds.add(d.getId());
         }
-    }
-
-    /**
-     * @return the datastores
-     */
-    public ArrayList<DatastoreXml> getDatastores() {
         return datastores;
     }
-
-    /**
-     * @param datastores the datastores to set
-     */
-    public void setDatastores(ArrayList<DatastoreXml> datastores) {
-        this.datastores = datastores;
+    
+    @Override
+    public DatastoreXml getDatastore(int id) {
+        return new DatastoreXml(dp.getById(id));
     }
     
-    public DatastoreXml getById(Integer id) {
-        for (DatastoreXml ds: datastores) {
-            if (Objects.equals(ds.getId(), id)) {
-                return ds;
-            }
-        }
-        return null;
-    }
-    
-    public ArrayList<Integer> getSystemDs() {
-        ArrayList<Integer> systemDs = new ArrayList<>();
-        for (DatastoreXml ds: datastores) {
+    @Override
+    public List<DatastoreXml> getSystemDs() {
+        List<DatastoreXml> systemDs = new ArrayList<>();
+        for (DatastoreXml ds: getDatastores()) {
             if (ds.getType() == 1) {
-                systemDs.add(ds.getId());
+                systemDs.add(ds);
             }
         }
         return systemDs;
@@ -83,7 +66,12 @@ public class DatastoreXmlPool {
     /**
      * @return the datastoresIds
      */
-    public ArrayList<Integer> getDatastoresIds() {
-        return datastoresIds;
+    @Override
+    public List<Integer> getDatastoresIds() {
+        List<Integer> dsIds = new ArrayList<>();
+        for (DatastoreXml ds: getDatastores()) {
+            dsIds.add(ds.getId());
+        }
+        return dsIds;
     }
 }
