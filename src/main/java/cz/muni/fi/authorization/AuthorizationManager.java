@@ -3,17 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package authorization;
+package cz.muni.fi.authorization;
 
-import cz.muni.fi.pools.AclXmlPool;
-import cz.muni.fi.pools.ClusterXmlPool;
-import cz.muni.fi.pools.DatastoreXmlPool;
-import cz.muni.fi.pools.HostXmlPool;
-import cz.muni.fi.pools.UserXmlPool;
-import cz.muni.fi.resources.ClusterXml;
-import cz.muni.fi.resources.DatastoreXml;
-import cz.muni.fi.resources.HostXml;
-import cz.muni.fi.resources.VmXml;
+import cz.muni.fi.one.pools.AclXmlPool;
+import cz.muni.fi.one.pools.ClusterXmlPool;
+import cz.muni.fi.one.pools.DatastoreXmlPool;
+import cz.muni.fi.one.pools.HostXmlPool;
+import cz.muni.fi.one.pools.UserXmlPool;
+import cz.muni.fi.scheduler.resources.ClusterXml;
+import cz.muni.fi.scheduler.resources.DatastoreXml;
+import cz.muni.fi.scheduler.resources.HostXml;
+import cz.muni.fi.scheduler.resources.VmXml;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.acl.Acl;

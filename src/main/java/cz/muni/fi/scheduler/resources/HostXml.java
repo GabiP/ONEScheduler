@@ -1,7 +1,7 @@
-package cz.muni.fi.resources;
+package cz.muni.fi.scheduler.resources;
 
-import cz.muni.fi.pools.ClusterXmlPool;
-import cz.muni.fi.pools.DatastoreXmlPool;
+import cz.muni.fi.one.pools.ClusterXmlPool;
+import cz.muni.fi.one.pools.DatastoreXmlPool;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;

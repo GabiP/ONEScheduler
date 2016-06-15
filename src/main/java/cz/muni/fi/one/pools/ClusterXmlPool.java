@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.pools;
+package cz.muni.fi.one.pools;
 
-import cz.muni.fi.resources.ClusterXml;
+import cz.muni.fi.scheduler.resources.ClusterXml;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.opennebula.client.Client;

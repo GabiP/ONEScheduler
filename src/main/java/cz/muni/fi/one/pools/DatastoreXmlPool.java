@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.pools;
+package cz.muni.fi.one.pools;
 
-import cz.muni.fi.resources.DatastoreXml;
+import cz.muni.fi.scheduler.resources.DatastoreXml;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;

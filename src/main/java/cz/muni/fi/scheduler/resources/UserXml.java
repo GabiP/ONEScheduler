@@ -1,4 +1,4 @@
-package cz.muni.fi.resources;
+package cz.muni.fi.scheduler.resources;
 
 import java.util.List;
 import java.util.logging.Level;
