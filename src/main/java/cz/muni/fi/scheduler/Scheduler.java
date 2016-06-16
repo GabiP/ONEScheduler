@@ -88,7 +88,7 @@ public class Scheduler {
         while (!queue.isEmpty()) {
             VmXml vm = (VmXml) queue.peek();
             //check the authorization for this VM
-            ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
+            List<Integer> authorizedHosts = authorizationManager.authorize(vm);
             if (authorizedHosts.isEmpty()) {
                 System.out.println("Empty authorized hosts.");
             }
@@ -106,7 +106,7 @@ public class Scheduler {
         return plan;
     }
     
-    public List<HostXml> filterAuthorizedHosts(ArrayList<Integer> authorizedHosts, VmXml vm) {
+    public List<HostXml> filterAuthorizedHosts(List<Integer> authorizedHosts, VmXml vm) {
         List<HostXml> filteredHosts = new ArrayList<>();
         for (Integer hostId : authorizedHosts) {
             HostXml h = hostPool.getHost(hostId);
