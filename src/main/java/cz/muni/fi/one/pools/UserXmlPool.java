@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.one.pools;
 
-import cz.muni.fi.scheduler.resources.UserXml;
+import cz.muni.fi.scheduler.resources.UserElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.opennebula.client.Client;
@@ -21,7 +21,7 @@ public class UserXmlPool {
     
     private UserPool up;
     
-    private ArrayList<UserXml> users;
+    private ArrayList<UserElement> users;
     
     public UserXmlPool(Client oneClient) {
         up = new UserPool(oneClient);
@@ -38,14 +38,14 @@ public class UserXmlPool {
         while (itr.hasNext()) {
             User element = itr.next();
             System.out.println("User: " + element);
-            UserXml u = new UserXml(element);
+            UserElement u = new UserElement(element);
             System.out.println("User: " + u);
             getUsers().add(u);
         }
     }
     
-    public UserXml getById(Integer id) {
-        for (UserXml user: users) {
+    public UserElement getById(Integer id) {
+        for (UserElement user: users) {
             if (user.getId() == id) {
                 return user;
             }
@@ -70,14 +70,14 @@ public class UserXmlPool {
     /**
      * @return the users
      */
-    public ArrayList<UserXml> getUsers() {
+    public ArrayList<UserElement> getUsers() {
         return users;
     }
 
     /**
      * @param users the users to set
      */
-    public void setUsers(ArrayList<UserXml> users) {
+    public void setUsers(ArrayList<UserElement> users) {
         this.users = users;
     }
 }

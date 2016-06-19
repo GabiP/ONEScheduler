@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.one.pools;
 
-import cz.muni.fi.scheduler.resources.HostXml;
+import cz.muni.fi.scheduler.resources.HostElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.opennebula.client.Client;
@@ -21,7 +21,7 @@ public class HostXmlPool {
     
     private HostPool hp;
     
-    private ArrayList<HostXml> hosts;
+    private ArrayList<HostElement> hosts;
     
     public HostXmlPool(Client oneClient) {
         hp = new HostPool(oneClient);
@@ -43,7 +43,7 @@ public class HostXmlPool {
         while (itr.hasNext()) {
             Host element = itr.next();
             System.out.println("Host: " + element + "   state: " + element.state() + " id: " + element.getId());
-            HostXml h = new HostXml(element);
+            HostElement h = new HostElement(element);
             getHosts().add(h);
         }
     }
@@ -54,9 +54,9 @@ public class HostXmlPool {
      *               2 = monitored
      * @return array of active hosts
      */
-    public ArrayList<HostXml> getActiveHosts() {
-        ArrayList<HostXml> activeHosts = new ArrayList<>();
-        for (HostXml host: activeHosts) {
+    public ArrayList<HostElement> getActiveHosts() {
+        ArrayList<HostElement> activeHosts = new ArrayList<>();
+        for (HostElement host: activeHosts) {
             if (host.getState() == 1 || host.getState() == 2) {
                 activeHosts.add(host);
             }
@@ -81,19 +81,19 @@ public class HostXmlPool {
     /**
      * @return the hosts
      */
-    public ArrayList<HostXml> getHosts() {
+    public ArrayList<HostElement> getHosts() {
         return hosts;
     }
 
     /**
      * @param hosts the hosts to set
      */
-    public void setHosts(ArrayList<HostXml> hosts) {
+    public void setHosts(ArrayList<HostElement> hosts) {
         this.hosts = hosts;
     }
     
-    public HostXml getById(Integer id) {
-        for (HostXml host: hosts) {
+    public HostElement getById(Integer id) {
+        for (HostElement host: hosts) {
             if (host.getId() == id) {
                 return host;
             }
@@ -103,7 +103,7 @@ public class HostXmlPool {
     
     public ArrayList<Integer> getHostsIds() {
         ArrayList<Integer> hostsIds = new ArrayList<>();
-        for(HostXml h: hosts) {
+        for(HostElement h: hosts) {
             hostsIds.add(h.getId());
         }
         return hostsIds;

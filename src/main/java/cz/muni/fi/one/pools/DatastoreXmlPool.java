@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.one.pools;
 
-import cz.muni.fi.scheduler.resources.DatastoreXml;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
@@ -22,7 +22,7 @@ public class DatastoreXmlPool {
     
     private final DatastorePool dp;
     
-    private ArrayList<DatastoreXml> datastores;
+    private ArrayList<DatastoreElement> datastores;
     
     private ArrayList<Integer> datastoresIds;
     
@@ -41,7 +41,7 @@ public class DatastoreXmlPool {
         Iterator<Datastore> itr = dp.iterator();
         while (itr.hasNext()) {
             Datastore element = itr.next();
-            DatastoreXml d = new DatastoreXml(element);
+            DatastoreElement d = new DatastoreElement(element);
             datastores.add(d);
             datastoresIds.add(d.getId());
         }
@@ -50,19 +50,19 @@ public class DatastoreXmlPool {
     /**
      * @return the datastores
      */
-    public ArrayList<DatastoreXml> getDatastores() {
+    public ArrayList<DatastoreElement> getDatastores() {
         return datastores;
     }
 
     /**
      * @param datastores the datastores to set
      */
-    public void setDatastores(ArrayList<DatastoreXml> datastores) {
+    public void setDatastores(ArrayList<DatastoreElement> datastores) {
         this.datastores = datastores;
     }
     
-    public DatastoreXml getById(Integer id) {
-        for (DatastoreXml ds: datastores) {
+    public DatastoreElement getById(Integer id) {
+        for (DatastoreElement ds: datastores) {
             if (Objects.equals(ds.getId(), id)) {
                 return ds;
             }
@@ -72,7 +72,7 @@ public class DatastoreXmlPool {
     
     public ArrayList<Integer> getSystemDs() {
         ArrayList<Integer> systemDs = new ArrayList<>();
-        for (DatastoreXml ds: datastores) {
+        for (DatastoreElement ds: datastores) {
             if (ds.getType() == 1) {
                 systemDs.add(ds.getId());
             }

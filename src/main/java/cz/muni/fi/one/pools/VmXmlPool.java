@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.one.pools;
 
-import cz.muni.fi.scheduler.resources.VmXml;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.opennebula.client.Client;
@@ -28,23 +28,23 @@ public class VmXmlPool {
         vmp = new VirtualMachinePool(oneClient);
     }
     
-    public ArrayList<VmXml> getVms() {
+    public ArrayList<VmElement> getVms() {
         return getVms(Pool.ALL, VirtualMachinePool.NOT_DONE); 
     }
     
-    public ArrayList<VmXml> getAllVms() {
+    public ArrayList<VmElement> getAllVms() {
         return getVms(Pool.ALL, VirtualMachinePool.ALL_VM); 
     }
     
-    public ArrayList<VmXml> getVmsByUser(int userId) {
+    public ArrayList<VmElement> getVmsByUser(int userId) {
         return getVms(userId, VirtualMachinePool.NOT_DONE); 
     }
     
-    public ArrayList<VmXml> getAllVmsByUser(int userId) {
+    public ArrayList<VmElement> getAllVmsByUser(int userId) {
         return getVms(userId, VirtualMachinePool.ALL_VM); 
     }
     
-    public ArrayList<VmXml> getVmsByState(int state) {
+    public ArrayList<VmElement> getVmsByState(int state) {
         return getVms(Pool.ALL, state); 
     }
     
@@ -67,8 +67,8 @@ public class VmXmlPool {
      *             VirtualMachinePool.NOT_DONE = Flag for Virtual Machines in any state, except for DONE.
      * @return array of virtual machines
      */
-    public ArrayList<VmXml> getVms(int userId, int state) {
-        ArrayList<VmXml> vms = new ArrayList<>();
+    public ArrayList<VmElement> getVms(int userId, int state) {
+        ArrayList<VmElement> vms = new ArrayList<>();
         OneResponse vmpr = vmp.info(userId, Integer.MIN_VALUE, Integer.MAX_VALUE, state);
         if (vmpr.isError()) {
             //TODO: log it
@@ -77,7 +77,7 @@ public class VmXmlPool {
         Iterator<VirtualMachine> itr = vmp.iterator();
         while (itr.hasNext()) {
             VirtualMachine element = itr.next();
-            VmXml vm = new VmXml(element);
+            VmElement vm = new VmElement(element);
             vms.add(vm);
         }
         return vms;

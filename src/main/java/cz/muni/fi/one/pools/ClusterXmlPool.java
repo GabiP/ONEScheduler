@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.one.pools;
 
-import cz.muni.fi.scheduler.resources.ClusterXml;
+import cz.muni.fi.scheduler.resources.ClusterElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.opennebula.client.Client;
@@ -21,7 +21,7 @@ public class ClusterXmlPool {
     
     private final ClusterPool cp;
     
-    private ArrayList<ClusterXml> clusters;
+    private ArrayList<ClusterElement> clusters;
     
     public ClusterXmlPool(Client oneClient) {
         cp = new ClusterPool(oneClient);
@@ -38,14 +38,14 @@ public class ClusterXmlPool {
         while (itr.hasNext()) {
             Cluster element = itr.next();
             System.out.println("Cluster: " + element);
-            ClusterXml c = new ClusterXml(element);
+            ClusterElement c = new ClusterElement(element);
             System.out.println("Cluster: " + c);
             clusters.add(c);
         }
     }
     
-    public ClusterXml getById(Integer id) {
-        for (ClusterXml cluster: clusters) {
+    public ClusterElement getById(Integer id) {
+        for (ClusterElement cluster: clusters) {
             if (cluster.getId() == id) {
                 return cluster;
             }
@@ -55,7 +55,7 @@ public class ClusterXmlPool {
     /**
      * @return the clusters
      */
-    public ArrayList<ClusterXml> getClusters() {
+    public ArrayList<ClusterElement> getClusters() {
         return clusters;
     }
 }

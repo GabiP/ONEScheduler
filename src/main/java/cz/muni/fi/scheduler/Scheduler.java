@@ -2,18 +2,18 @@ package cz.muni.fi.scheduler;
 
 import cz.muni.fi.authorization.AuthorizationManager;
 import cz.muni.fi.one.pools.AclXmlPool;
-import cz.muni.fi.scheduler.resources.ClusterXml;
+import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.one.pools.ClusterXmlPool;
 import cz.muni.fi.one.pools.DatastoreXmlPool;
 import cz.muni.fi.one.pools.HostXmlPool;
 import cz.muni.fi.one.pools.TemplateXmlPool;
 import cz.muni.fi.one.pools.UserXmlPool;
 import cz.muni.fi.one.pools.VmXmlPool;
-import cz.muni.fi.scheduler.resources.DatastoreXml;
-import cz.muni.fi.scheduler.resources.HostXml;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.TemplateXml;
-import cz.muni.fi.scheduler.resources.UserXml;
-import cz.muni.fi.scheduler.resources.VmXml;
+import cz.muni.fi.scheduler.resources.UserElement;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,9 +45,9 @@ public class Scheduler {
     
     DatastoreXmlPool dsPool;
     
-    private ArrayList<HostXml> filteredHosts = new ArrayList<>();
+    private ArrayList<HostElement> filteredHosts = new ArrayList<>();
     
-    private ArrayList<VmXml> pendingVms = new ArrayList<>();  
+    private ArrayList<VmElement> pendingVms = new ArrayList<>();  
     
     /**
      * Queues with waiting VMs.
@@ -87,7 +87,7 @@ public class Scheduler {
             // Criteria-based ordering
             // Run several algorithms. Write the results. Compare. Choose the best --> criteria. Then deploy in hostId.
             while(!queue.isEmpty()) {
-              VmXml vm = (VmXml) queue.peek();
+              VmElement vm = (VmElement) queue.peek();
               System.out.println("Checking for vm: " + vm.getVmId());
               //check the authorization for this VM
               ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
@@ -98,7 +98,7 @@ public class Scheduler {
               // filter hosts - whether the vm can be hosted - testCapacity...
               for (Integer hostId: authorizedHosts) {
                   System.out.println("Host id " + hostId);
-                  HostXml h = hostPool.getById(hostId);
+                  HostElement h = hostPool.getById(hostId);
                   boolean enoughCapacity  = h.testCapacity(vm);
                   if (enoughCapacity ==  false) {
                       System.out.println("Host does not have enough capacity - CPU, MEM to host the vm.");
