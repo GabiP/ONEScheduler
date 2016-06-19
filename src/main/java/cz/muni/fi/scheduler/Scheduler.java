@@ -1,25 +1,29 @@
 package cz.muni.fi.scheduler;
 
 import cz.muni.fi.authorization.AuthorizationManager;
-import cz.muni.fi.one.pools.AclXmlPool;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.one.pools.ClusterXmlPool;
-import cz.muni.fi.one.pools.DatastoreXmlPool;
-import cz.muni.fi.one.pools.HostXmlPool;
-import cz.muni.fi.one.pools.TemplateXmlPool;
-import cz.muni.fi.one.pools.UserXmlPool;
-import cz.muni.fi.one.pools.VmXmlPool;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.one.pools.AclElementPool;
+import cz.muni.fi.one.pools.ClusterElementPool;
+import cz.muni.fi.one.pools.DatastoreElementPool;
+import cz.muni.fi.one.pools.HostElementPool;
+import cz.muni.fi.one.pools.UserElementPool;
+import cz.muni.fi.one.pools.VmElementPool;
+import cz.muni.fi.scheduler.elementpools.IAclPool;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IHostPool;
+import cz.muni.fi.scheduler.elementpools.IUserPool;
+import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.TemplateXml;
-import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.opennebula.client.Client;
-import org.opennebula.client.acl.Acl;
+import org.opennebula.client.OneResponse;
 
 /**
  *
@@ -31,23 +35,17 @@ public class Scheduler {
     
     AuthorizationManager authorizationManager;
     
-    HostXmlPool hostPool;
+    IHostPool hostPool;
     
-    VmXmlPool vmPool;
+    IVmPool vmPool;
     
-    UserXmlPool userPool;
+    IUserPool userPool;
     
-    TemplateXmlPool templatePool;
+    IAclPool aclPool;
     
-    AclXmlPool aclPool;
+    IClusterPool clusterPool;
     
-    ClusterXmlPool clusterPool;
-    
-    DatastoreXmlPool dsPool;
-    
-    private ArrayList<HostElement> filteredHosts = new ArrayList<>();
-    
-    private ArrayList<VmElement> pendingVms = new ArrayList<>();  
+    IDatastorePool dsPool;
     
     /**
      * Queues with waiting VMs.
@@ -70,88 +68,107 @@ public class Scheduler {
     }
     
     public void body() throws InterruptedException, IOException {
-        while(true) {
-            //load all pools - must be the first call
-            loadPools();
-            //instantiate the Authorizationmanager
-            authorizationManager = new AuthorizationManager(aclPool, clusterPool, hostPool, dsPool, userPool);
-            //get pendings, state = 1 is pending
-            pendingVms = vmPool.getVmsByState(1);           
-            if (pendingVms.isEmpty()) {
-                System.out.println("No pendings");
-                break;
+        //load all pools - must be the first call
+        loadOnePools();
+        //instantiate the Authorizationmanager
+        authorizationManager = new AuthorizationManager(aclPool, clusterPool, hostPool, dsPool, userPool);
+        //get pendings, state = 1 is pending
+        List<VmElement> pendingVms = vmPool.getVmsByState(1);
+        if (pendingVms.isEmpty()) {
+            System.out.println("No pendings");
+        }
+        // VM queue construction
+        queue.addAll(pendingVms);
+        Map<HostElement, List<VmElement>> plan = processQueue(queue);
+    }
+
+    public Map<HostElement, List<VmElement>> processQueue(LinkedList queue) {
+        Map<HostElement, List<VmElement>> plan = new HashMap<>();
+        while (!queue.isEmpty()) {
+            VmElement vm = (VmElement) queue.peek();
+            //check the authorization for this VM
+            List<Integer> authorizedHosts = authorizationManager.authorize(vm);
+            if (authorizedHosts.isEmpty()) {
+                System.out.println("Empty authorized hosts.");
             }
-            // Load configuration file (how many queues, priorities, quotas)
-            // VM queue construction
-            queue.addAll(pendingVms);
-            // Criteria-based ordering
-            // Run several algorithms. Write the results. Compare. Choose the best --> criteria. Then deploy in hostId.
-            while(!queue.isEmpty()) {
-              VmElement vm = (VmElement) queue.peek();
-              System.out.println("Checking for vm: " + vm.getVmId());
-              //check the authorization for this VM
-              ArrayList<Integer> authorizedHosts = authorizationManager.authorize(vm);
-              if (authorizedHosts.isEmpty()) {
-                  System.out.println("Empty authorized hosts.");
-              }
-              // check limits
-              // filter hosts - whether the vm can be hosted - testCapacity...
-              for (Integer hostId: authorizedHosts) {
-                  System.out.println("Host id " + hostId);
-                  HostElement h = hostPool.getById(hostId);
-                  boolean enoughCapacity  = h.testCapacity(vm);
-                  if (enoughCapacity ==  false) {
-                      System.out.println("Host does not have enough capacity - CPU, MEM to host the vm.");
-                  }
-                  boolean enoughCapacityDs = h.testDs(vm, clusterPool, dsPool);
-                  if (enoughCapacityDs ==  false) {
-                      System.out.println("Host does not have enough capacity in DATASTORES to host the vm.");
-                  }
-                  boolean reqs = vm.evaluateSchedReqs(h);
-                  if (reqs ==  false) {
-                      System.out.println("Host does not satisfy the scheduling requirements.");
-                  }
-                  boolean pciFits = h.checkPci(vm);
-                  if (reqs ==  false) {
-                      System.out.println("Host does not have the specied PCI.");
-                  }
-                  if (enoughCapacity && reqs && enoughCapacityDs && pciFits) {
-                      filteredHosts.add(h);
-                  }
-              }
-              // deploy if filtered hosts is not empty
-              if (!filteredHosts.isEmpty()) {
-                  //we wont be deploying here. Just 
-                  vm.getVm().deploy(filteredHosts.get(0).getId());
-                  filteredHosts.get(0).addCapacity(vm);
-                  System.out.println("Deploying vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
+            //filter authorized hosts for vm
+            List<HostElement> filteredHosts = filterAuthorizedHosts(authorizedHosts, vm);
+            // deploy if filtered hosts is not empty
+            if (!filteredHosts.isEmpty()) {
+                putValueToMap(plan, filteredHosts.get(0), vm);
+                System.out.println("Deploying vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
                 // addCapacity - id I add capacity, won't there be a problem with the parameters when it is actually deployed?
                 // Should I make a copy of this parameters and ask for that parameter. And When I update the pools I also update the copy.
-                // poll VM from queue
-                // Will I be polling? - I should maybe use LinkedList and iterate through it. The poll queue deletes the value. I will be needing that in threads. 
-              }
-              queue.poll();
             }
-          System.out.println("New cycle will start in 10 seconds");
-          TimeUnit.SECONDS.sleep(10);
+            queue.poll();
         }
+        return plan;
     }
     
-    public void loadPools() throws IOException {
-        vmPool = new VmXmlPool(oneClient);
-        hostPool = new HostXmlPool(oneClient);
-        userPool = new UserXmlPool(oneClient);
-        templatePool = new TemplateXmlPool(oneClient);
-        aclPool = new AclXmlPool(oneClient);
-        clusterPool = new ClusterXmlPool(oneClient);
-        dsPool = new DatastoreXmlPool(oneClient);
-
-        hostPool.loadHosts();
-        vmPool.getAllVms();
-        userPool.loadUsers();       
-        aclPool.loadAcl();
-        clusterPool.loadClusters();   
-        dsPool.loadDatastores();
-        templatePool.loadTemplates();
+    public List<HostElement> filterAuthorizedHosts(List<Integer> authorizedHosts, VmElement vm) {
+        List<HostElement> filteredHosts = new ArrayList<>();
+        for (Integer hostId : authorizedHosts) {
+            HostElement h = hostPool.getHost(hostId);
+            if (match(h, vm)) {
+                filteredHosts.add(h);
+            }
+        }
+        return filteredHosts;
+    }
+    
+    public void putValueToMap(Map<HostElement, List<VmElement>> plan, HostElement host, VmElement vm) {
+        if (plan.containsKey(host)) {
+            plan.get(host).add(vm);
+        } else {
+            List<VmElement> values = new ArrayList<>();
+            values.add(vm);
+            plan.put(host, values);
+        }              
+    }
+    
+    public boolean match(HostElement h, VmElement vm) {
+        boolean enoughCapacity = h.testCapacity(vm);
+        if (enoughCapacity == false) {
+            System.out.println("Host does not have enough capacity - CPU, MEM to host the vm.");
+        }
+        boolean enoughCapacityDs = h.testDs(vm, clusterPool, dsPool);
+        if (enoughCapacityDs == false) {
+            System.out.println("Host does not have enough capacity in DATASTORES to host the vm.");
+        }
+        boolean reqs = vm.evaluateSchedReqs(h);
+        if (reqs == false) {
+            System.out.println("Host does not satisfy the scheduling requirements.");
+        }
+        boolean pciFits = h.checkPci(vm);
+        if (reqs == false) {
+            System.out.println("Host does not have the specied PCI.");
+        }
+        return enoughCapacity && reqs && enoughCapacityDs && pciFits;
+    }
+    
+    public List<VmElement> deployPlan(Map<HostElement, List<VmElement>> plan) {
+        List<VmElement> failedVms = new ArrayList<>();
+        Set<HostElement> hosts = plan.keySet();
+        for (HostElement host: hosts) {
+            List<VmElement> vms = plan.get(host);
+            for (VmElement vm: vms) {
+                OneResponse oneResp = vm.getVm().deploy(host.getId());
+                if (oneResp.getMessage() == null) {
+                    //Log error in deployment
+                    System.out.println(oneResp.getErrorMessage());
+                    failedVms.add(vm);
+                }
+            }
+        }
+        return failedVms;
+    }
+    
+    public void loadOnePools() throws IOException {
+        vmPool = new VmElementPool(oneClient);
+        hostPool = new HostElementPool(oneClient);
+        userPool = new UserElementPool(oneClient);
+        aclPool = new AclElementPool(oneClient);
+        clusterPool = new ClusterElementPool(oneClient);
+        dsPool = new DatastoreElementPool(oneClient);
     }
 }

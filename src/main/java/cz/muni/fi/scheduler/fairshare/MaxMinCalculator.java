@@ -5,7 +5,8 @@
  */
 package cz.muni.fi.scheduler.fairshare;
 
-import cz.muni.fi.one.pools.VmXmlPool;
+import cz.muni.fi.one.pools.VmElementPool;
+import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +19,9 @@ import java.util.Set;
  */
 public class MaxMinCalculator implements IUserPriorityCalculator {
     
-    private VmXmlPool vmPool;
+    private IVmPool vmPool;
 
-    public MaxMinCalculator(VmXmlPool vmPool) {
+    public MaxMinCalculator(VmElementPool vmPool) {
         this.vmPool = vmPool;
     }
 

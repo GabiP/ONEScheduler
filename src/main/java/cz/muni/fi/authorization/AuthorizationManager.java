@@ -5,11 +5,11 @@
  */
 package cz.muni.fi.authorization;
 
-import cz.muni.fi.one.pools.AclXmlPool;
-import cz.muni.fi.one.pools.ClusterXmlPool;
-import cz.muni.fi.one.pools.DatastoreXmlPool;
-import cz.muni.fi.one.pools.HostXmlPool;
-import cz.muni.fi.one.pools.UserXmlPool;
+import cz.muni.fi.scheduler.elementpools.IAclPool;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IHostPool;
+import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -24,13 +24,13 @@ import org.opennebula.client.acl.Acl;
  */
 public class AuthorizationManager {
     
-    private final AclXmlPool aclPool;
-    private final ClusterXmlPool clusterPool;
-    private final HostXmlPool hostPool;
-    private final DatastoreXmlPool datastorePool;
-    private final UserXmlPool userPool;
+    private final IAclPool aclPool;
+    private final IClusterPool clusterPool;
+    private final IHostPool hostPool;
+    private final IDatastorePool datastorePool;
+    private final IUserPool userPool;
     
-    public AuthorizationManager(AclXmlPool acls, ClusterXmlPool clusters, HostXmlPool hosts, DatastoreXmlPool datastores, UserXmlPool userPool) {
+    public AuthorizationManager(IAclPool acls, IClusterPool clusters, IHostPool hosts, IDatastorePool datastores, IUserPool userPool) {
         this.aclPool = acls;
         this.clusterPool = clusters;
         this.hostPool = hosts;
@@ -44,7 +44,7 @@ public class AuthorizationManager {
      * @param vm the virtual machine's user's to be authorized
      * @return an array with ids of authorized hosts
      */
-    public ArrayList<Integer> authorize(VmElement vm) {
+    public List<Integer> authorize(VmElement vm) {
         Integer uid = vm.getUid();
         List<Integer> userGroups = userPool.getById(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
@@ -54,7 +54,7 @@ public class AuthorizationManager {
             String gidstring = "@" + gid;
             groups.add(gidstring);
         }
-        ArrayList<Acl> acls = aclPool.getAcls();
+        List<Acl> acls = aclPool.getAcls();
         ArrayList<Integer> authorizedHosts = new ArrayList<>();
         ArrayList<Integer> authorizedDatastores = new ArrayList<>();
         String uidstring = "#" + uid;
@@ -64,61 +64,82 @@ public class AuthorizationManager {
             // check if the rule contains the user's id or one of the user's group id
             if ((splittedRule[0].trim().equals(uidstring) || groups.contains(splittedRule[0].trim())) ||splittedRule[0].trim().equals("*")) {
                 // affected resources hosts with rights to manage
-                if (splittedRule[2].contains("MANAGE") && splittedRule[1].contains("HOST")) {
-                    if (splittedRule[1].contains("*")) {
-                        authorizedHosts.addAll(hostPool.getHostsIds());
-                    }
-                    if (splittedRule[1].contains("#")) {
-                        String s = splittedRule[1].substring(splittedRule[1].indexOf("#") + 1);
-                        Integer hostId  = Integer.valueOf(s);
-                        HostElement host = hostPool.getById(hostId);
-                        authorizedHosts.add(host.getId());
-                    }
-                    if (splittedRule[1].contains("%")) {
-                        String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
-                        Integer clusterId  = Integer.valueOf(s);
-                        ClusterElement cl = clusterPool.getById(clusterId);
-                        authorizedHosts.addAll(cl.getHosts());
-                    }
-                    
-                }
+                List<Integer> evaluatedHosts = evaluateHost(splittedRule[2], splittedRule[1]);
+                authorizedHosts.addAll(evaluatedHosts);
                 // Finding the datastores that the user is authorized to use
-                if (splittedRule[2].contains("USE") && splittedRule[1].contains("DATASTORE")) {
-                    if (splittedRule[1].contains("*")) {
-                        authorizedDatastores.addAll(datastorePool.getDatastoresIds());
-                    }
-                    if (splittedRule[1].contains("#")) {
-                        String s = splittedRule[1].substring(splittedRule[1].indexOf("#") + 1);
-                        Integer dsId  = Integer.valueOf(s);
-                        authorizedDatastores.add(dsId);
-                    }
-                    if (splittedRule[1].contains("%")) {
-                        String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
-                        Integer clusterId  = Integer.valueOf(s);
-                        ClusterElement cl = clusterPool.getById(clusterId);
-                        authorizedDatastores.addAll(cl.getDatastores());
-                    }
-                }
+                List<Integer> evaluatedDatastores = evaluateDatastore(splittedRule[2], splittedRule[1]);
+                authorizedDatastores.addAll(evaluatedDatastores);
             }
         }
         //match authorizedHosts and authorizedDatastores
+        List<Integer> result = matchHostsAndDatastores(authorizedHosts, authorizedDatastores);
+        return result;
+    }
+    
+    public List<Integer> evaluateHost(String rights, String resources) {
+        List<Integer> authorizedHosts = new ArrayList<>();
+        if (rights.contains("MANAGE") && resources.contains("HOST")) {
+            if (resources.contains("*")) {
+                authorizedHosts.addAll(hostPool.getHostsIds());
+            }
+            if (resources.contains("#")) {
+                Integer hostId = getIdFromResources(resources, "#");
+                HostElement host = hostPool.getHost(hostId);
+                authorizedHosts.add(host.getId());
+            }
+            if (resources.contains("%")) {
+                Integer clusterId = getIdFromResources(resources, "%");
+                ClusterElement cl = clusterPool.getCluster(clusterId);
+                authorizedHosts.addAll(cl.getHosts());
+            }
+        }
+        return authorizedHosts;
+    }
+    
+    public List<Integer> evaluateDatastore(String rights, String resources) {
+        List<Integer> authorizedDatastores = new ArrayList<>();
+        if (rights.contains("USE") && resources.contains("DATASTORE")) {
+            if (resources.contains("*")) {
+                authorizedDatastores.addAll(datastorePool.getDatastoresIds());
+            }
+            if (resources.contains("#")) {
+                Integer dsId = getIdFromResources(resources, "#");
+                authorizedDatastores.add(dsId);
+            }
+            if (resources.contains("%")) {
+                Integer clusterId = getIdFromResources(resources, "%");
+                ClusterElement cl = clusterPool.getCluster(clusterId);
+                authorizedDatastores.addAll(cl.getDatastores());
+            }
+        }
+        return authorizedDatastores;
+    }
+    
+    public Integer getIdFromResources(String resources, String mark) {
+        String s = resources.substring(resources.indexOf(mark) + 1);
+        Integer id = Integer.valueOf(s);
+        return id;
+    }
+    
+    public List<Integer> matchHostsAndDatastores(List<Integer> authorizedHosts, List<Integer> authorizedDatastores) {
+        List<Integer> result = new ArrayList<>(authorizedHosts);
         for (Integer hostId: authorizedHosts) {
             boolean hasSystemDs = false;
-            HostElement host = hostPool.getById(hostId);
+            HostElement host = hostPool.getHost(hostId);
             Integer hostClusterId = host.getClusterId();
-            ClusterElement cluster = clusterPool.getById(hostClusterId);
+            ClusterElement cluster = clusterPool.getCluster(hostClusterId);
             List<Integer> clusterDatastores = cluster.getDatastores();
             for (Integer datastoreId: clusterDatastores) {
-                DatastoreElement ds = datastorePool.getById(datastoreId);
+                DatastoreElement ds = datastorePool.getDatastore(datastoreId);
                 // the ds on cluster is system and the user is authorized to use that ds
                 if (ds.getType() == 1 && authorizedDatastores.contains(ds.getId())) {
                     hasSystemDs = true;
                 }               
             }
             if (hasSystemDs == false) {
-                authorizedHosts.remove(hostId);
+                result.remove(hostId);
             }
         }
-        return authorizedHosts;
+        return result;
     }
 }

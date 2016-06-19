@@ -5,9 +5,12 @@
  */
 package cz.muni.fi.one.pools;
 
+import cz.muni.fi.one.mappers.ClusterMapper;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.resources.ClusterElement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.cluster.Cluster;
@@ -17,18 +20,20 @@ import org.opennebula.client.cluster.ClusterPool;
  *
  * @author Gabriela Podolnikova
  */
-public class ClusterXmlPool {
+public class ClusterElementPool implements IClusterPool {
     
     private final ClusterPool cp;
     
-    private ArrayList<ClusterElement> clusters;
-    
-    public ClusterXmlPool(Client oneClient) {
+    public ClusterElementPool(Client oneClient) {
         cp = new ClusterPool(oneClient);
     }
-    
-    public void loadClusters() {
-        clusters = new ArrayList<>();
+
+    /**
+     * @return the clusters
+     */
+    @Override
+    public List<ClusterElement> getClusters() {
+        List<ClusterElement> clusters = new ArrayList<>();
         OneResponse cpr = cp.info();
         if (cpr.isError()) {
             //TODO: log it
@@ -38,24 +43,15 @@ public class ClusterXmlPool {
         while (itr.hasNext()) {
             Cluster element = itr.next();
             System.out.println("Cluster: " + element);
-            ClusterElement c = new ClusterElement(element);
+            ClusterElement c = ClusterMapper.map(element);
             System.out.println("Cluster: " + c);
             clusters.add(c);
         }
-    }
-    
-    public ClusterElement getById(Integer id) {
-        for (ClusterElement cluster: clusters) {
-            if (cluster.getId() == id) {
-                return cluster;
-            }
-        }
-        return null;
-    }
-    /**
-     * @return the clusters
-     */
-    public ArrayList<ClusterElement> getClusters() {
         return clusters;
+    }
+
+    @Override
+    public ClusterElement getCluster(int id) {
+        return ClusterMapper.map(cp.getById(id));
     }
 }

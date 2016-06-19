@@ -3,9 +3,8 @@ package cz.muni.fi.scheduler.resources;
 import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.one.pools.ClusterXmlPool;
-import cz.muni.fi.one.pools.DatastoreXmlPool;
-import java.util.ArrayList;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import java.util.List;
 
 /**
@@ -142,9 +141,9 @@ public class HostElement {
      * @param dsPool all datastore to find the ds to be checked
      * @return true if the vm fits, false otherwise
      */
-    public boolean testDs(VmElement vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
+    public boolean testDs(VmElement vm, IClusterPool clusterPool, IDatastorePool dsPool) {
         boolean fits = false;
-        ClusterElement cluster = clusterPool.getById(this.clusterId);
+        ClusterElement cluster = clusterPool.getCluster(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
         List<DiskNode> disks = vm.getDisks();
         int sizeValue = 0;
@@ -152,7 +151,7 @@ public class HostElement {
             sizeValue += disk.getSize();
         }
         for (Integer dsId : datastoresIds) {
-            DatastoreElement ds = dsPool.getById(dsId);
+            DatastoreElement ds = dsPool.getDatastore(dsId);
             if (ds.getFree_mb() > sizeValue) {
                 fits = true;
             }
