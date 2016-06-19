@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
@@ -11,20 +11,13 @@ import org.opennebula.client.PoolElement;
  *
  * @author gabi
  */
-public class NicNode extends NodeElement {
-    
-    private static final String XPATH_EXPR = "/VM/TEMPLATE/NIC";
-     
+public class NicNode extends AbstractNode {
+         
     private Integer networkId;
 
     @Override
-    void load(PoolElement vm, int i) {
-        networkId = Integer.parseInt(vm.xpath(XPATH_EXPR + "["+i+"]" + "/NETWORK_ID"));
-    }
-
-    @Override
-    String getXpathExpr() {
-        return XPATH_EXPR;
+    public void load(PoolElement vm, String xpathExpr) {
+        networkId = Integer.parseInt(vm.xpath(xpathExpr + "/NETWORK_ID"));
     }
 
     /**
@@ -39,6 +32,5 @@ public class NicNode extends NodeElement {
      */
     public void setNetworkId(Integer networkId) {
         this.networkId = networkId;
-    }
-    
+    }    
 }

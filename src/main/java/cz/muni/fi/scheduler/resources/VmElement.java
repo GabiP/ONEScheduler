@@ -5,32 +5,27 @@
  */
 package cz.muni.fi.scheduler.resources;
 
+import cz.muni.fi.scheduler.resources.nodes.DiskNode;
+import cz.muni.fi.scheduler.resources.nodes.NicNode;
+import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opennebula.client.vm.VirtualMachine;
 
 /**
  * This class represents an OpenNebula Vm
  * 
  * @author Gabriela Podolnikova
  */
-public class VmXml {
+public class VmElement {
     
-    private int vmId;
+    private Integer vmId;
      
     private Integer uid;
     
-    private Integer gid;
-    
-    private String uname;
-    
-    private String gname;
+    private Integer gid;    
     
     private String name;
-    
-    private Integer last_poll;
-    
+        
     /**
     * STATE values,
         see http://opennebula.org/_media/documentation:rel3.6:states-complete.png
@@ -42,17 +37,9 @@ public class VmXml {
     * for values see vm.xsd
     */
     private Integer lcm_state;
-    
-    private Integer prev_state;
-    
-    private Integer prev_lcm_state;
-    
+        
     private Integer resched;
-    
-    private Integer stime;
-    
-    private Integer etime;
-    
+        
     private String deploy_id;
     
     private Float cpu;
@@ -88,59 +75,10 @@ public class VmXml {
     
     private String schedDsRequirements;
     
-    private List<PciNodeVm> pcis;
+    private List<PciNode> pcis;
     
-    private final VirtualMachine vm;
-
-    public VmXml(VirtualMachine vm) {
-        this.vm = vm;
-        vm.info();
-        this.init();
-    }
-
-    private void init() {
-        vmId = Integer.parseInt(getVm().xpath("/VM/ID"));
-        uid  = Integer.parseInt(getVm().xpath("/VM/UID"));
-        gid  = Integer.parseInt(getVm().xpath("/VM/GID"));
-        name = getVm().xpath("/VM/NAME");
-        state  = Integer.parseInt(getVm().xpath("/VM/STATE"));
-        lcm_state  = Integer.parseInt(getVm().xpath("/VM/LCM_STATE"));
-        resched  = Integer.parseInt(getVm().xpath("/VM/RESCHED"));
-        deploy_id = getVm().xpath("/VM/DEPLOY_ID");
-        setCpu(Float.parseFloat(getVm().xpath("/VM/TEMPLATE/CPU")));
-        setMemory(Integer.parseInt(getVm().xpath("/VM/TEMPLATE/MEMORY")));
-        try {
-            datastore_id = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/DISK/DATASTORE_ID"));
-        } catch (Exception e) {
-            datastore_id = null;
-        }
-        try {
-            disks = NodeElementLoader.getNodeElements(vm, DiskNode.class);
-            histories = NodeElementLoader.getNodeElements(vm, HistoryNode.class);
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
-            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            nics = NodeElementLoader.getNodeElements(vm, NicNode.class);
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
-            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        schedRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_RANK");
-        schedDsRank = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK");
-        schedRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS");
-        schedDsRequirements = getVm().xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS");
-        templateId = Integer.parseInt(getVm().xpath("/VM/TEMPLATE/TEMPLATE_ID"));
-        try {
-            pcis = NodeElementLoader.getNodeElements(vm, PciNodeVm.class);
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
-            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    } 
     
-    public boolean evaluateSchedReqs(HostXml host) {
+    public boolean evaluateSchedReqs(HostElement host) {
         String[] reqs = schedRequirements.split("\\|");
         boolean fits = false;
         if (schedRequirements.equals("")) {
@@ -180,6 +118,20 @@ public class VmXml {
             }
         }
         return runTime;
+    }    
+    
+    /**
+     * @return the id
+     */
+    public Integer getVmId() {
+        return vmId;
+    }    
+    
+    /**
+     * @param id the id to set
+     */
+    public void setVmId(Integer id) {
+        this.vmId = id;
     }
     
     /**
@@ -194,35 +146,7 @@ public class VmXml {
      */
     public Integer getGid() {
         return gid;
-    }
-
-    /**
-     * @return the uname
-     */
-    public String getUname() {
-        return uname;
-    }
-
-    /**
-     * @param uname the uname to set
-     */
-    public void setUname(String uname) {
-        this.uname = uname;
-    }
-
-    /**
-     * @return the gname
-     */
-    public String getGname() {
-        return gname;
-    }
-
-    /**
-     * @param gname the gname to set
-     */
-    public void setGname(String gname) {
-        this.gname = gname;
-    }
+    }    
 
     /**
      * @return the name
@@ -237,21 +161,7 @@ public class VmXml {
     public void setName(String name) {
         this.name = name;
     }
-
-    /**
-     * @return the last_poll
-     */
-    public Integer getLast_poll() {
-        return last_poll;
-    }
-
-    /**
-     * @param last_poll the last_poll to set
-     */
-    public void setLast_poll(Integer last_poll) {
-        this.last_poll = last_poll;
-    }
-
+    
     /**
      * @return the state
      */
@@ -281,34 +191,6 @@ public class VmXml {
     }
 
     /**
-     * @return the prev_state
-     */
-    public Integer getPrev_state() {
-        return prev_state;
-    }
-
-    /**
-     * @param prev_state the prev_state to set
-     */
-    public void setPrev_state(Integer prev_state) {
-        this.prev_state = prev_state;
-    }
-
-    /**
-     * @return the prev_lcm_state
-     */
-    public Integer getPrev_lcm_state() {
-        return prev_lcm_state;
-    }
-
-    /**
-     * @param prev_lcm_state the prev_lcm_state to set
-     */
-    public void setPrev_lcm_state(Integer prev_lcm_state) {
-        this.prev_lcm_state = prev_lcm_state;
-    }
-
-    /**
      * @return the resched
      */
     public Integer getResched() {
@@ -323,34 +205,6 @@ public class VmXml {
     }
 
     /**
-     * @return the stime
-     */
-    public Integer getStime() {
-        return stime;
-    }
-
-    /**
-     * @param stime the stime to set
-     */
-    public void setStime(Integer stime) {
-        this.stime = stime;
-    }
-
-    /**
-     * @return the etime
-     */
-    public Integer getEtime() {
-        return etime;
-    }
-
-    /**
-     * @param etime the etime to set
-     */
-    public void setEtime(Integer etime) {
-        this.etime = etime;
-    }
-
-    /**
      * @return the deploy_id
      */
     public String getDeploy_id() {
@@ -362,13 +216,6 @@ public class VmXml {
      */
     public void setDeploy_id(String deploy_id) {
         this.deploy_id = deploy_id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setVmId(int id) {
-        this.vmId = id;
     }
 
     /**
@@ -402,12 +249,6 @@ public class VmXml {
                 '}';
     }
 
-    /**
-     * @return the id
-     */
-    public int getVmId() {
-        return vmId;
-    }
 
     /**
      * @return the cpu
@@ -435,13 +276,6 @@ public class VmXml {
      */
     public void setMemory(Integer memory) {
         this.memory = memory;
-    }
-
-    /**
-     * @return the vm
-     */
-    public VirtualMachine getVm() {
-        return vm;
     }
 
     /**
@@ -561,10 +395,19 @@ public class VmXml {
     /**
      * @return the pcis
      */
-    public List<PciNodeVm> getPcis() {
+    public List<PciNode> getPcis() {
         return pcis;
     }
-
     
+    public void setPcis(List<PciNode> pcis) {
+        this.pcis = pcis;
+    }
 
+    public List<NicNode> getNics() {
+        return nics;
+    }
+
+    public void setNics(List<NicNode> nics) {
+        this.nics = nics;
+    }
 }

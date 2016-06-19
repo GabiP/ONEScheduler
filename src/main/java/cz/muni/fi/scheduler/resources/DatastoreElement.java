@@ -5,13 +5,11 @@
  */
 package cz.muni.fi.scheduler.resources;
 
-import org.opennebula.client.datastore.Datastore;
-
 /**
  *
  * @author Gabriela Podolnikova
  */
-public class DatastoreXml {
+public class DatastoreElement {
     
     private Integer id;  
     private Integer uid;  
@@ -38,42 +36,10 @@ public class DatastoreXml {
     
     private Integer total_mb;
     private Integer free_mb;
-    private Integer used_mb;
-    
-    private Datastore ds;
+    private Integer used_mb;    
     
     //shared - yes or no, how to get it
     
-    public DatastoreXml(Datastore ds) {
-        this.ds = ds;
-        ds.info();
-        this.init();
-    }
-    
-    public DatastoreXml() {
-    }
-    
-    public void init() {
-        id = Integer.parseInt(ds.xpath("/DATASTORE/ID"));
-        uid = Integer.parseInt(ds.xpath("/DATASTORE/UID"));
-        gid = Integer.parseInt(ds.xpath("/DATASTORE/GID"));
-        name = ds.xpath("/DATASTORE/NAME");
-        type = Integer.parseInt(ds.xpath("/DATASTORE/TYPE"));
-        owner_u = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_U"));
-        owner_m = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_M"));
-        owner_a = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OWNER_A"));
-        group_u = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/GROUP_U"));
-        group_m = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/GROUP_M"));
-        group_a = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/GROUP_A"));
-        other_u = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OTHER_U"));
-        other_m = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OTHER_M"));
-        other_a = Integer.parseInt(ds.xpath("/DATASTORE/PERMISSIONS/OTHER_A"));
-        cluster_id = Integer.parseInt(ds.xpath("/DATASTORE/CLUSTER_ID"));
-        total_mb = Integer.parseInt(ds.xpath("/DATASTORE/TOTAL_MB"));
-        free_mb = Integer.parseInt(ds.xpath("/DATASTORE/FREE_MB"));
-        used_mb = Integer.parseInt(ds.xpath("/DATASTORE/USED_MB"));
-    }
-
     /**
      * @return the id
      */
@@ -310,20 +276,6 @@ public class DatastoreXml {
      */
     public void setUsed_mb(Integer used_mb) {
         this.used_mb = used_mb;
-    }
-
-    /**
-     * @return the ds
-     */
-    public Datastore getDs() {
-        return ds;
-    }
-
-    /**
-     * @param ds the ds to set
-     */
-    public void setDs(Datastore ds) {
-        this.ds = ds;
     }
 
     /**

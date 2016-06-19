@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare;
 
-import cz.muni.fi.scheduler.resources.VmXml;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,21 +28,21 @@ public class FairShareOrderer {
         this.priorityCalculator = priorityCalculator;
     }
     
-    public List<VmXml> orderVms(List<VmXml> vms) {
+    public List<VmElement> orderVms(List<VmElement> vms) {
         Map<Integer, Float> userPriorities = priorityCalculator.getUserPriorities(getUserIds(vms));
-        Map<VmXml, Float> vmPriorities = new HashMap<>();
-        for (VmXml vm : vms) {
+        Map<VmElement, Float> vmPriorities = new HashMap<>();
+        for (VmElement vm : vms) {
             Float vmPriority = userPriorities.get(vm.getUid());
             vmPriorities.put(vm, vmPriority);
         }
-        List<VmXml> orderedVms = sortByValue(vmPriorities);
+        List<VmElement> orderedVms = sortByValue(vmPriorities);
         
         return orderedVms;
     }
 
-    private Set<Integer> getUserIds(List<VmXml> vms) {
+    private Set<Integer> getUserIds(List<VmElement> vms) {
         Set<Integer> userIds = new HashSet<>();
-        for (VmXml vm : vms) {
+        for (VmElement vm : vms) {
             userIds.add(vm.getUid());
         }
         return userIds;

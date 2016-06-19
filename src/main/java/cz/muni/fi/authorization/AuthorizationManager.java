@@ -10,10 +10,10 @@ import cz.muni.fi.one.pools.ClusterXmlPool;
 import cz.muni.fi.one.pools.DatastoreXmlPool;
 import cz.muni.fi.one.pools.HostXmlPool;
 import cz.muni.fi.one.pools.UserXmlPool;
-import cz.muni.fi.scheduler.resources.ClusterXml;
-import cz.muni.fi.scheduler.resources.DatastoreXml;
-import cz.muni.fi.scheduler.resources.HostXml;
-import cz.muni.fi.scheduler.resources.VmXml;
+import cz.muni.fi.scheduler.resources.ClusterElement;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.acl.Acl;
@@ -44,7 +44,7 @@ public class AuthorizationManager {
      * @param vm the virtual machine's user's to be authorized
      * @return an array with ids of authorized hosts
      */
-    public ArrayList<Integer> authorize(VmXml vm) {
+    public ArrayList<Integer> authorize(VmElement vm) {
         Integer uid = vm.getUid();
         List<Integer> userGroups = userPool.getById(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
@@ -71,13 +71,13 @@ public class AuthorizationManager {
                     if (splittedRule[1].contains("#")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("#") + 1);
                         Integer hostId  = Integer.valueOf(s);
-                        HostXml host = hostPool.getById(hostId);
+                        HostElement host = hostPool.getById(hostId);
                         authorizedHosts.add(host.getId());
                     }
                     if (splittedRule[1].contains("%")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
                         Integer clusterId  = Integer.valueOf(s);
-                        ClusterXml cl = clusterPool.getById(clusterId);
+                        ClusterElement cl = clusterPool.getById(clusterId);
                         authorizedHosts.addAll(cl.getHosts());
                     }
                     
@@ -95,7 +95,7 @@ public class AuthorizationManager {
                     if (splittedRule[1].contains("%")) {
                         String s = splittedRule[1].substring(splittedRule[1].indexOf("%") + 1);
                         Integer clusterId  = Integer.valueOf(s);
-                        ClusterXml cl = clusterPool.getById(clusterId);
+                        ClusterElement cl = clusterPool.getById(clusterId);
                         authorizedDatastores.addAll(cl.getDatastores());
                     }
                 }
@@ -104,12 +104,12 @@ public class AuthorizationManager {
         //match authorizedHosts and authorizedDatastores
         for (Integer hostId: authorizedHosts) {
             boolean hasSystemDs = false;
-            HostXml host = hostPool.getById(hostId);
+            HostElement host = hostPool.getById(hostId);
             Integer hostClusterId = host.getClusterId();
-            ClusterXml cluster = clusterPool.getById(hostClusterId);
+            ClusterElement cluster = clusterPool.getById(hostClusterId);
             List<Integer> clusterDatastores = cluster.getDatastores();
             for (Integer datastoreId: clusterDatastores) {
-                DatastoreXml ds = datastorePool.getById(datastoreId);
+                DatastoreElement ds = datastorePool.getById(datastoreId);
                 // the ds on cluster is system and the user is authorized to use that ds
                 if (ds.getType() == 1 && authorizedDatastores.contains(ds.getId())) {
                     hasSystemDs = true;

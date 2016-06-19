@@ -6,7 +6,7 @@
 package cz.muni.fi.scheduler.fairshare;
 
 import cz.muni.fi.one.pools.VmXmlPool;
-import cz.muni.fi.scheduler.resources.VmXml;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +28,9 @@ public class MaxMinCalculator implements IUserPriorityCalculator {
     public Map<Integer, Float> getUserPriorities(Set<Integer> userIds) {
         Map<Integer, Float> userPriorities = new HashMap<>();
         for (Integer userId : userIds) {
-            List<VmXml> vms = vmPool.getAllVmsByUser(userId);
+            List<VmElement> vms = vmPool.getAllVmsByUser(userId);
             float priority = 0;
-            for (VmXml vm : vms) {
+            for (VmElement vm : vms) {
                 float penalty = vm.getCpu();
                 float runTime = vm.getRunTime();
                 if (runTime == 0) {
@@ -44,10 +44,10 @@ public class MaxMinCalculator implements IUserPriorityCalculator {
         return userPriorities;
     }
 
-    private int getMaxRuntime(List<VmXml> vms) {
+    private int getMaxRuntime(List<VmElement> vms) {
         // TODO: get from DB
         int maxRunTime = 0;
-        for (VmXml vm : vms) {
+        for (VmElement vm : vms) {
             int runTime = vm.getRunTime();
             if (runTime > maxRunTime) {
                 maxRunTime = runTime;

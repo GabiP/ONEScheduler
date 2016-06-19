@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.resources.nodes;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,9 +13,7 @@ import org.opennebula.client.PoolElement;
  *
  * @author Andras Urge
  */
-public class HistoryNode extends NodeElement {
-
-    private static final String XPATH_EXPR = "/VM/HISTORY_RECORDS/HISTORY";
+public class HistoryNode extends AbstractNode {
     
     private long startTime;
     private long endTime;
@@ -30,21 +28,36 @@ public class HistoryNode extends NodeElement {
     private int reason;    
         
     @Override
-    void load(PoolElement vm, int index) {
-        startTime = Integer.parseInt(vm.xpath(XPATH_EXPR+"["+index+"]" + "/RSTIME"));
-        endTime = Integer.parseInt(vm.xpath(XPATH_EXPR+"["+index+"]" + "/RETIME"));
-        reason = Integer.parseInt(vm.xpath(XPATH_EXPR+"["+index+"]" + "/REASON"));
+    public void load(PoolElement vm, String xpathExpr) {
+        startTime = Integer.parseInt(vm.xpath(xpathExpr + "/RSTIME"));
+        endTime = Integer.parseInt(vm.xpath(xpathExpr + "/RETIME"));
+        reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));
         if (endTime != 0) {
             runTime = (int) (endTime - startTime);
         } else {
             runTime = (int) (System.currentTimeMillis()/1000L - startTime);
         }
     }
+    
+    public void setReason(int reason) {
+        this.reason = reason;
+    }
 
-    @Override
-    String getXpathExpr() {
-        return XPATH_EXPR;
-    }    
+    public void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setRunTime(int runTime) {
+        this.runTime = runTime;
+    }
+    
+    public int getReason() {
+        return reason;
+    }
     
     public long getStartTime() {
         return startTime;
@@ -60,8 +73,7 @@ public class HistoryNode extends NodeElement {
     
     public boolean isClosed() {
         return (reason != 0);
-    }
-    
+    }    
     
     // TODO: remove (just for debugging purposes)
     public String formatStartTime() {
@@ -86,5 +98,4 @@ public class HistoryNode extends NodeElement {
         
         return days + "d " + hours+":"+minutes+ ":"+time;
     }
-    
 }

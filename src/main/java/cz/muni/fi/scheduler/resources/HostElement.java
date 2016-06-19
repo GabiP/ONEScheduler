@@ -1,27 +1,27 @@
 package cz.muni.fi.scheduler.resources;
 
+import cz.muni.fi.scheduler.resources.nodes.DiskNode;
+import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import cz.muni.fi.one.pools.ClusterXmlPool;
 import cz.muni.fi.one.pools.DatastoreXmlPool;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.opennebula.client.host.Host;
 
 /**
  * This class represents an OpenNebula Host
  *
  * @author Gabriela Podolnikova
  */
-public class HostXml {
+public class HostElement {
 
-    private int id;
+    private Integer id;
 
     private String name;
 
-    private int state;
+    private Integer state;
 
-    private int clusterId;
+    private Integer clusterId;
     
     private Integer disk_usage;
     
@@ -53,63 +53,17 @@ public class HostXml {
     
     private Integer reservedMemory;
     
-    private ArrayList<Integer> dsIds;
+    private List<Integer> dsIds;
     
     private List<PciNode> pcis;
-    
-    private final Host host;
-    
+        
     private List<DatastoreNode> datastores;
-
-    public HostXml(Host host) {
-        this.host = host;
-        host.info();
-        this.init();
-    }
-    
-     private void init() {
-        id = Integer.parseInt(host.xpath("/HOST/ID"));
-        name = host.xpath("/HOST/NAME");
-        state = Integer.parseInt(host.xpath("/HOST/STATE"));
-        clusterId = Integer.parseInt(host.xpath("/HOST/CLUSTER_ID")); ;
-        setDisk_usage((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/DISK_USAGE")));
-        setMem_usage((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MEM_USAGE")));
-        setCpu_usage((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/CPU_USAGE"))/100);
-        setMax_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MAX_DISK")));
-        setMax_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/MAX_MEM")));
-        setMax_cpu((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/MAX_CPU"))/100);
-        setFree_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/FREE_DISK")));
-        setFree_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/FREE_MEM")));
-        setFree_cpu((Float) Float.parseFloat(host.xpath("/HOST/HOST_SHARE/FREE_CPU"))/100);
-        setUsed_disk((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_DISK")));
-        setUsed_mem((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_MEM")));
-        setUsed_cpu((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/USED_CPU")));
-        setRunningVms((Integer) Integer.parseInt(host.xpath("/HOST/HOST_SHARE/RUNNING_VMS")));
-        if (!host.xpath("/HOST/TEMPLATE/RESERVED_CPU").equals("")) {
-            reservedCpu = Integer.parseInt(host.xpath("/HOST/TEMPLATE/RESERVED_CPU"));
-        }
-        if (!host.xpath("/HOST/TEMPLATE/RESERVED_MEM").equals("")) {
-            reservedMemory= Integer.parseInt(host.xpath("/HOST/TEMPLATE/RESERVED_MEM"));
-        }
-        try {
-            pcis = NodeElementLoader.getNodeElements(host, PciNode.class);
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
-            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            datastores = NodeElementLoader.getNodeElements(host, DatastoreNode.class);
-        } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
-            Logger.getLogger(VmXml.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public int getId() {
+        
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -121,19 +75,19 @@ public class HostXml {
         this.name = name;
     }
 
-    public int getState() {
+    public Integer getState() {
         return state;
     }
 
-    public void setState(int state) {
+    public void setState(Integer state) {
         this.state = state;
     }
 
-    public int getClusterId() {
+    public Integer getClusterId() {
         return clusterId;
     }
 
-    public void setClusterId(int clusterId) {
+    public void setClusterId(Integer clusterId) {
         this.clusterId = clusterId;
     }
 
@@ -156,7 +110,7 @@ public class HostXml {
      * @param vm virtual machine to be tested
      * @return true if VM can be hosted, false otherwise
      */
-    public boolean testCapacity(VmXml vm) {
+    public boolean testCapacity(VmElement vm) {
         System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
         return ((max_cpu - cpu_usage) >= vm.getCpu()) && ((max_mem - mem_usage) >= vm.getMemory());
     }
@@ -165,7 +119,7 @@ public class HostXml {
      * Increases cpu and memory on current host.
      * @param vm virtual machine with information for increasing the capacity
      */
-    public void addCapacity(VmXml vm) {
+    public void addCapacity(VmElement vm) {
          cpu_usage += vm.getCpu();
          mem_usage += vm.getMemory();
     }
@@ -174,7 +128,7 @@ public class HostXml {
      * Decreases cpu and memory on current host.
      * @param vm virtual machine with information for increasing the capacity
      */
-    public void delCapacity(VmXml vm) {
+    public void delCapacity(VmElement vm) {
          cpu_usage -= vm.getCpu();
          mem_usage -= vm.getMemory();
     }
@@ -188,9 +142,9 @@ public class HostXml {
      * @param dsPool all datastore to find the ds to be checked
      * @return true if the vm fits, false otherwise
      */
-    public boolean testDs(VmXml vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
+    public boolean testDs(VmElement vm, ClusterXmlPool clusterPool, DatastoreXmlPool dsPool) {
         boolean fits = false;
-        ClusterXml cluster = clusterPool.getById(this.clusterId);
+        ClusterElement cluster = clusterPool.getById(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
         List<DiskNode> disks = vm.getDisks();
         int sizeValue = 0;
@@ -198,7 +152,7 @@ public class HostXml {
             sizeValue += disk.getSize();
         }
         for (Integer dsId : datastoresIds) {
-            DatastoreXml ds = dsPool.getById(dsId);
+            DatastoreElement ds = dsPool.getById(dsId);
             if (ds.getFree_mb() > sizeValue) {
                 fits = true;
             }
@@ -215,7 +169,7 @@ public class HostXml {
      * @param vm the vm to be checked
      * @return true if vm can be hosted, false otherwise
      */
-    public boolean checkPci(VmXml vm) {
+    public boolean checkPci(VmElement vm) {
         boolean pciFits = false;
         if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
             return true;
@@ -227,7 +181,7 @@ public class HostXml {
             return false;
         }
         for (PciNode pci: pcis) {
-            for (PciNodeVm pciVm: vm.getPcis()) {
+            for (PciNode pciVm: vm.getPcis()) {
                 if ((pci.getPci_class().equals(pciVm.getPci_class())) && (pci.getDevice().equals(pciVm.getDevice())) && (pci.getVendor().equals(pciVm.getVendor()))) {
                     pciFits = true;
                 }
@@ -449,10 +403,14 @@ public class HostXml {
     /**
      * @return the dsIds
      */
-    public ArrayList<Integer> getDsIds() {
+    public List<Integer> getDsIds() {
         return dsIds;
     }
-
+    
+    public void setDsIds(List<Integer> dsIds) {
+        this.dsIds = dsIds;
+    }
+    
     /**
      * @return the pcis
      */
@@ -460,18 +418,20 @@ public class HostXml {
         return pcis;
     }
 
-    /**
-     * @return the host
-     */
-    public Host getHost() {
-        return host;
+    public void setPcis(List<PciNode> pcis) {
+        this.pcis = pcis;
     }
-
+    
     /**
      * @return the datastores
      */
     public List<DatastoreNode> getDatastores() {
         return datastores;
-    }
+    }  
 
+    public void setDatastores(List<DatastoreNode> datastores) {
+        this.datastores = datastores;
+    }
+    
+    
 }

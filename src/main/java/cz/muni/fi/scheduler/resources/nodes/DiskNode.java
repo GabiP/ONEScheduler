@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
@@ -11,20 +11,13 @@ import org.opennebula.client.PoolElement;
  *
  * @author Andras Urge
  */
-public class DiskNode extends NodeElement {
-    
-    private static final String XPATH_EXPR = "/VM/TEMPLATE/DISK";
-    
+public class DiskNode extends AbstractNode {
+        
     private int size;
 
     @Override
-    public void load(PoolElement vm, int index) {
-        size = Integer.parseInt(vm.xpath(XPATH_EXPR+"["+index+"]" + "/SIZE"));
-    }
-
-    @Override
-    public String getXpathExpr() {
-        return XPATH_EXPR;
+    public void load(PoolElement vm, String xpathExpr) {
+        size = Integer.parseInt(vm.xpath(xpathExpr + "/SIZE"));
     }
 
     public int getSize() {
@@ -34,6 +27,4 @@ public class DiskNode extends NodeElement {
     public void setSize(int size) {
         this.size = size;
     }
-    
-    
 }

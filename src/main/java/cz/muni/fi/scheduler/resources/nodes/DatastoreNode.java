@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
@@ -11,26 +11,19 @@ import org.opennebula.client.PoolElement;
  *
  * @author Gabriela Podolnikova
  */
-public class DatastoreNode extends NodeElement {
-    
-    private static final String XPATH_EXPR = "/HOST/HOST_SHARE/DATASTORES/DS";
-    
+public class DatastoreNode extends AbstractNode {
+        
     private Integer id_ds;
     private Integer free_mb;
     private Integer total_mb;
     private Integer used_mb;
 
     @Override
-    void load(PoolElement host, int i) {
-         id_ds = Integer.parseInt(host.xpath(XPATH_EXPR + "["+i+"]" + "/ID"));
-         free_mb = Integer.parseInt(host.xpath(XPATH_EXPR + "["+i+"]" + "/FREE_MB"));
-         total_mb = Integer.parseInt(host.xpath(XPATH_EXPR + "["+i+"]" + "/TOTAL_MB"));
-         used_mb = Integer.parseInt(host.xpath(XPATH_EXPR + "["+i+"]" + "/USED_MB"));
-    }
-
-    @Override
-    String getXpathExpr() {
-        return XPATH_EXPR;
+    public void load(PoolElement host, String xpathExpr) {
+         id_ds = Integer.parseInt(host.xpath(xpathExpr + "/ID"));
+         free_mb = Integer.parseInt(host.xpath(xpathExpr + "/FREE_MB"));
+         total_mb = Integer.parseInt(host.xpath(xpathExpr + "/TOTAL_MB"));
+         used_mb = Integer.parseInt(host.xpath(xpathExpr + "/USED_MB"));
     }
 
     /**

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
@@ -11,24 +11,17 @@ import org.opennebula.client.PoolElement;
  *
  * @author Gabriela Podolnikova
  */
-public class PciNode extends NodeElement {
-
-    private static final String XPATH_EXPR = "/HOST/HOST_SHARE/PCI_DEVICES/PCI";
-    
+public class PciNode extends AbstractNode {
+   
     private String pci_class;
     private String device;
     private String vendor;
     
     @Override
-    void load(PoolElement host, int i) {
-        pci_class = host.xpath(XPATH_EXPR + "["+i+"]" + "/CLASS");
-        device = host.xpath(XPATH_EXPR + "["+i+"]" + "/DEVICE");
-        vendor = host.xpath(XPATH_EXPR + "["+i+"]" + "/VENDOR");
-    }
-
-    @Override
-    String getXpathExpr() {
-        return XPATH_EXPR;
+    public void load(PoolElement host, String xpathExpr) {
+        pci_class = host.xpath(xpathExpr + "/CLASS");
+        device = host.xpath(xpathExpr + "/DEVICE");
+        vendor = host.xpath(xpathExpr + "/VENDOR");
     }
 
     /**
@@ -72,7 +65,4 @@ public class PciNode extends NodeElement {
     public String getVendor() {
         return vendor;
     }
-
-    
-    
 }
