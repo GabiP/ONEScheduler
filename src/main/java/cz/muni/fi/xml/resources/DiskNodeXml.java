@@ -1,0 +1,33 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cz.muni.fi.xml.resources;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+/**
+ *
+ * @author Andras Urge
+ */
+@JacksonXmlRootElement(localName = "DISK")
+public class DiskNodeXml {
+    
+    @JacksonXmlProperty(localName = "SIZE")
+    private int size;
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return "DiskNodeXml{" + "size=" + size + '}';
+    }
+}
