@@ -21,9 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.opennebula.client.Client;
-import org.opennebula.client.OneResponse;
 
 /**
  *
@@ -57,8 +55,8 @@ public class Scheduler {
     
     public void init() {
         try {
-            String SECRET = "";
-            String ENDPOINT = "";
+            String SECRET = "oneadmin:opennebula";
+            String ENDPOINT = "http://one-sendbox:2633/RPC2";
 
             oneClient = new Client(SECRET, ENDPOINT);
             
@@ -80,6 +78,13 @@ public class Scheduler {
         // VM queue construction
         queue.addAll(pendingVms);
         Map<HostElement, List<VmElement>> plan = processQueue(queue);
+        for (HostElement host: plan.keySet()) {
+            System.out.println(host);
+            System.out.println("Its vms: ");
+            for (VmElement vm: plan.get(host)) {
+                System.out.println(vm);
+            }
+        }
     }
 
     public Map<HostElement, List<VmElement>> processQueue(LinkedList queue) {
@@ -146,13 +151,13 @@ public class Scheduler {
         return enoughCapacity && reqs && enoughCapacityDs && pciFits;
     }
     
-    public List<VmElement> deployPlan(Map<HostElement, List<VmElement>> plan) {
+    /*public List<VmElement> deployPlan(Map<HostElement, List<VmElement>> plan) {
         List<VmElement> failedVms = new ArrayList<>();
         Set<HostElement> hosts = plan.keySet();
         for (HostElement host: hosts) {
             List<VmElement> vms = plan.get(host);
             for (VmElement vm: vms) {
-                OneResponse oneResp = vm.getVm().deploy(host.getId());
+                OneResponse oneResp = .deploy(host.getId());
                 if (oneResp.getMessage() == null) {
                     //Log error in deployment
                     System.out.println(oneResp.getErrorMessage());
@@ -161,7 +166,7 @@ public class Scheduler {
             }
         }
         return failedVms;
-    }
+    }*/
     
     public void loadOnePools() throws IOException {
         vmPool = new VmElementPool(oneClient);

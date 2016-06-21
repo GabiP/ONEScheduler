@@ -1,31 +1,40 @@
-package cz.muni.fi.scheduler.resources;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package cz.muni.fi.xml.resources;
 
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.elementpools.IClusterPool;
-import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import java.util.List;
 
 /**
- * This class represents an OpenNebula Host
  *
- * @author Gabriela Podolnikova
+ * @author gabi
  */
-public class HostElement {
-
+public class HostXml {
+    @JacksonXmlProperty(localName = "ID")
     private Integer id;
 
+    @JacksonXmlProperty(localName = "NAME")
     private String name;
 
-    private Integer state;
-
+    @JacksonXmlProperty(localName = "STATE")
+    private int state;
+    
+    @JacksonXmlProperty(localName = "CLUSTER_ID")
     private Integer clusterId;
     
+    @JacksonXmlProperty(localName = "DISK_USAGE")
     private Integer disk_usage;
     
+    @JacksonXmlProperty(localName = "MEM_USAGE")
     private Integer mem_usage;
     
+    @JacksonXmlProperty(localName = "CPU_USAGE")
     private Float cpu_usage;
 
     private Integer max_disk;
@@ -52,10 +61,12 @@ public class HostElement {
     
     private Integer reservedMemory;
         
-    private List<PciNode> pcis;
-        
-    private List<DatastoreNode> datastores;
-        
+    @JacksonXmlProperty(localName = "PCIS")
+    private PciNodeXml[] pcis;
+    
+    @JacksonXmlProperty(localName = "DATASTORES")
+    private DatastoreNodeXml[] datastores;
+
     public Integer getId() {
         return id;
     }
@@ -72,121 +83,38 @@ public class HostElement {
         this.name = name;
     }
 
-    public Integer getState() {
+    public int getState() {
         return state;
     }
 
-    public void setState(Integer state) {
+    public void setState(int state) {
         this.state = state;
     }
 
+    @Override
+    public String toString() {
+        String text =  "HostXml{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", pcis=" + pcis + ", datastores=" + datastores + '}';
+        text += "\n\t Datastores: ";
+        for(DatastoreNodeXml xml : datastores) {
+            text += xml + ", ";
+        }
+        return text;
+    }
+
+    /**
+     * @return the clusterId
+     */
     public Integer getClusterId() {
         return clusterId;
     }
 
+    /**
+     * @param clusterId the clusterId to set
+     */
     public void setClusterId(Integer clusterId) {
         this.clusterId = clusterId;
     }
 
-
-    @Override
-    public String toString() {
-        return "Host{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", state=" + state +
-                ", clusterId=" + clusterId +
-                '}';
-    }
-
-    
-    /**
-     * Tests whether a VM can be hosted by the host.
-     * Checks the memory and capacity on host.
-     * 
-     * @param vm virtual machine to be tested
-     * @return true if VM can be hosted, false otherwise
-     */
-    public boolean testCapacity(VmElement vm) {
-        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
-        return ((max_cpu - cpu_usage) >= vm.getCpu()) && ((max_mem - mem_usage) >= vm.getMemory());
-    }
-    
-    /**
-     * Increases cpu and memory on current host.
-     * @param vm virtual machine with information for increasing the capacity
-     */
-    public void addCapacity(VmElement vm) {
-         cpu_usage += vm.getCpu();
-         mem_usage += vm.getMemory();
-    }
-    
-    /**
-     * Decreases cpu and memory on current host.
-     * @param vm virtual machine with information for increasing the capacity
-     */
-    public void delCapacity(VmElement vm) {
-         cpu_usage -= vm.getCpu();
-         mem_usage -= vm.getMemory();
-    }
-    
-    /**
-     * Tests whether current host has enough free space(mb) in datastores to host the specified vm disks.
-     * Simplified version: firstly it adds up the sizes(mb) of vm's disks. Then this value is checked on cluster's datastores.
-     * TODO: It can divide the sizes of disks and try if it will fit somehow on the available datastores.
-     * @param vm to be tested
-     * @param clusterPool all clusters to find the host cluster
-     * @param dsPool all datastore to find the ds to be checked
-     * @return true if the vm fits, false otherwise
-     */
-    public boolean testDs(VmElement vm, IClusterPool clusterPool, IDatastorePool dsPool) {
-        boolean fits = false;
-        ClusterElement cluster = clusterPool.getCluster(this.clusterId);
-        List<Integer> datastoresIds = cluster.getDatastores();
-        List<DiskNode> disks = vm.getDisks();
-        int sizeValue = 0;
-        for (DiskNode disk : disks) {
-            sizeValue += disk.getSize();
-        }
-        for (Integer dsId : datastoresIds) {
-            DatastoreElement ds = dsPool.getDatastore(dsId);
-            if (ds.getFree_mb() > sizeValue) {
-                fits = true;
-            }
-        }
-        if (fits == false) {
-            System.out.println("Datastore does not have enough capacity to host the vm");
-        }
-        return fits;
-    }
-    
-    /**
-     * Checks whether the host has the specified pci that the vm requires.
-     * Note: the hosts in OpenNebule must be configured, that this functionality works.
-     * @param vm the vm to be checked
-     * @return true if vm can be hosted, false otherwise
-     */
-    public boolean checkPci(VmElement vm) {
-        boolean pciFits = false;
-        if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
-            return true;
-        }
-        if (!pcis.isEmpty() && vm.getPcis().isEmpty()) {
-            return true;
-        }
-        if (pcis.isEmpty() && !vm.getPcis().isEmpty()) {
-            return false;
-        }
-        for (PciNode pci: pcis) {
-            for (PciNode pciVm: vm.getPcis()) {
-                if ((pci.getPci_class().equals(pciVm.getPci_class())) && (pci.getDevice().equals(pciVm.getDevice())) && (pci.getVendor().equals(pciVm.getVendor()))) {
-                    pciFits = true;
-                }
-            }
-        }
-        return pciFits;
-    }
-    
     /**
      * @return the disk_usage
      */
@@ -396,28 +324,25 @@ public class HostElement {
     public void setReservedMemory(Integer reservedMemory) {
         this.reservedMemory = reservedMemory;
     }
-    
-    /**
-     * @return the pcis
-     */
-    public List<PciNode> getPcis() {
+
+    public PciNodeXml[] getPcis() {
         return pcis;
     }
 
-    public void setPcis(List<PciNode> pcis) {
+    public void setPcis(PciNodeXml[] pcis) {
         this.pcis = pcis;
     }
-    
-    /**
-     * @return the datastores
-     */
-    public List<DatastoreNode> getDatastores() {
-        return datastores;
-    }  
 
-    public void setDatastores(List<DatastoreNode> datastores) {
+    public DatastoreNodeXml[] getDatastores() {
+        return datastores;
+    }
+
+    public void setDatastores(DatastoreNodeXml[] datastores) {
         this.datastores = datastores;
     }
+
     
+
+   
     
 }

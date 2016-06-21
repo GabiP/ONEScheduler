@@ -70,6 +70,7 @@ public class HostElementPool implements IHostPool{
     
     @Override
     public HostElement getHost(int id) {
+        hp.info();
         return HostMapper.map(hp.getById(id));
     }
     

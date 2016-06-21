@@ -52,6 +52,7 @@ public class ClusterElementPool implements IClusterPool {
 
     @Override
     public ClusterElement getCluster(int id) {
+        cp.info();
         return ClusterMapper.map(cp.getById(id));
     }
 }

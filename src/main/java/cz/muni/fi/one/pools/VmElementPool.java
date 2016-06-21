@@ -70,5 +70,5 @@ public class VmElementPool implements IVmPool{
             vms.add(vm);
         }
         return vms;
-    } 
+    }
 }

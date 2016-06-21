@@ -49,6 +49,7 @@ public class UserElementPool implements IUserPool{
     
     @Override
     public UserElement getById(int id) {
+        up.info();
         return UserMapper.map(up.getById(id));
     }
 

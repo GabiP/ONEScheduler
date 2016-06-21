@@ -41,8 +41,7 @@ public class HostMapper {
         result.setUsed_cpu(XpathLoader.getInt(host, "/HOST/HOST_SHARE/USED_CPU"));
         result.setRunningVms(XpathLoader.getInt(host, "/HOST/HOST_SHARE/RUNNING_VMS"));
         result.setReservedCpu(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_CPU"));
-        result.setReservedMemory(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_MEM"));        
-        result.setDsIds(XpathLoader.getIntList(host, "/HOST/HOST_SHARE/DATASTORES/DS/ID")); 
+        result.setReservedMemory(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_MEM"));   
         
         try { 
             result.setPcis(XpathLoader.getNodeList(host, PciNode.class, "/HOST/HOST_SHARE/PCI_DEVICES/PCI"));

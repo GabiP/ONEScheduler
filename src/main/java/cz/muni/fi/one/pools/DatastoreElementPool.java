@@ -50,6 +50,7 @@ public class DatastoreElementPool implements IDatastorePool {
     
     @Override
     public DatastoreElement getDatastore(int id) {
+        dp.info();
         return DatastoreMapper.map(dp.getById(id));
     }
     
