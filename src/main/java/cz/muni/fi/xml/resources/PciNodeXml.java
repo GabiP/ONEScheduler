@@ -13,7 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * @author gabi
  */
 @JacksonXmlRootElement(localName = "PCI")
-class PciNodeXml {
+public class PciNodeXml {
     
     @JacksonXmlProperty(localName = "CLASS")
     private String pci_class;

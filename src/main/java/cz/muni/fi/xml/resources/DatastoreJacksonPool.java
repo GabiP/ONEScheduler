@@ -14,24 +14,24 @@ import java.util.Arrays;
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "HOSTPOOL")
-public class HostJacksonPool {
-    @JacksonXmlProperty(localName = "HOST")
+@JacksonXmlRootElement(localName = "DATASTORE_POOL")
+public class DatastoreJacksonPool {
+    
+    @JacksonXmlProperty(localName = "DATASTORE")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private HostXml[] hosts;
+    private DatastoreXml[] datastores;
 
-    public HostXml[] getHosts() {
-        return hosts;
+    public DatastoreXml[] getDatastores() {
+        return datastores;
     }
 
-    public void setHosts(HostXml[] hosts) {
-        this.hosts = hosts;
+    public void setDatastores(DatastoreXml[] datastores) {
+        this.datastores = datastores;
     }
 
     @Override
     public String toString() {
-        return "Hostpool{" +
-                "hosts=" + Arrays.toString(hosts) +
-                '}';
+        return "DatastoreJacksonPool{" + "datastores=" + Arrays.toString(datastores) + '}';
     }
+    
 }

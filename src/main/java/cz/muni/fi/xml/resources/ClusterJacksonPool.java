@@ -8,30 +8,29 @@ package cz.muni.fi.xml.resources;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import java.util.Arrays;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "HOSTPOOL")
-public class HostJacksonPool {
-    @JacksonXmlProperty(localName = "HOST")
+@JacksonXmlRootElement(localName = "CLUSTER_POOL")
+public class ClusterJacksonPool {
+    
+    @JacksonXmlProperty(localName = "CLUSTER")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private HostXml[] hosts;
+    private ClusterXml[] clusters;
 
-    public HostXml[] getHosts() {
-        return hosts;
+    public ClusterXml[] getClusters() {
+        return clusters;
     }
 
-    public void setHosts(HostXml[] hosts) {
-        this.hosts = hosts;
+    public void setClusters(ClusterXml[] clusters) {
+        this.clusters = clusters;
     }
 
     @Override
     public String toString() {
-        return "Hostpool{" +
-                "hosts=" + Arrays.toString(hosts) +
-                '}';
+        return "ClusterJacksonPool{" + "clusters=" + clusters + '}';
     }
+    
 }

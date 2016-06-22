@@ -13,7 +13,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  *
  * @author gabi
  */
-@JacksonXmlRootElement(localName = "DATASTORE")
+@JacksonXmlRootElement(localName = "DS")
 public class DatastoreNodeXml {
     
     @JacksonXmlProperty(localName = "ID")

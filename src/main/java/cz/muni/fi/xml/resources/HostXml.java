@@ -36,36 +36,48 @@ public class HostXml {
     
     @JacksonXmlProperty(localName = "CPU_USAGE")
     private Float cpu_usage;
-
+    
+    @JacksonXmlProperty(localName = "MAX_DISK")
     private Integer max_disk;
 
+    @JacksonXmlProperty(localName = "MAX_MEM")
     private Integer max_mem;
 
+    @JacksonXmlProperty(localName = "MAX_CPU")
     private Float max_cpu;
 
+    @JacksonXmlProperty(localName = "FREE_DISK")
     private Integer free_disk;
     
+    @JacksonXmlProperty(localName = "FREE_MEM")
     private Integer free_mem;
 
+    @JacksonXmlProperty(localName = "FREE_CPU")
     private Float free_cpu;
 
+    @JacksonXmlProperty(localName = "USED_DISK")
     private Integer used_disk;
     
+    @JacksonXmlProperty(localName = "USED_MEM")
     private Integer used_mem;
     
+    @JacksonXmlProperty(localName = "USED_CPU")
     private Integer used_cpu;
-      
+    
+    @JacksonXmlProperty(localName = "RUNNING_VMS")
     private Integer runningVms;
     
+    @JacksonXmlProperty(localName = "RESERVED_CPU")
     private Integer reservedCpu;
     
+    @JacksonXmlProperty(localName = "RESERVED_MEMORY")
     private Integer reservedMemory;
         
-    @JacksonXmlProperty(localName = "PCIS")
-    private PciNodeXml[] pcis;
+    @JacksonXmlProperty(localName = "PCI_DEVICES")
+    private List<PciNodeXml> pcis;
     
     @JacksonXmlProperty(localName = "DATASTORES")
-    private DatastoreNodeXml[] datastores;
+    private List<DatastoreNodeXml> datastores;
 
     public Integer getId() {
         return id;
@@ -325,19 +337,19 @@ public class HostXml {
         this.reservedMemory = reservedMemory;
     }
 
-    public PciNodeXml[] getPcis() {
+    public List<PciNodeXml> getPcis() {
         return pcis;
     }
 
-    public void setPcis(PciNodeXml[] pcis) {
+    public void setPcis(List<PciNodeXml> pcis) {
         this.pcis = pcis;
     }
 
-    public DatastoreNodeXml[] getDatastores() {
+    public List<DatastoreNodeXml> getDatastores() {
         return datastores;
     }
 
-    public void setDatastores(DatastoreNodeXml[] datastores) {
+    public void setDatastores(List<DatastoreNodeXml> datastores) {
         this.datastores = datastores;
     }
 

@@ -6,59 +6,62 @@
 package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.xml.mappers.HostXmlMapper;
 import cz.muni.fi.xml.resources.HostJacksonPool;
-import cz.muni.fi.xml.resources.HostXml;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
- * @author gabi
+ * @author Gabriela Podolnikova
  */
 public class HostXmlPool implements IHostPool {
     
-    private String xml;
-    
-    private XmlMapper xmlMapper;
+    private List<HostElement> hosts;
 
-    public HostXmlPool(String xml) {
-        this.xml = xml;
-        xmlMapper = new XmlMapper();
+    public HostXmlPool(String xml)  throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        HostJacksonPool hostpool = xmlMapper.readValue(xml, HostJacksonPool.class);
+        hosts = HostXmlMapper.map(hostpool.getHosts());
     }    
 
     @Override
     public List<HostElement> getHosts() {
-        HostJacksonPool hostpool = null;
-        try {
-            hostpool = xmlMapper.readValue(xml, HostJacksonPool.class);
-        } catch (IOException ex) {
-            Logger.getLogger(HostXmlPool.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return HostXmlMapper.map(hostpool.getHosts());
+        return Collections.unmodifiableList(hosts);
     }
 
     @Override
     public List<HostElement> getActiveHosts() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<HostElement> activeHosts = new ArrayList<>();
+        for (HostElement host: getHosts()) {
+            if (host.getState() == 1 || host.getState() == 2) {
+                activeHosts.add(host);
+            }
+        }
+        return activeHosts;
     }
 
     @Override
     public List<Integer> getHostsIds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Integer> hostsIds = new ArrayList<>();
+        for(HostElement h: getHosts()) {
+            hostsIds.add(h.getId());
+        }
+        return hostsIds;
     }
 
     @Override
     public HostElement getHost(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (HostElement h : hosts) {
+            if (h.getId() == id) {
+                return h;
+            }
+        }
+        return null;
     }
     
 }

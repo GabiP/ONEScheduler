@@ -5,14 +5,18 @@
     <STATE>100</STATE>
     <DISK_USAGE>1</DISK_USAGE>
     <DATASTORES>
-        <DATASTORE>
+        <DS>
             <ID>0</ID>
             <TOTAL_MB>10</TOTAL_MB>
-        </DATASTORE>
-        <DATASTORE>
+        </DS>
+        <DS>
             <ID>1</ID>
             <TOTAL_MB>20</TOTAL_MB>
-        </DATASTORE>
-    </DATASTORES>    
+        </DS>
+    </DATASTORES>
+    <PCI_DEVICE>
+        <CLASS>CLASS</CLASS>
+        <VENDOR>VENDOR</VENDOR>
+    </PCI_DEVICE>    
   </HOST>
 </HOST_POOL>
