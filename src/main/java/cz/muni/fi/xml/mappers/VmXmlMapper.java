@@ -62,9 +62,11 @@ public class VmXmlMapper {
     // TODO : create new Mappers or Leave these here ???
     public static List<DiskNode> mapDisks(List<DiskNodeXml> disks) {
         List<DiskNode> result = new ArrayList<>();
-        for(DiskNodeXml xml : disks) {
-            result.add(map(xml));
-        }        
+        if (disks != null) {
+            for(DiskNodeXml xml : disks) {
+                result.add(map(xml));
+            }        
+        }
         return result;
     }
     
@@ -76,9 +78,11 @@ public class VmXmlMapper {
     
     public static List<HistoryNode> mapHistories(List<HistoryNodeXml> histories) {
         List<HistoryNode> result = new ArrayList<>();
-        for(HistoryNodeXml xml : histories) {
-            result.add(map(xml));
-        }        
+        if (histories != null) {
+            for(HistoryNodeXml xml : histories) {
+                result.add(map(xml));
+            }        
+        }
         return result;
     }
     
@@ -94,9 +98,11 @@ public class VmXmlMapper {
     
     public static List<NicNode> mapNics(List<NicNodeXml> nics) {
         List<NicNode> result = new ArrayList<>();
-        for(NicNodeXml xml : nics) {
-            result.add(map(xml));
-        }        
+        if (nics != null) {
+            for(NicNodeXml xml : nics) {
+                result.add(map(xml));
+            }   
+        }
         return result;
     }
     
@@ -108,9 +114,11 @@ public class VmXmlMapper {
     
     public static List<PciNode> mapPcis(List<PciNodeXml> pcis) {
         List<PciNode> result = new ArrayList<>();
-        for(PciNodeXml xml : pcis) {
-            result.add(map(xml));
-        }        
+        if (pcis != null) {
+            for(PciNodeXml xml : pcis) {
+                result.add(map(xml));
+            }        
+        }
         return result;
     }
     

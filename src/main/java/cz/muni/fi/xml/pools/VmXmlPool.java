@@ -59,7 +59,21 @@ public class VmXmlPool implements IVmPool {
     public List<VmElement> getVms(int userId, int state) {
         List<VmElement> result = new ArrayList<>();
         for (VmElement vm : vms) {
-            if (vm.getUid() == userId && vm.getState() == state) {
+            boolean hasUser = true;
+            boolean hasState = true;
+           
+            if (userId != Pool.ALL) {
+                hasUser = (vm.getUid() == userId);
+            }
+            
+            if (state != VirtualMachinePool.ALL_VM) {
+                hasState = (vm.getState() == state);
+                if (state == VirtualMachinePool.NOT_DONE) {
+                    hasState = hasState && (vm.getState() != 6);
+                }
+            }
+            
+            if (hasUser && hasState) {
                 result.add(vm);
             }
         }

@@ -19,7 +19,6 @@ public class UserXml {
     @JacksonXmlProperty(localName = "GID")
     private Integer gid;
     
-    //TODO : change Integer to Groups ?
     @JacksonXmlProperty(localName = "GROUPS")
     private List<Integer> groups;
 
