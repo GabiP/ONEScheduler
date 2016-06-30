@@ -43,16 +43,13 @@ public class VmXml {
     @JacksonXmlProperty(localName = "MEMORY")
     private Integer memory;
     
-    @JacksonXmlProperty(localName = "DATASTORE_ID")
-    private Integer datastore_id;
-    
     @JacksonXmlProperty(localName = "DISKS")
     private List<DiskNodeXml> disks;    
     
-    @JacksonXmlProperty(localName = "HISTORIES")
+    @JacksonXmlProperty(localName = "HISTORY_RECORDS")
     private List<HistoryNodeXml> histories;
     
-    @JacksonXmlProperty(localName = "NICS")
+    @JacksonXmlProperty(localName = "NIC")
     private List<NicNodeXml> nics;        
     
     @JacksonXmlProperty(localName = "TEMPLATE_ID")
@@ -70,7 +67,7 @@ public class VmXml {
     @JacksonXmlProperty(localName = "SCHED_DS_REQUIREMENTS")
     private String schedDsRequirements;
     
-    @JacksonXmlProperty(localName = "PCIS")
+    @JacksonXmlProperty(localName = "PCIS_DEVICES")
     private List<PciNodeXml> pcis;
 
     public Integer getVmId() {
@@ -151,14 +148,6 @@ public class VmXml {
 
     public void setMemory(Integer memory) {
         this.memory = memory;
-    }
-
-    public Integer getDatastore_id() {
-        return datastore_id;
-    }
-
-    public void setDatastore_id(Integer datastore_id) {
-        this.datastore_id = datastore_id;
     }
 
     public List<DiskNodeXml> getDisks() {

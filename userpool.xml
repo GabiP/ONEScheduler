@@ -3,8 +3,15 @@
         <ID>0</ID>
         <GID>0</GID>
         <GROUPS>
-            <ID></ID>
-            <ID></ID>
+            <ID>0</ID>
+        </GROUPS>
+    </USER>
+    <USER>
+        <ID>2</ID>
+        <GID>1</GID>
+        <GROUPS>
+          <ID>1</ID>
+          <ID>100</ID>
         </GROUPS>
     </USER>
 </USER_POOL>

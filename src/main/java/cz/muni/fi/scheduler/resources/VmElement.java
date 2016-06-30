@@ -46,8 +46,6 @@ public class VmElement {
     
     private Integer memory;
     
-    private Integer datastore_id;
-    
     private List<DiskNode> disks;    
     
     private List<HistoryNode> histories;
@@ -276,20 +274,6 @@ public class VmElement {
      */
     public void setMemory(Integer memory) {
         this.memory = memory;
-    }
-
-    /**
-     * @return the datastore_id
-     */
-    public Integer getDatastore_id() {
-        return datastore_id;
-    }
-
-    /**
-     * @param datastore_id the datastore_id to set
-     */
-    public void setDatastore_id(Integer datastore_id) {
-        this.datastore_id = datastore_id;
     }
 
     /**

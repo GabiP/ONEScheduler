@@ -72,8 +72,10 @@ public class HostXmlMapper {
     
     public static List<DatastoreNode> mapDatastores(List<DatastoreNodeXml> datastores) {
         List<DatastoreNode> result = new ArrayList<>();
-        for (DatastoreNodeXml xml : datastores) {
-            result.add(map(xml));
+        if (datastores !=null) {
+            for (DatastoreNodeXml xml : datastores) {
+                result.add(map(xml));
+            }
         }
         return result;
     }

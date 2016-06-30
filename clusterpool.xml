@@ -1,14 +1,14 @@
 <CLUSTER_POOL xmlns="http://opennebula.org/XMLSchema">
     <CLUSTER>
-        <ID>0</ID>
+        <ID>100</ID>
         <NAME>cluster01</NAME>
         <HOSTS>
-            <ID></ID>
-            <ID></ID>
+            <ID>0</ID>  
         </HOSTS>
         <DATASTORES>
-            <ID></ID>
-            <ID></ID>
+            <ID>0</ID>
+            <ID>1</ID>
+            <ID>2</ID>
         </DATASTORES>
     </CLUSTER>
 </CLUSTER_POOL>    

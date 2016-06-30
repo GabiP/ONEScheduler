@@ -38,8 +38,7 @@ public class VmMapper {
         result.setSchedDsRank(vm.xpath("/VM/USER_TEMPLATE/SCHED_DS_RANK"));
         result.setSchedRequirements(vm.xpath("/VM/USER_TEMPLATE/SCHED_REQUIREMENTS"));
         result.setSchedDsRequirements(vm.xpath("/VM/USER_TEMPLATE/SCHED_DS_REQUIREMENTS"));
-        result.setTemplateId(XpathLoader.getInt(vm, "/VM/TEMPLATE/TEMPLATE_ID"));   
-        result.setDatastore_id(XpathLoader.getInt(vm, "/VM/TEMPLATE/DISK/DATASTORE_ID"));
+        result.setTemplateId(XpathLoader.getInt(vm, "/VM/TEMPLATE/TEMPLATE_ID"));
                 
         try {
             result.setDisks(XpathLoader.getNodeList(vm, DiskNode.class, "/VM/TEMPLATE/DISK"));

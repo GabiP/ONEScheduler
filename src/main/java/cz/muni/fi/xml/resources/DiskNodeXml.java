@@ -17,6 +17,9 @@ public class DiskNodeXml {
     
     @JacksonXmlProperty(localName = "SIZE")
     private int size;
+    
+    @JacksonXmlProperty(localName = "DATASTORE_ID")
+    private Integer datastore_id;
 
     public int getSize() {
         return size;
@@ -26,8 +29,17 @@ public class DiskNodeXml {
         this.size = size;
     }
 
+    public Integer getDatastore_id() {
+        return datastore_id;
+    }
+
+    public void setDatastore_id(Integer datastore_id) {
+        this.datastore_id = datastore_id;
+    }
+
     @Override
     public String toString() {
-        return "DiskNodeXml{" + "size=" + size + '}';
+        return "DiskNodeXml{" + "size=" + size + ", datastore_id=" + datastore_id + '}';
     }
+    
 }

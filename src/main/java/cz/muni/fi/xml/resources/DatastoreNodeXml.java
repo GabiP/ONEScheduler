@@ -25,7 +25,7 @@ public class DatastoreNodeXml {
     @JacksonXmlProperty(localName = "TOTAL_MB")
     private int total_mb;
     
-    @JacksonXmlProperty(localName = "USED_CPU")
+    @JacksonXmlProperty(localName = "USED_MB")
     private int used_mb;
 
     public int getId_ds() {

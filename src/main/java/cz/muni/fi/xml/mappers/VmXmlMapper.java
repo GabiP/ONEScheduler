@@ -44,7 +44,6 @@ public class VmXmlMapper {
         result.setDeploy_id(vm.getDeploy_id());
         result.setCpu(vm.getCpu());
         result.setMemory(vm.getMemory());
-        result.setDatastore_id(vm.getDatastore_id());
         result.setTemplateId(vm.getTemplateId());
         result.setSchedRank(vm.getSchedRank());
         result.setSchedDsRank(vm.getSchedDsRank());
