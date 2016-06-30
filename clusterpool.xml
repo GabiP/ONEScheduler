@@ -1,0 +1,14 @@
+<CLUSTER_POOL xmlns="http://opennebula.org/XMLSchema">
+    <CLUSTER>
+        <ID>0</ID>
+        <NAME>cluster01</NAME>
+        <HOSTS>
+            <ID></ID>
+            <ID></ID>
+        </HOSTS>
+        <DATASTORES>
+            <ID></ID>
+            <ID></ID>
+        </DATASTORES>
+    </CLUSTER>
+</CLUSTER_POOL>    

@@ -1,0 +1,10 @@
+<USER_POOL xmlns="http://opennebula.org/XMLSchema">
+    <USER>
+        <ID>0</ID>
+        <GID>0</GID>
+        <GROUPS>
+            <ID></ID>
+            <ID></ID>
+        </GROUPS>
+    </USER>
+</USER_POOL>
