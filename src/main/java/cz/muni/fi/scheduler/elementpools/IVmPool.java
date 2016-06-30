@@ -28,8 +28,6 @@ public interface IVmPool {
      * Gets virtual machines by user and state.
      * @param userId: >= 0            = UID User's Virtual Machines
      *             Pool.ALL        = All Virtual Machines
-     *             Pool.MINE       = Connected user's Virtual Machines
-     *             Pool.MINE_GROUP = Connected user's Virtual Machines, and the ones in his group
      *             
      * @param state: 1 = pending
      *             2 = hold

@@ -37,41 +37,40 @@ public class VmXml {
     @JacksonXmlProperty(localName = "DEPLOY_ID")
     private String deploy_id;
     
-    // TODO : properties are not at this level
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "CPU")
     private Float cpu;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "MEMORY")
     private Integer memory;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "DATASTORE_ID")
     private Integer datastore_id;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "DISKS")
     private List<DiskNodeXml> disks;    
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "HISTORIES")
     private List<HistoryNodeXml> histories;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "NICS")
     private List<NicNodeXml> nics;        
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "TEMPLATE_ID")
     private Integer templateId;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "SCHED_RANK")
     private String schedRank;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "SCHED_DS_RANK")
     private String schedDsRank;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "SCHED_REQUIREMENTS")
     private String schedRequirements;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "SCHED_DS_REQUIREMENTS")
     private String schedDsRequirements;
     
-    @JacksonXmlProperty(localName = "")
+    @JacksonXmlProperty(localName = "PCIS")
     private List<PciNodeXml> pcis;
 
     public Integer getVmId() {

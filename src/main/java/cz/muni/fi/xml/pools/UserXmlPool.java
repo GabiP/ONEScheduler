@@ -11,6 +11,7 @@ import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.xml.mappers.UserXmlMapper;
 import cz.muni.fi.xml.resources.UserJacksonPool;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,8 +30,7 @@ public class UserXmlPool implements IUserPool {
     
     @Override
     public List<UserElement> getUsers() {
-        // TODO : maybe unmodifiable or new array ???
-        return users;
+        return Collections.unmodifiableList(users);
     }
 
     @Override
