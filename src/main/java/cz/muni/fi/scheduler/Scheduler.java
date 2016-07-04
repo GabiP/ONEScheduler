@@ -1,6 +1,7 @@
 package cz.muni.fi.scheduler;
 
 import cz.muni.fi.authorization.AuthorizationManager;
+import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.one.pools.AclElementPool;
 import cz.muni.fi.one.pools.ClusterElementPool;
 import cz.muni.fi.one.pools.DatastoreElementPool;
@@ -29,17 +30,11 @@ import org.opennebula.client.Client;
  */
 public class Scheduler {
     
-    Client oneClient;
-    
-    AuthorizationManager authorizationManager;
+    IAuthorizationManager authorizationManager;
     
     IHostPool hostPool;
     
-    IVmPool vmPool;
-    
-    IUserPool userPool;
-    
-    IAclPool aclPool;
+    IVmPool vmPool;    
     
     IClusterPool clusterPool;
     
@@ -52,24 +47,17 @@ public class Scheduler {
      * For concurrent queues we can use: ConcurrentLinkedQueue
      */
     private LinkedList queue = new LinkedList();
-    
-    public void init() {
-        try {
-            String SECRET = "oneadmin:opennebula";
-            String ENDPOINT = "http://one-sendbox:2633/RPC2";
 
-            oneClient = new Client(SECRET, ENDPOINT);
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
+    Scheduler(IVmPool vmPool, IHostPool hostPool, IClusterPool clusterPool, IDatastorePool dsPool, IAuthorizationManager authorizationManager) {
+        this.vmPool = vmPool;
+        this.hostPool = hostPool;
+        this.clusterPool = clusterPool;
+        this.dsPool = dsPool;
+        this.authorizationManager = authorizationManager;
     }
     
-    public void body() throws InterruptedException, IOException {
-        //load all pools - must be the first call
-        loadOnePools();
-        //instantiate the Authorizationmanager
-        authorizationManager = new AuthorizationManager(aclPool, clusterPool, hostPool, dsPool, userPool);
+
+    public Map<HostElement, List<VmElement>> getPlan() throws InterruptedException, IOException {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
@@ -85,6 +73,7 @@ public class Scheduler {
                 System.out.println(vm);
             }
         }
+        return plan;
     }
 
     public Map<HostElement, List<VmElement>> processQueue(LinkedList queue) {
@@ -168,12 +157,5 @@ public class Scheduler {
         return failedVms;
     }*/
     
-    public void loadOnePools() throws IOException {
-        vmPool = new VmElementPool(oneClient);
-        hostPool = new HostElementPool(oneClient);
-        userPool = new UserElementPool(oneClient);
-        aclPool = new AclElementPool(oneClient);
-        clusterPool = new ClusterElementPool(oneClient);
-        dsPool = new DatastoreElementPool(oneClient);
-    }
+
 }

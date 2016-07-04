@@ -22,7 +22,7 @@ import org.opennebula.client.acl.Acl;
  *
  * @author Gabriela Podolnikova
  */
-public class AuthorizationManager {
+public class AuthorizationManager implements IAuthorizationManager {
     
     private final IAclPool aclPool;
     private final IClusterPool clusterPool;
@@ -44,6 +44,7 @@ public class AuthorizationManager {
      * @param vm the virtual machine's user's to be authorized
      * @return an array with ids of authorized hosts
      */
+    @Override
     public List<Integer> authorize(VmElement vm) {
         Integer uid = vm.getUid();
         List<Integer> userGroups = userPool.getById(uid).getGroups();
