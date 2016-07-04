@@ -31,12 +31,7 @@ public class HistoryNode extends AbstractNode {
     public void load(PoolElement vm, String xpathExpr) {
         startTime = Integer.parseInt(vm.xpath(xpathExpr + "/RSTIME"));
         endTime = Integer.parseInt(vm.xpath(xpathExpr + "/RETIME"));
-        reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));
-        if (endTime != 0) {
-            runTime = (int) (endTime - startTime);
-        } else {
-            runTime = (int) (System.currentTimeMillis()/1000L - startTime);
-        }
+        reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));        
     }
     
     public void setReason(int reason) {
@@ -68,6 +63,12 @@ public class HistoryNode extends AbstractNode {
     }
 
     public int getRunTime() {
+        // TODO : agree with Dalibor how to handle missing End Time
+        if (endTime != 0) {
+            runTime = (int) (endTime - startTime);
+        } else {
+            runTime = (int) (System.currentTimeMillis()/1000L - startTime);
+        }
         return runTime;
     }
     

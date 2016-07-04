@@ -5,12 +5,13 @@
  */
 package cz.muni.fi.xml.pools;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.xml.mappers.ClusterXmlMapper;
-import cz.muni.fi.xml.resources.ClusterJacksonPool;
-import java.io.IOException;
+import cz.muni.fi.xml.resources.ClusterXml;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,15 +19,18 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
+@JacksonXmlRootElement(localName = "CLUSTER_POOL")
 public class ClusterXmlPool implements IClusterPool {
+    
+    @JacksonXmlProperty(localName = "CLUSTER")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<ClusterXml> clusterXmls;
+    
+    private List<ClusterElement> clusters;
 
-    List<ClusterElement> clusters;
-
-    public ClusterXmlPool(String xml) throws IOException {
-        XmlMapper xmlMapper = new XmlMapper();
-        ClusterJacksonPool clPool = xmlMapper.readValue(xml, ClusterJacksonPool.class);
-        clusters = ClusterXmlMapper.map(clPool.getClusters());
-    }
+    public ClusterXmlPool() {
+        clusters = ClusterXmlMapper.map(clusterXmls);
+    }    
     
     @Override
     public List<ClusterElement> getClusters() {

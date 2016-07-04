@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class DatastoreXmlMapper {
 
-    public static List<DatastoreElement> map(DatastoreXml[] datastores) {
+    public static List<DatastoreElement> map(List<DatastoreXml> datastores) {
         List<DatastoreElement> result = new ArrayList<>();
         for (DatastoreXml xml : datastores) {
             result.add(map(xml));
