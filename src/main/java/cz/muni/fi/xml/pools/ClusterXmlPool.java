@@ -24,27 +24,20 @@ public class ClusterXmlPool implements IClusterPool {
     
     @JacksonXmlProperty(localName = "CLUSTER")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<ClusterXml> clusterXmls;
-    
-    private List<ClusterElement> clusters;
-
-    public ClusterXmlPool() {
-        clusters = ClusterXmlMapper.map(clusterXmls);
-    }    
+    private List<ClusterXml> clusters;
     
     @Override
     public List<ClusterElement> getClusters() {
-        return Collections.unmodifiableList(clusters);
+        return Collections.unmodifiableList(ClusterXmlMapper.map(clusters));
     }
 
     @Override
     public ClusterElement getCluster(int id) {
-        for (ClusterElement cl : clusters) {
+        for (ClusterElement cl : ClusterXmlMapper.map(clusters)) {
             if (cl.getId() == id) {
                 return cl;
             }
         }
         return null;
-    }
-    
+    }    
 }

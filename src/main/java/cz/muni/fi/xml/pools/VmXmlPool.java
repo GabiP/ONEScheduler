@@ -26,13 +26,7 @@ public class VmXmlPool implements IVmPool {
     
     @JacksonXmlProperty(localName = "VM")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<VmXml> vmXmls;
-    
-    private List<VmElement> vms;
-
-    public VmXmlPool() {
-        vms = VmXmlMapper.map(vmXmls);
-    }
+    private List<VmXml> vms;
         
     @Override
     public List<VmElement> getVms() {
@@ -62,7 +56,7 @@ public class VmXmlPool implements IVmPool {
     @Override
     public List<VmElement> getVms(int userId, int state) {
         List<VmElement> result = new ArrayList<>();
-        for (VmElement vm : vms) {
+        for (VmElement vm : VmXmlMapper.map(vms)) {
             boolean hasUser = true;
             boolean hasState = true;
            

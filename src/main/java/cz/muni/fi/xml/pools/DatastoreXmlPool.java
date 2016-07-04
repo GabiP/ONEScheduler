@@ -25,22 +25,16 @@ public class DatastoreXmlPool implements IDatastorePool {
     
     @JacksonXmlProperty(localName = "DATASTORE")
     @JacksonXmlElementWrapper(useWrapping = false)    
-    private List<DatastoreXml> datastoreXmls;        
-            
-    private List<DatastoreElement> datastores;
-
-    public DatastoreXmlPool() {
-        datastores = DatastoreXmlMapper.map(datastoreXmls);
-    }
-        
+    private List<DatastoreXml> datastores;        
+                    
     @Override
     public List<DatastoreElement> getDatastores() {
-        return Collections.unmodifiableList(datastores);
+        return Collections.unmodifiableList(DatastoreXmlMapper.map(datastores));
     }
 
     @Override
     public DatastoreElement getDatastore(int id) {
-        for (DatastoreElement ds : datastores) {
+        for (DatastoreElement ds : DatastoreXmlMapper.map(datastores)) {
             if (ds.getId() == id) {
                 return ds;
             }

@@ -24,22 +24,16 @@ public class UserXmlPool implements IUserPool {
 
     @JacksonXmlProperty(localName = "USER")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<UserXml> userXmls;
-    
-    private List<UserElement> users;
-
-    public UserXmlPool() {
-        users = UserXmlMapper.map(userXmls);
-    }
-    
+    private List<UserXml> users;
+        
     @Override
     public List<UserElement> getUsers() {
-        return Collections.unmodifiableList(users);
+        return Collections.unmodifiableList(UserXmlMapper.map(users));
     }
 
     @Override
     public UserElement getById(int id) {
-        for (UserElement u : users) {
+        for (UserElement u : UserXmlMapper.map(users)) {
             if (u.getId() == id) {
                 return u;
             }

@@ -25,17 +25,11 @@ public class HostXmlPool implements IHostPool {
     
     @JacksonXmlProperty(localName = "HOST")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<HostXml> hostXmls;
-    
-    private List<HostElement> hosts;
-
-    public HostXmlPool() {
-        hosts = HostXmlMapper.map(hostXmls);
-    }       
+    private List<HostXml> hosts;
 
     @Override
     public List<HostElement> getHosts() {
-        return Collections.unmodifiableList(hosts);
+        return Collections.unmodifiableList(HostXmlMapper.map(hosts));
     }
 
     @Override
@@ -60,7 +54,7 @@ public class HostXmlPool implements IHostPool {
 
     @Override
     public HostElement getHost(int id) {
-        for (HostElement h : hosts) {
+        for (HostElement h : HostXmlMapper.map(hosts)) {
             if (h.getId() == id) {
                 return h;
             }
