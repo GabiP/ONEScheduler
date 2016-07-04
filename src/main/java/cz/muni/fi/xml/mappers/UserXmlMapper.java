@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class UserXmlMapper {
     
-    public static List<UserElement> map(UserXml[] users) {
+    public static List<UserElement> map(List<UserXml> users) {
         List<UserElement> result = new ArrayList<>();
         for(UserXml xml : users) {
             result.add(map(xml));

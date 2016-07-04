@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class VmXmlMapper {
     
-    public static List<VmElement> map(VmXml[] vms) {
+    public static List<VmElement> map(List<VmXml> vms) {
         List<VmElement> result = new ArrayList<>();
         for(VmXml xml : vms) {
             result.add(map(xml));

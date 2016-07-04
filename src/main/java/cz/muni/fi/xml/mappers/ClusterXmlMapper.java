@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ClusterXmlMapper {
     
-    public static List<ClusterElement> map(ClusterXml[] clusters) {
+    public static List<ClusterElement> map(List<ClusterXml> clusters) {
         List<ClusterElement> result = new ArrayList<>();
         for (ClusterXml xml : clusters) {
             result.add(map(xml));

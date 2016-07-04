@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class HostXmlMapper {
     
-    public static List<HostElement> map(HostXml[] hosts) {
+    public static List<HostElement> map(List<HostXml> hosts) {
         List<HostElement> result = new ArrayList<>();
         for(HostXml xml : hosts) {
             result.add(map(xml));

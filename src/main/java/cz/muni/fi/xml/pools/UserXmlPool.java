@@ -5,12 +5,13 @@
  */
 package cz.muni.fi.xml.pools;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.xml.mappers.UserXmlMapper;
-import cz.muni.fi.xml.resources.UserJacksonPool;
-import java.io.IOException;
+import cz.muni.fi.xml.resources.UserXml;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,14 +19,17 @@ import java.util.List;
  *
  * @author Andras Urge
  */
+@JacksonXmlRootElement(localName = "USERPOOL")
 public class UserXmlPool implements IUserPool {
 
-    List<UserElement> users;
+    @JacksonXmlProperty(localName = "USER")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<UserXml> userXmls;
     
-    public UserXmlPool(String xml) throws IOException {
-        XmlMapper xmlMapper = new XmlMapper();
-        UserJacksonPool userPool = xmlMapper.readValue(xml, UserJacksonPool.class);
-        users = UserXmlMapper.map(userPool.getUsers());
+    private List<UserElement> users;
+
+    public UserXmlPool() {
+        users = UserXmlMapper.map(userXmls);
     }
     
     @Override

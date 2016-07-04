@@ -5,12 +5,13 @@
  */
 package cz.muni.fi.xml.pools;
 
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.xml.mappers.VmXmlMapper;
-import cz.muni.fi.xml.resources.VmJacksonPool;
-import java.io.IOException;
+import cz.muni.fi.xml.resources.VmXml;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.Pool;
@@ -20,16 +21,19 @@ import org.opennebula.client.vm.VirtualMachinePool;
  *
  * @author Andras Urge
  */
+@JacksonXmlRootElement(localName = "VMPOOL")
 public class VmXmlPool implements IVmPool {
+    
+    @JacksonXmlProperty(localName = "VM")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<VmXml> vmXmls;
+    
+    private List<VmElement> vms;
 
-    List<VmElement> vms;
-    
-    public VmXmlPool(String xml) throws IOException {
-        XmlMapper xmlMapper = new XmlMapper();
-        VmJacksonPool vmPool = xmlMapper.readValue(xml, VmJacksonPool.class);
-        vms = VmXmlMapper.map(vmPool.getVms());
+    public VmXmlPool() {
+        vms = VmXmlMapper.map(vmXmls);
     }
-    
+        
     @Override
     public List<VmElement> getVms() {
         return getVms(Pool.ALL, VirtualMachinePool.NOT_DONE);
