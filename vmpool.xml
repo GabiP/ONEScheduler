@@ -1,9 +1,9 @@
-<VM_POOL xmlns="http://opennebula.org/XMLSchema">
+<VMPOOL xmlns="http://opennebula.org/XMLSchema">
     <VM>
         <ID>0</ID>
         <UID>0</UID>
         <GID>0</GID>
-        <NAME>vm01</NAME>
+        <!--NAME>vm01</NAME>
         <STATE>8</STATE>
         <LCM_STATE>0</LCM_STATE>
         <RESCHED>0</RESCHED>
@@ -172,6 +172,6 @@
             <NETWORK_ID>0</NETWORK_ID>
         </NIC>
         <SCHED_REQS></SCHED_REQS>
-        <PCI_DEVICES/>
+        <PCI_DEVICES/-->
     </VM>
-</VM_POOL>
+</VMPOOL>

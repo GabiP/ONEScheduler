@@ -1,4 +1,4 @@
-<HOST_POOL xmlns="http://opennebula.org/XMLSchema">
+<HOSTPOOL xmlns="http://opennebula.org/XMLSchema">
   <!--Zero or more repetitions:-->
   <HOST>
     <ID>0</ID>
@@ -29,4 +29,4 @@
     </PCI_DEVICES>
     <DATASTORES/>
   </HOST>
-</HOST_POOL>
+</HOSTPOOL>

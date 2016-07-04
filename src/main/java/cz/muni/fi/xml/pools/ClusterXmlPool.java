@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "CLUSTER_POOL")
+@JacksonXmlRootElement(localName = "CLUSTERPOOL")
 public class ClusterXmlPool implements IClusterPool {
     
     @JacksonXmlProperty(localName = "CLUSTER")

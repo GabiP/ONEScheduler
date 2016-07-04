@@ -1,18 +1,9 @@
 package cz.muni.fi.scheduler;
 
-import cz.muni.fi.authorization.AuthorizationManager;
 import cz.muni.fi.authorization.IAuthorizationManager;
-import cz.muni.fi.one.pools.AclElementPool;
-import cz.muni.fi.one.pools.ClusterElementPool;
-import cz.muni.fi.one.pools.DatastoreElementPool;
-import cz.muni.fi.one.pools.HostElementPool;
-import cz.muni.fi.one.pools.UserElementPool;
-import cz.muni.fi.one.pools.VmElementPool;
-import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
@@ -22,7 +13,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.opennebula.client.Client;
 
 /**
  *
@@ -57,7 +47,7 @@ public class Scheduler {
     }
     
 
-    public Map<HostElement, List<VmElement>> getPlan() throws InterruptedException, IOException {
+    public Map<HostElement, List<VmElement>> getPlan() {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
@@ -66,13 +56,6 @@ public class Scheduler {
         // VM queue construction
         queue.addAll(pendingVms);
         Map<HostElement, List<VmElement>> plan = processQueue(queue);
-        for (HostElement host: plan.keySet()) {
-            System.out.println(host);
-            System.out.println("Its vms: ");
-            for (VmElement vm: plan.get(host)) {
-                System.out.println(vm);
-            }
-        }
         return plan;
     }
 

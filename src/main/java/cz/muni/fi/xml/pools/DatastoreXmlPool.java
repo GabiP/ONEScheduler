@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "DATASTORE_POOL")
+@JacksonXmlRootElement(localName = "DATASTOREPOOL")
 public class DatastoreXmlPool implements IDatastorePool {
     
     @JacksonXmlProperty(localName = "DATASTORE")

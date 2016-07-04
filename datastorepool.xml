@@ -1,4 +1,4 @@
-<DATASTORE_POOL xmlns="http://opennebula.org/XMLSchema">
+<DATASTOREPOOL xmlns="http://opennebula.org/XMLSchema">
     <DATASTORE>
         <ID>0</ID>
         <UID>0</UID>
@@ -32,4 +32,4 @@
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
     </DATASTORE>
-</DATASTORE_POOL>
+</DATASTOREPOOL>

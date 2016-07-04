@@ -1,4 +1,4 @@
-<CLUSTER_POOL xmlns="http://opennebula.org/XMLSchema">
+<CLUSTERPOOL xmlns="http://opennebula.org/XMLSchema">
     <CLUSTER>
         <ID>100</ID>
         <NAME>cluster01</NAME>
@@ -11,4 +11,4 @@
             <ID>2</ID>
         </DATASTORES>
     </CLUSTER>
-</CLUSTER_POOL>    
+</CLUSTERPOOL>    

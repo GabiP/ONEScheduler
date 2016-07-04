@@ -1,4 +1,4 @@
-<USER_POOL xmlns="http://opennebula.org/XMLSchema">
+<USERPOOL xmlns="http://opennebula.org/XMLSchema">
     <USER>
         <ID>0</ID>
         <GID>0</GID>
@@ -14,4 +14,4 @@
           <ID>100</ID>
         </GROUPS>
     </USER>
-</USER_POOL>
+</USERPOOL>
