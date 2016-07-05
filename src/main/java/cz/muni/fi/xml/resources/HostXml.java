@@ -159,7 +159,7 @@ public class HostXml {
      * @return the cpu_usage
      */
     public Float getCpu_usage() {
-        return cpu_usage;
+        return cpu_usage/100;
     }
 
     /**
@@ -201,7 +201,7 @@ public class HostXml {
      * @return the max_cpu
      */
     public Float getMax_cpu() {
-        return max_cpu;
+        return max_cpu/100;
     }
 
     /**
@@ -243,7 +243,7 @@ public class HostXml {
      * @return the free_cpu
      */
     public Float getFree_cpu() {
-        return free_cpu;
+        return free_cpu/100;
     }
 
     /**

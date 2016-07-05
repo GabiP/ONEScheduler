@@ -72,10 +72,10 @@ public class Scheduler {
             List<HostElement> filteredHosts = filterAuthorizedHosts(authorizedHosts, vm);
             // deploy if filtered hosts is not empty
             if (!filteredHosts.isEmpty()) {
-                putValueToMap(plan, filteredHosts.get(0), vm);
+                plan = putValueToMap(plan, filteredHosts.get(0), vm);
                 System.out.println("Deploying vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
-                // addCapacity - id I add capacity, won't there be a problem with the parameters when it is actually deployed?
-                // Should I make a copy of this parameters and ask for that parameter. And When I update the pools I also update the copy.
+                // addCapacity
+                filteredHosts.get(0).addCapacity(vm);
             }
             queue.poll();
         }
@@ -93,14 +93,15 @@ public class Scheduler {
         return filteredHosts;
     }
     
-    public void putValueToMap(Map<HostElement, List<VmElement>> plan, HostElement host, VmElement vm) {
+    public Map<HostElement, List<VmElement>> putValueToMap(Map<HostElement, List<VmElement>> plan, HostElement host, VmElement vm) {
         if (plan.containsKey(host)) {
             plan.get(host).add(vm);
         } else {
             List<VmElement> values = new ArrayList<>();
             values.add(vm);
             plan.put(host, values);
-        }              
+        }
+        return plan;
     }
     
     public boolean match(HostElement h, VmElement vm) {

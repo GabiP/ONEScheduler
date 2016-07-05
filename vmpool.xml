@@ -4,10 +4,10 @@
         <UID>0</UID>
         <GID>0</GID>
         <NAME>vm01</NAME>
-        <STATE>8</STATE>
-        <LCM_STATE>0</LCM_STATE>
+        <STATE>1</STATE>
+        <LCM_STATE></LCM_STATE>
         <RESCHED>0</RESCHED>
-        <DEPLOY_ID>one-0</DEPLOY_ID>
+        <DEPLOY_ID></DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>       
@@ -41,10 +41,10 @@
         <UID>0</UID>
         <GID>0</GID>
         <NAME>vm01</NAME>
-        <STATE>3</STATE>
-        <LCM_STATE>3</LCM_STATE>
+        <STATE>1</STATE>
+        <LCM_STATE></LCM_STATE>
         <RESCHED>0</RESCHED>
-        <DEPLOY_ID>one-1</DEPLOY_ID>
+        <DEPLOY_ID></DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>
@@ -78,10 +78,10 @@
         <UID>0</UID>
         <GID>0</GID>
         <NAME>vm01</NAME>
-        <STATE>3</STATE>
-        <LCM_STATE>3</LCM_STATE>
+        <STATE>1</STATE>
+        <LCM_STATE></LCM_STATE>
         <RESCHED>0</RESCHED>
-        <DEPLOY_ID>one-3</DEPLOY_ID>
+        <DEPLOY_ID></DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>       
@@ -115,10 +115,10 @@
         <UID>0</UID>
         <GID>100</GID>
         <NAME>vm01</NAME>
-        <STATE>3</STATE>
-        <LCM_STATE>3</LCM_STATE>
+        <STATE>1</STATE>
+        <LCM_STATE></LCM_STATE>
         <RESCHED>0</RESCHED>
-        <DEPLOY_ID>one-5</DEPLOY_ID>
+        <DEPLOY_ID></DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>       
@@ -157,10 +157,10 @@
         <UID>0</UID>
         <GID>0</GID>
         <NAME>vm02</NAME>
-        <STATE>8</STATE>
-        <LCM_STATE>0</LCM_STATE>
+        <STATE>1</STATE>
+        <LCM_STATE></LCM_STATE>
         <RESCHED>0</RESCHED>
-        <DEPLOY_ID>one-10</DEPLOY_ID>
+        <DEPLOY_ID></DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>

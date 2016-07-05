@@ -40,6 +40,11 @@ public class DatastoreElement {
     
     //shared - yes or no, how to get it
     
+    public void addUsedMb(Integer mb) {
+        used_mb += mb;
+        free_mb -= mb;
+    }
+    
     /**
      * @return the id
      */

@@ -77,6 +77,9 @@ public class VmElement {
     
     
     public boolean evaluateSchedReqs(HostElement host) {
+        if (schedRequirements == null) {
+            return true;
+        }
         String[] reqs = schedRequirements.split("\\|");
         boolean fits = false;
         if (schedRequirements.equals("")) {

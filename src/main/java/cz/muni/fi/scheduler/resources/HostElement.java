@@ -108,26 +108,31 @@ public class HostElement {
      * @return true if VM can be hosted, false otherwise
      */
     public boolean testCapacity(VmElement vm) {
-        System.out.println("testCapacity:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
+        System.out.println("testCapacity - cpu:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
+        System.out.println("testCapacity - mem:" + max_mem + " - " + mem_usage + " = " + (max_mem - mem_usage) + " =? " + free_mem + " vm mem: " + vm.getMemory());
         return ((max_cpu - cpu_usage) >= vm.getCpu()) && ((max_mem - mem_usage) >= vm.getMemory());
     }
     
     /**
-     * Increases cpu and memory on current host.
+     * Increases cpu and memory on current host. And decreases free cpu and memory.
      * @param vm virtual machine with information for increasing the capacity
      */
     public void addCapacity(VmElement vm) {
          cpu_usage += vm.getCpu();
          mem_usage += vm.getMemory();
+         free_cpu -= vm.getCpu();
+         free_mem -= vm.getMemory();
     }
     
     /**
-     * Decreases cpu and memory on current host.
+     * Decreases cpu and memory on current host. And increases free cpu and memory.
      * @param vm virtual machine with information for increasing the capacity
      */
     public void delCapacity(VmElement vm) {
          cpu_usage -= vm.getCpu();
          mem_usage -= vm.getMemory();
+         free_cpu += vm.getCpu();
+         free_mem += vm.getMemory();
     }
     
     /**
@@ -152,6 +157,8 @@ public class HostElement {
             DatastoreElement ds = dsPool.getDatastore(dsId);
             if (ds.getFree_mb() > sizeValue) {
                 fits = true;
+                addDsCapacity(sizeValue, ds);
+                return fits;
             }
         }
         if (fits == false) {
@@ -160,9 +167,13 @@ public class HostElement {
         return fits;
     }
     
+    public void addDsCapacity(int sizeValue, DatastoreElement ds) {
+        ds.addUsedMb(sizeValue);
+    }
+    
     /**
      * Checks whether the host has the specified pci that the vm requires.
-     * Note: the hosts in OpenNebule must be configured, that this functionality works.
+     * Note: the hosts in OpenNebula must be configured, that this functionality works.
      * @param vm the vm to be checked
      * @return true if vm can be hosted, false otherwise
      */
