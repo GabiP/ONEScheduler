@@ -49,7 +49,7 @@ public class VmXml {
     @JacksonXmlProperty(localName = "HISTORY_RECORDS")
     private List<HistoryNodeXml> histories;
     
-    @JacksonXmlProperty(localName = "NIC")
+    @JacksonXmlProperty(localName = "NICS")
     private List<NicNodeXml> nics;        
     
     @JacksonXmlProperty(localName = "TEMPLATE_ID")
@@ -67,7 +67,7 @@ public class VmXml {
     @JacksonXmlProperty(localName = "SCHED_DS_REQUIREMENTS")
     private String schedDsRequirements;
     
-    @JacksonXmlProperty(localName = "PCIS_DEVICES")
+    @JacksonXmlProperty(localName = "PCI_DEVICES")
     private List<PciNodeXml> pcis;
 
     public Integer getVmId() {

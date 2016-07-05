@@ -3,17 +3,19 @@
         <ID>0</ID>
         <UID>0</UID>
         <GID>0</GID>
-        <!--NAME>vm01</NAME>
+        <NAME>vm01</NAME>
         <STATE>8</STATE>
         <LCM_STATE>0</LCM_STATE>
         <RESCHED>0</RESCHED>
         <DEPLOY_ID>one-0</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
-        <DATASTORE_ID>1</DATASTORE_ID>
-        <DISK>
-            <SIZE>200</SIZE>
-        </DISK>
+        <DISKS>       
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>200</SIZE>
+            </DISK>
+        </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
                 <RSTIME>1456231287</RSTIME>
@@ -26,10 +28,12 @@
                 <REASON>1</REASON>
             </HISTORY>
         </HISTORY_RECORDS>
-        <NIC>
-            <NETWORK_ID>0</NETWORK_ID>
-        </NIC>
-        <SCHED_REQS></SCHED_REQS>
+        <NICS>
+            <NIC>
+                <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+        </NICS>
+        <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>
         <PCI_DEVICES/>
     </VM>
     <VM>
@@ -43,10 +47,12 @@
         <DEPLOY_ID>one-1</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
-        <DATASTORE_ID>1</DATASTORE_ID>
-        <DISK>
-            <SIZE>200</SIZE>
-        </DISK>
+        <DISKS>
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>200</SIZE>
+            </DISK>
+        </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
                 <RSTIME>1467280843</RSTIME>
@@ -59,10 +65,12 @@
                 <REASON>0</REASON>
             </HISTORY>
         </HISTORY_RECORDS>
-        <NIC>
-            <NETWORK_ID>0</NETWORK_ID>
-        </NIC>
-        <SCHED_REQS></SCHED_REQS>
+        <NICS>
+            <NIC>
+                <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+        </NICS>
+        <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>
         <PCI_DEVICES/>
     </VM>
     <VM>
@@ -76,10 +84,12 @@
         <DEPLOY_ID>one-3</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
-        <DATASTORE_ID>1</DATASTORE_ID>
-        <DISK>
-            <SIZE>200</SIZE>
-        </DISK>
+        <DISKS>       
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>200</SIZE>
+            </DISK>
+        </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
                 <RSTIME>1467280843</RSTIME>
@@ -92,10 +102,12 @@
                 <REASON>0</REASON>
             </HISTORY>
         </HISTORY_RECORDS>
-        <NIC>
-            <NETWORK_ID>0</NETWORK_ID>
-        </NIC>
-        <SCHED_REQS></SCHED_REQS>
+        <NICS>
+            <NIC>
+                <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+        </NICS>
+        <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>
         <PCI_DEVICES/>
     </VM>
     <VM>
@@ -109,10 +121,12 @@
         <DEPLOY_ID>one-5</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
-        <DATASTORE_ID>1</DATASTORE_ID>
-        <DISK>
-            <SIZE>200</SIZE>
-        </DISK>
+        <DISKS>       
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>200</SIZE>
+            </DISK>
+        </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
                 <RSTIME>1456264052</RSTIME>
@@ -130,10 +144,12 @@
                 <REASON>0</REASON>
             </HISTORY>
         </HISTORY_RECORDS>
-        <NIC>
-            <NETWORK_ID>0</NETWORK_ID>
-        </NIC>
-        <SCHED_REQS></SCHED_REQS>
+        <NICS>
+            <NIC>
+                <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+        </NICS>
+        <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>
         <PCI_DEVICES/>
     </VM>
     <VM>
@@ -147,10 +163,12 @@
         <DEPLOY_ID>one-10</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
-        <DATASTORE_ID>1</DATASTORE_ID>
-        <DISK>
-            <SIZE>200</SIZE>
-        </DISK>
+        <DISKS>
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>200</SIZE>
+            </DISK>
+        </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
                 <RSTIME>1456264052</RSTIME>
@@ -168,10 +186,12 @@
                 <REASON>0</REASON>
             </HISTORY>
         </HISTORY_RECORDS>
-        <NIC>
-            <NETWORK_ID>0</NETWORK_ID>
-        </NIC>
-        <SCHED_REQS></SCHED_REQS>
-        <PCI_DEVICES/-->
+        <NICS>
+            <NIC>
+                <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+        </NICS>
+        <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>
+        <PCI_DEVICES/>
     </VM>
 </VMPOOL>
