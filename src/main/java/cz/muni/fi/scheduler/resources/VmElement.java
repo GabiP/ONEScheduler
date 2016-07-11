@@ -10,6 +10,7 @@ import cz.muni.fi.scheduler.resources.nodes.NicNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents an OpenNebula Vm
@@ -396,5 +397,43 @@ public class VmElement {
 
     public void setNics(List<NicNode> nics) {
         this.nics = nics;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.getVmId());
+        hash = 47 * hash + Objects.hashCode(this.getName());
+        hash = 47 * hash + Objects.hashCode(this.getState());
+        hash = 47 * hash + Objects.hashCode(this.getCpu());
+        hash = 47 * hash + Objects.hashCode(this.getMemory());
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof VmElement)) {
+            return false;
+        }
+        final VmElement other = (VmElement) obj;
+        if (!Objects.equals(this.getVmId(), other.getVmId())) {
+            return false;
+        }
+        if (!Objects.equals(this.getName(), other.getName())) {
+            return false;
+        }
+        if (!Objects.equals(this.getState(), other.getState())) {
+            return false;
+        }
+        if (!Objects.equals(this.getCpu(), other.getCpu())) {
+            return false;
+        }
+        if (!Objects.equals(this.getMemory(), other.getMemory())) {
+            return false;
+        }
+        return true;
     }
 }

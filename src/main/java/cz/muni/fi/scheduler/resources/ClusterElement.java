@@ -6,6 +6,7 @@
 package cz.muni.fi.scheduler.resources;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -77,5 +78,31 @@ public class ClusterElement {
     
     public void setDatastores(List<Integer> datastores) {
         this.datastores = datastores;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.getId());
+        hash = 47 * hash + Objects.hashCode(this.getName());
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof DatastoreElement)) {
+            return false;
+        }
+        final DatastoreElement other = (DatastoreElement) obj;
+        if (!Objects.equals(this.getId(), other.getId())) {
+            return false;
+        }
+        if (!Objects.equals(this.getName(), other.getName())) {
+            return false;
+        }
+        return true;
     }
 }

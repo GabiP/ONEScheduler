@@ -6,6 +6,7 @@ import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This class represents an OpenNebula Host
@@ -430,5 +431,37 @@ public class HostElement {
         this.datastores = datastores;
     }
     
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.getId());
+        hash = 47 * hash + Objects.hashCode(this.getName());
+        hash = 47 * hash + Objects.hashCode(this.getState());
+        hash = 47 * hash + Objects.hashCode(this.getClusterId());
+        return hash;
+    }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof HostElement)) {
+            return false;
+        }
+        final HostElement other = (HostElement) obj;
+        if (!Objects.equals(this.getId(), other.getId())) {
+            return false;
+        }
+        if (!Objects.equals(this.getName(), other.getName())) {
+            return false;
+        }
+        if (!Objects.equals(this.getState(), other.getState())) {
+            return false;
+        }
+        if (!Objects.equals(this.getClusterId(), other.getClusterId())) {
+            return false;
+        }
+        return true;
+    }
 }

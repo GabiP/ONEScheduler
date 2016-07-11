@@ -5,6 +5,8 @@
  */
 package cz.muni.fi.scheduler.resources;
 
+import java.util.Objects;
+
 /**
  *
  * @author Gabriela Podolnikova
@@ -295,5 +297,39 @@ public class DatastoreElement {
      */
     public void setType(Integer type) {
         this.type = type;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + Objects.hashCode(this.getId());
+        hash = 47 * hash + Objects.hashCode(this.getName());
+        hash = 47 * hash + Objects.hashCode(this.getType());
+        hash = 47 * hash + Objects.hashCode(this.getCluster_id());
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof DatastoreElement)) {
+            return false;
+        }
+        final DatastoreElement other = (DatastoreElement) obj;
+        if (!Objects.equals(this.getId(), other.getId())) {
+            return false;
+        }
+        if (!Objects.equals(this.getName(), other.getName())) {
+            return false;
+        }
+        if (!Objects.equals(this.getType(), other.getType())) {
+            return false;
+        }
+        if (!Objects.equals(this.getCluster_id(), other.getCluster_id())) {
+            return false;
+        }
+        return true;
     }
 }
