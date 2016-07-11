@@ -15,6 +15,10 @@
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
             </DISK>
+            <DISK>
+                <DATASTORE_ID>1</DATASTORE_ID>
+                <SIZE>300</SIZE>
+            </DISK>
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
@@ -31,6 +35,9 @@
         <NICS>
             <NIC>
                 <NETWORK_ID>0</NETWORK_ID>
+            </NIC>
+            <NIC>
+                <NETWORK_ID>1</NETWORK_ID>
             </NIC>
         </NICS>
         <SCHED_REQUIREMENTS></SCHED_REQUIREMENTS>

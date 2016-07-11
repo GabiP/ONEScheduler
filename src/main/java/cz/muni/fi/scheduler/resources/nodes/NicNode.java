@@ -32,5 +32,10 @@ public class NicNode extends AbstractNode {
      */
     public void setNetworkId(Integer networkId) {
         this.networkId = networkId;
-    }    
+    }
+
+    @Override
+    public String toString() {
+        return "NicNode{" + "networkId=" + networkId + '}';
+    }
 }

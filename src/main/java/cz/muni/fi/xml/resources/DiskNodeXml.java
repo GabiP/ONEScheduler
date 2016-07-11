@@ -14,12 +14,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  */
 @JacksonXmlRootElement(localName = "DISK")
 public class DiskNodeXml {
+        
+    @JacksonXmlProperty(localName = "DATASTORE_ID")
+    private Integer datastore_id;
     
     @JacksonXmlProperty(localName = "SIZE")
     private int size;
-    
-    @JacksonXmlProperty(localName = "DATASTORE_ID")
-    private Integer datastore_id;
 
     public int getSize() {
         return size;

@@ -38,5 +38,9 @@ public class DiskNode extends AbstractNode {
     public void setDatastore_id(Integer datastore_id) {
         this.datastore_id = datastore_id;
     }
-    
+
+    @Override
+    public String toString() {
+        return "DiskNode{" + "datastore_id=" + datastore_id + ", size=" + size + '}';
+    }  
 }

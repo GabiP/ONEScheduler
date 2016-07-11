@@ -65,4 +65,9 @@ public class PciNode extends AbstractNode {
     public String getVendor() {
         return vendor;
     }
+
+    @Override
+    public String toString() {
+        return "PciNode{" + "pci_class=" + pci_class + ", device=" + device + ", vendor=" + vendor + '}';
+    }
 }

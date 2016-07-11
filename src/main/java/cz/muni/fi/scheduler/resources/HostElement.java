@@ -97,6 +97,8 @@ public class HostElement {
                 ", name='" + name + '\'' +
                 ", state=" + state +
                 ", clusterId=" + clusterId +
+                ", pcis=" + pcis +
+                ", datastores=" + datastores +
                 '}';
     }
 

@@ -99,4 +99,10 @@ public class HistoryNode extends AbstractNode {
         
         return days + "d " + hours+":"+minutes+ ":"+time;
     }
+
+    @Override
+    public String toString() {
+        return "HistoryNode{" + "startTime=" + startTime + ", endTime=" + endTime + ", runTime=" + runTime + ", reason=" + reason + '}';
+    }
+    
 }

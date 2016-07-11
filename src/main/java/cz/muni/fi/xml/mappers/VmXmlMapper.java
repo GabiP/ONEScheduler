@@ -71,6 +71,7 @@ public class VmXmlMapper {
     
     public static DiskNode map(DiskNodeXml disk) {
         DiskNode result = new DiskNode();
+        result.setDatastore_id(disk.getDatastore_id());
         result.setSize(disk.getSize());        
         return result;
     }

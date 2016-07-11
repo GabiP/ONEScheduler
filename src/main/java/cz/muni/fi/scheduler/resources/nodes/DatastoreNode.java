@@ -81,5 +81,10 @@ public class DatastoreNode extends AbstractNode {
     public void setUsed_mb(Integer used_mb) {
         this.used_mb = used_mb;
     }
+
+    @Override
+    public String toString() {
+        return "DatastoreNode{" + "id_ds=" + id_ds + ", free_mb=" + free_mb + ", total_mb=" + total_mb + ", used_mb=" + used_mb + '}';
+    }
     
 }

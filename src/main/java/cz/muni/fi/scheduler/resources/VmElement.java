@@ -248,6 +248,9 @@ public class VmElement {
                 ", schedRequirements=" + schedRequirements + '\'' +
                 ", schedDsRequirements=" + schedDsRequirements + '\'' +
                 ", pcis=" + pcis + '\'' +
+                ", disks=" + disks + '\'' +
+                ", histories=" + histories + '\'' +
+                ", nics=" + nics + '\'' +
                 '}';
     }
 
