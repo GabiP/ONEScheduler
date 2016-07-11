@@ -49,6 +49,7 @@ public class SetUp {
         
         useXml = configuration.getBoolean("useXml");
         endpoint = configuration.getString("endpoint");
+        secret = configuration.getString("secret");
         hostPoolPath = configuration.getString("hostpoolpath");
         clusterPoolPath = configuration.getString("clusterpoolpath");
         userPoolPath = configuration.getString("userpoolpath");
@@ -63,7 +64,12 @@ public class SetUp {
                 return;
             }
         } else {
-            manager = new ManagerOne(secret, endpoint);
+            if (secret == null || endpoint == null) {
+                System.out.println("Could not reach OpenNebula. Check if endpoint or secret has the right configuration.");
+                return;
+            } else {
+                manager = new ManagerOne(secret, endpoint);
+            }
         }
         
         Scheduler scheduler = new Scheduler(manager.getVmPool(), manager.getHostPool(), manager.getClusterPool(), manager.getDatastorePool(), manager.getAuthorizationManager());

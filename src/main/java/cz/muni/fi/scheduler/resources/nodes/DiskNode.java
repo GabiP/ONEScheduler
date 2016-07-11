@@ -20,7 +20,11 @@ public class DiskNode extends AbstractNode {
     @Override
     public void load(PoolElement vm, String xpathExpr) {
         size = Integer.parseInt(vm.xpath(xpathExpr + "/SIZE"));
-        datastore_id = Integer.parseInt(vm.xpath(xpathExpr + "/DATASTORE_ID"));
+        try {
+            datastore_id = Integer.parseInt(vm.xpath(xpathExpr + "/DATASTORE_ID"));
+        } catch (Exception e) {
+            datastore_id = null;
+        }
     }
 
     public int getSize() {

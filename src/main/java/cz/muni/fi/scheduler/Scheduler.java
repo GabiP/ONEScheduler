@@ -61,10 +61,11 @@ public class Scheduler {
 
     public Map<HostElement, List<VmElement>> processQueue(LinkedList queue) {
         Map<HostElement, List<VmElement>> plan = new HashMap<>();
+        List<Integer> authorizedHosts;
         while (!queue.isEmpty()) {
             VmElement vm = (VmElement) queue.peek();
             //check the authorization for this VM
-            List<Integer> authorizedHosts = authorizationManager.authorize(vm);
+            authorizedHosts = authorizationManager.authorize(vm);
             if (authorizedHosts.isEmpty()) {
                 System.out.println("Empty authorized hosts.");
             }
