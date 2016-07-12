@@ -13,6 +13,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.xml.pools.ClusterXmlPool;
 import cz.muni.fi.xml.pools.DatastoreXmlPool;
 import cz.muni.fi.xml.pools.HostXmlPool;
@@ -21,6 +22,7 @@ import cz.muni.fi.xml.pools.VmXmlPool;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 /**
  *

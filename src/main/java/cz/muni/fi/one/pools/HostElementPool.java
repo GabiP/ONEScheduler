@@ -24,6 +24,8 @@ public class HostElementPool implements IHostPool{
     
     private HostPool hp;
     
+    private List<HostElement> cachedHosts;
+    
     public HostElementPool(Client oneClient) {
         hp = new HostPool(oneClient);
     }
@@ -49,6 +51,21 @@ public class HostElementPool implements IHostPool{
             getHosts().add(h);
         }
         return hosts;
+    }
+    
+    @Override
+    public List<HostElement> getCachedHosts() {
+        return cachedHosts;
+    }
+    
+    @Override
+    public HostElement getCachedHosts(Integer id) {
+        for (HostElement h : cachedHosts) {
+            if (h.getId() == id) {
+                return h;
+            }
+        }
+        return null;
     }
     
     /**

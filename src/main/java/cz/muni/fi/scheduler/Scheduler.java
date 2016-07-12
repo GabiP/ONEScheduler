@@ -30,6 +30,8 @@ public class Scheduler {
     
     IDatastorePool dsPool;
     
+    List<VmElement> pendingVms; 
+    
     /**
      * Queues with waiting VMs.
      * Note: Load number of queues from configuration file.
@@ -49,7 +51,7 @@ public class Scheduler {
 
     public Map<HostElement, List<VmElement>> getPlan() {
         //get pendings, state = 1 is pending
-        List<VmElement> pendingVms = vmPool.getVmsByState(1);
+        pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
             System.out.println("No pendings");
         }
@@ -86,7 +88,7 @@ public class Scheduler {
     public List<HostElement> filterAuthorizedHosts(List<Integer> authorizedHosts, VmElement vm) {
         List<HostElement> filteredHosts = new ArrayList<>();
         for (Integer hostId : authorizedHosts) {
-            HostElement h = hostPool.getHost(hostId);
+            HostElement h = hostPool.getCachedHosts(hostId);
             if (match(h, vm)) {
                 filteredHosts.add(h);
             }

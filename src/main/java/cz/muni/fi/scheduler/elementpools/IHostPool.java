@@ -16,6 +16,10 @@ public interface IHostPool {
     
     public List<HostElement> getHosts();
     
+    public List<HostElement> getCachedHosts();
+    
+    public HostElement getCachedHosts(Integer id);
+    
     public List<HostElement> getActiveHosts();
     
     public List<Integer> getHostsIds();
