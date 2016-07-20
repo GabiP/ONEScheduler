@@ -1,15 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
 /**
- *
- * @author gabi
+ * This class represents a NicNode.
+ * A virtual machine can have multiple nic nodes. A virtual machine in OpenNebula system has a set of NICs attached to one or more virtual networks.
+ * Loads the data from xml by using OpenNebula's API.
+ * 
+ * @author Gabriela Podolnikova
  */
 public class NicNode extends AbstractNode {
          

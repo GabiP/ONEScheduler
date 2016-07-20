@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler;
 
 import cz.muni.fi.authorization.AuthorizationManager;
@@ -23,7 +18,9 @@ import java.io.IOException;
 import org.opennebula.client.Client;
 
 /**
- *
+ * This class creates a connection with OpenNebula by creating the instance of the Client class.
+ * The Client class represents the connection with the core and handles the xml-rpc calls.
+ * 
  * @author Gabriela Podolnikova
  */
 public class ManagerOne implements IManager{
@@ -42,6 +39,12 @@ public class ManagerOne implements IManager{
     
     private IDatastorePool dsPool;
     
+    /**
+     * Creates a new xml-rpc client with specified options - secret and endpoint.
+     * And loads OpenNebula's pools.
+     * @param secret A string containing the ONE user:password tuple. Can be null
+     * @param endpoint Where the rpc server is listening, must be something like "http://localhost:2633/RPC2". Can be null
+     */
     public ManagerOne(String secret, String endpoint) {
         try {           
             oneClient = new Client(secret, endpoint);            

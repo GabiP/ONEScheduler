@@ -19,7 +19,9 @@ import java.util.List;
 import org.opennebula.client.acl.Acl;
 
 /**
- *
+ * Authorization manager for managing ACL obtained from OpenNebula.
+ * For understanding OpenNebula ACLs please refer to http://docs.opennebula.org/4.14/administration/users_and_groups/manage_acl.html
+ * 
  * @author Gabriela Podolnikova
  */
 public class AuthorizationManager implements IAuthorizationManager {
@@ -41,13 +43,13 @@ public class AuthorizationManager implements IAuthorizationManager {
     /**
      * Finds the subset of hosts where the owner of specified virtual machine can deploy.
      * 
-     * @param vm the virtual machine's user's to be authorized
+     * @param vm the virtual machine's user to be authorized
      * @return an array with ids of authorized hosts
      */
     @Override
     public List<Integer> authorize(VmElement vm) {
         Integer uid = vm.getUid();
-        List<Integer> userGroups = userPool.getById(uid).getGroups();
+        List<Integer> userGroups = userPool.getUser(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
         userGroups.add(vm.getGid());
         ArrayList<String> groups = new ArrayList<>();
@@ -77,7 +79,15 @@ public class AuthorizationManager implements IAuthorizationManager {
         return result;
     }
     
-    public List<Integer> evaluateHost(String rights, String resources) {
+    /**
+     * Evaluates given acl rule - its rights and resources.
+     * Use when evaluating user's rights to manage hosts.
+     * 
+     * @param rights the string representing the rights to be checked
+     * @param resources the string representing the resources to be checked
+     * @return a list of authorized hosts
+     */
+    private List<Integer> evaluateHost(String rights, String resources) {
         List<Integer> authorizedHosts = new ArrayList<>();
         if (rights.contains("MANAGE") && resources.contains("HOST")) {
             if (resources.contains("*")) {
@@ -97,7 +107,15 @@ public class AuthorizationManager implements IAuthorizationManager {
         return authorizedHosts;
     }
     
-    public List<Integer> evaluateDatastore(String rights, String resources) {
+     /**
+     * Evaluates given acl rule - its rights and resources.
+     * Use when evaluating user's rights to use datastore.
+     * 
+     * @param rights the string representing the rights to be checked
+     * @param resources the string representing the resources to be checked
+     * @return a list of authorized datastores
+     */
+    private List<Integer> evaluateDatastore(String rights, String resources) {
         List<Integer> authorizedDatastores = new ArrayList<>();
         if (rights.contains("USE") && resources.contains("DATASTORE")) {
             if (resources.contains("*")) {
@@ -122,6 +140,15 @@ public class AuthorizationManager implements IAuthorizationManager {
         return id;
     }
     
+    /**
+     * Matches two lists. One containing the list of auhorized hosts and the other the authorized datastores.
+     * Matching needs to be done to obtain the list of hosts, that the user has rights to MANAGE,
+     * these hosts needs to have the SYSTEM datastore that the user has right to USE.
+     * 
+     * @param authorizedHosts the list of hosts to be matched
+     * @param authorizedDatastores the list af datastores to be macthed
+     * @return the list of host's ids that the user is authorized to use
+     */
     public List<Integer> matchHostsAndDatastores(List<Integer> authorizedHosts, List<Integer> authorizedDatastores) {
         List<Integer> result = new ArrayList<>(authorizedHosts);
         for (Integer hostId: authorizedHosts) {

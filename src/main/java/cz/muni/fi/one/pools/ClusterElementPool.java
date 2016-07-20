@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.ClusterMapper;
@@ -17,7 +12,10 @@ import org.opennebula.client.cluster.Cluster;
 import org.opennebula.client.cluster.ClusterPool;
 
 /**
- *
+ * This class represents OpenNebula's ClusterPool containing all instances of clusters in the system.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * Each OpenNebula's instance of Cluster is mapped to our ClusterElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class ClusterElementPool implements IClusterPool {
@@ -29,7 +27,8 @@ public class ClusterElementPool implements IClusterPool {
     }
 
     /**
-     * @return the clusters
+     * Goes through the pool and maps all clusters.
+     * @return the list of mapped clusters
      */
     @Override
     public List<ClusterElement> getClusters() {

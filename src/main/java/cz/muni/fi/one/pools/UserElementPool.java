@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.UserMapper;
@@ -17,7 +12,10 @@ import org.opennebula.client.user.User;
 import org.opennebula.client.user.UserPool;
 
 /**
- *
+ * This class represents OpenNebula's UserPool containing all instances of users in the system.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * Each OpenNebula's instance of User is mapped to our UserElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class UserElementPool implements IUserPool{
@@ -28,6 +26,10 @@ public class UserElementPool implements IUserPool{
         up = new UserPool(oneClient);
     }
     
+    /**
+     * Goes through the pool and maps all the users.
+     * @return the list of UserElements
+     */
     @Override
     public List<UserElement> getUsers() {
         List<UserElement> users = new ArrayList<>();
@@ -48,7 +50,7 @@ public class UserElementPool implements IUserPool{
     }
     
     @Override
-    public UserElement getById(int id) {
+    public UserElement getUser(int id) {
         up.info();
         return UserMapper.map(up.getById(id));
     }

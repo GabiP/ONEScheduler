@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.DatastoreMapper;
@@ -17,7 +12,10 @@ import org.opennebula.client.datastore.Datastore;
 import org.opennebula.client.datastore.DatastorePool;
 
 /**
- *
+ * This class represents OpenNebula's DatastorePool containing all instances of datastores in the system.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * Each OpenNebula's instance of Datastore is mapped to our DatastoreElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class DatastoreElementPool implements IDatastorePool {
@@ -29,6 +27,7 @@ public class DatastoreElementPool implements IDatastorePool {
     }
 
     /**
+     * Goes through the pool and maps all datastores.
      * @return the datastores
      */
     @Override
@@ -48,12 +47,21 @@ public class DatastoreElementPool implements IDatastorePool {
         return datastores;
     }
     
+    /**
+     * Gets the DatastoreElement with specified id.
+     * @param id to get the desired DatastoreElement
+     * @return the DatastoreElement with the specified id
+     */
     @Override
     public DatastoreElement getDatastore(int id) {
         dp.info();
         return DatastoreMapper.map(dp.getById(id));
     }
     
+    /**
+     * Gets only the system datastores from the pool.
+     * @return the lsit of system DatastoreElements.
+     */
     @Override
     public List<DatastoreElement> getSystemDs() {
         List<DatastoreElement> systemDs = new ArrayList<>();
@@ -66,6 +74,7 @@ public class DatastoreElementPool implements IDatastorePool {
     }
 
     /**
+     * Gets the datastore's ids.
      * @return the datastoresIds
      */
     @Override

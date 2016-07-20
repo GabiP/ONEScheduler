@@ -1,14 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.resources.nodes;
 
 import org.opennebula.client.PoolElement;
 
 /**
- *
+ * This class represents a PciNode.
+ * A virtual machine or a host can have multiple pci nodes.
+ * Loads the data from xml by using OpenNebula's API.
+ * 
  * @author Gabriela Podolnikova
  */
 public class PciNode extends AbstractNode {

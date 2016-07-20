@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -25,7 +20,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 /**
- *
+ * This class provides access to xml files that hold the data necessary for scheduling.
+ * 
  * @author Gabriela Podolnikova
  */
 public class ManagerXML implements IManager {
@@ -39,7 +35,16 @@ public class ManagerXML implements IManager {
     private IClusterPool clusterPool;
     
     private IDatastorePool dsPool;
-
+    
+    /**
+     * Creates all pools necessary for scheduling by reading the xmls.
+     * @param hostPoolPath the path to hostpoool.xml
+     * @param clusterPoolPath the path to clusterpool.xml
+     * @param userPoolPath the path to userpool.xml
+     * @param vmPoolPath the path to vmpool.xml
+     * @param datastorePoolPath the path to datastorepool.xml
+     * @throws IOException 
+     */
     public ManagerXML(String hostPoolPath, String clusterPoolPath, String userPoolPath, String vmPoolPath, String datastorePoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String hostPoolMessage = new String(Files.readAllBytes(Paths.get(hostPoolPath)));

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.resources;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,8 +7,8 @@ import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import java.util.List;
 
 /**
- *
- * @author gabi
+ * This class represents the Host retrived from xml.
+ * @author Gabriela Podolnikova
  */
 public class HostXml {
     @JacksonXmlProperty(localName = "ID")

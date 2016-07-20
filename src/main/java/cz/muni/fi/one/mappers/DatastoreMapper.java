@@ -10,7 +10,10 @@ import cz.muni.fi.scheduler.resources.DatastoreElement;
 import org.opennebula.client.datastore.Datastore;
 
 /**
- *
+ * This class maps OpenNebula's Datastore class to DatastoreElement class.
+ * Retreives from OpenNebula's Datastore instance its attributes by using OpenNebula's Java API.
+ * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * 
  * @author Andras Urge
  */
 public class DatastoreMapper {

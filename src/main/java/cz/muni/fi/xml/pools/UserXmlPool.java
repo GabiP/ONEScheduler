@@ -32,7 +32,7 @@ public class UserXmlPool implements IUserPool {
     }
 
     @Override
-    public UserElement getById(int id) {
+    public UserElement getUser(int id) {
         for (UserElement u : UserXmlMapper.map(users)) {
             if (u.getId() == id) {
                 return u;

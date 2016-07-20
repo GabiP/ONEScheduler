@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import java.util.ArrayList;
@@ -15,7 +10,9 @@ import cz.muni.fi.scheduler.elementpools.IAclPool;
 import java.util.List;
 
 /**
- *
+ * This class represents OpenNebula's AclPool.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * 
  * @author Gabriela Podolnikova
  */
 public class AclElementPool implements IAclPool{
@@ -25,7 +22,13 @@ public class AclElementPool implements IAclPool{
     public AclElementPool(Client oneClient) {
         aclpool = new AclPool(oneClient);
     }
-
+    
+    /**
+     * Gets list of Acls. We are not mapping the OpenNebula's Acl class.
+     * Acls are used only in AuthorizationManager class.
+     * 
+     * @return the list of Acls
+     */
     @Override
     public List<Acl> getAcls() {
         List<Acl> acls = new ArrayList<>();

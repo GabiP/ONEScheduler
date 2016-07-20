@@ -6,10 +6,12 @@ import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
- * This class represents an OpenNebula Host
+ * This class represents a Host.
+ * A Host is a server that has the ability to run Virtual Machines.
  *
  * @author Gabriela Podolnikova
  */
@@ -89,31 +91,9 @@ public class HostElement {
         this.clusterId = clusterId;
     }
 
-
     @Override
     public String toString() {
-        return "Host{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", state=" + state +
-                ", clusterId=" + clusterId +
-                ", pcis=" + pcis +
-                ", datastores=" + datastores +
-                '}';
-    }
-
-    
-    /**
-     * Tests whether a VM can be hosted by the host.
-     * Checks the memory and capacity on host.
-     * 
-     * @param vm virtual machine to be tested
-     * @return true if VM can be hosted, false otherwise
-     */
-    public boolean testCapacity(VmElement vm) {
-        System.out.println("testCapacity - cpu:" + max_cpu + " - " + cpu_usage + " = " + (max_cpu - cpu_usage) + " =? " + free_cpu + " vm cpu: " + vm.getCpu());
-        System.out.println("testCapacity - mem:" + max_mem + " - " + mem_usage + " = " + (max_mem - mem_usage) + " =? " + free_mem + " vm mem: " + vm.getMemory());
-        return ((max_cpu - cpu_usage) >= vm.getCpu()) && ((max_mem - mem_usage) >= vm.getMemory());
+        return "HostElement{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", pcis=" + pcis + ", datastores=" + datastores + '}';
     }
     
     /**
@@ -138,67 +118,17 @@ public class HostElement {
          free_mem += vm.getMemory();
     }
     
-    /**
-     * Tests whether current host has enough free space(mb) in datastores to host the specified vm disks.
-     * Simplified version: firstly it adds up the sizes(mb) of vm's disks. Then this value is checked on cluster's datastores.
-     * TODO: It can divide the sizes of disks and try if it will fit somehow on the available datastores.
-     * @param vm to be tested
-     * @param clusterPool all clusters to find the host cluster
-     * @param dsPool all datastore to find the ds to be checked
-     * @return true if the vm fits, false otherwise
-     */
-    public boolean testDs(VmElement vm, IClusterPool clusterPool, IDatastorePool dsPool) {
-        boolean fits = false;
+    public DatastoreElement getHostsFreeDatastore(Integer sizeValue, IClusterPool clusterPool, IDatastorePool dsPool, Map<DatastoreElement, Integer> dsMemUsages) {
         ClusterElement cluster = clusterPool.getCluster(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
-        List<DiskNode> disks = vm.getDisks();
-        int sizeValue = 0;
-        for (DiskNode disk : disks) {
-            sizeValue += disk.getSize();
-        }
-        for (Integer dsId : datastoresIds) {
+         for (Integer dsId : datastoresIds) {
             DatastoreElement ds = dsPool.getDatastore(dsId);
-            if (ds.getFree_mb() > sizeValue) {
-                fits = true;
-                addDsCapacity(sizeValue, ds);
-                return fits;
+            Integer free_mb = dsMemUsages.get(ds);
+            if (free_mb > sizeValue) {
+                return ds;
             }
         }
-        if (fits == false) {
-            System.out.println("Datastore does not have enough capacity to host the vm");
-        }
-        return fits;
-    }
-    
-    public void addDsCapacity(int sizeValue, DatastoreElement ds) {
-        ds.addUsedMb(sizeValue);
-    }
-    
-    /**
-     * Checks whether the host has the specified pci that the vm requires.
-     * Note: the hosts in OpenNebula must be configured, that this functionality works.
-     * @param vm the vm to be checked
-     * @return true if vm can be hosted, false otherwise
-     */
-    public boolean checkPci(VmElement vm) {
-        boolean pciFits = false;
-        if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
-            return true;
-        }
-        if (!pcis.isEmpty() && vm.getPcis().isEmpty()) {
-            return true;
-        }
-        if (pcis.isEmpty() && !vm.getPcis().isEmpty()) {
-            return false;
-        }
-        for (PciNode pci: pcis) {
-            for (PciNode pciVm: vm.getPcis()) {
-                if ((pci.getPci_class().equals(pciVm.getPci_class())) && (pci.getDevice().equals(pciVm.getDevice())) && (pci.getVendor().equals(pciVm.getVendor()))) {
-                    pciFits = true;
-                }
-            }
-        }
-        return pciFits;
+        return null;
     }
     
     /**

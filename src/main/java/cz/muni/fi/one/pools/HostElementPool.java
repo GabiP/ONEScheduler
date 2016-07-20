@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.HostMapper;
@@ -17,23 +12,24 @@ import org.opennebula.client.host.Host;
 import org.opennebula.client.host.HostPool;
 
 /**
- *
+ * This class represents OpenNebula's HostPool containing all instances of hosts in the system.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * Each OpenNebula's instance of Host is mapped to our HostElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class HostElementPool implements IHostPool{
     
     private HostPool hp;
     
-    private List<HostElement> cachedHosts;
-    
     public HostElementPool(Client oneClient) {
         hp = new HostPool(oneClient);
     }
     
     /**
-     * Loads all hosts from OpenNebula HostPool.
-     * Retrieves and store the xml representation as HostXml object into an array of hosts.
-     * @return array of hosts
+     * Goes through the pool and maps all hosts.
+     * 
+     * @return list of HostElements
      */
     @Override
     public List<HostElement> getHosts() {
@@ -53,26 +49,11 @@ public class HostElementPool implements IHostPool{
         return hosts;
     }
     
-    @Override
-    public List<HostElement> getCachedHosts() {
-        return cachedHosts;
-    }
-    
-    @Override
-    public HostElement getCachedHosts(Integer id) {
-        for (HostElement h : cachedHosts) {
-            if (h.getId() == id) {
-                return h;
-            }
-        }
-        return null;
-    }
-    
     /**
      * Gets hosts that are active.
      * Host states:  1 = monitoring-monitored
      *               2 = monitored
-     * @return array of active hosts
+     * @return list of active hosts
      */
     @Override
     public List<HostElement> getActiveHosts() {

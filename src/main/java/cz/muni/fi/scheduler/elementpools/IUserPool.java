@@ -16,5 +16,5 @@ public interface IUserPool {
     
     public List<UserElement> getUsers();
     
-    public UserElement getById(int id);
+    public UserElement getUser(int id);
 }

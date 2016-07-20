@@ -1,14 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.resources;
 
 import java.util.Objects;
 
 /**
- *
+ * This class represents a Datastore.
+ * A Datastore is any storage medium used to store disk images for VMs.
+ * There are three types of Datastores:
+ * - System, to hold images for running VMs.
+ * - Images, stores the disk images repository. Disk images are moved, or cloned to/from the System datastore when the VMs are deployed or shutdown; or when disks are attached or snapshoted.
+ * - Files, This is a special datastore used to store plain files and not disk images. The plain files can be used as kernels, ramdisks or context files.
+ * For more information see: http://docs.opennebula.org/4.12/administration/storage/sm.html
+ * 
  * @author Gabriela Podolnikova
  */
 public class DatastoreElement {
@@ -297,6 +299,11 @@ public class DatastoreElement {
      */
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "DatastoreElement{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", cluster_id=" + cluster_id + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
     }
     
     @Override

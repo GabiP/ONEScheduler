@@ -9,8 +9,9 @@ import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
 
 /**
- *
- * @author gabi
+ * This interface represents an authorization manager.
+ * 
+ * @author Gabriela Podolnikova
  */
 public interface IAuthorizationManager {
     public List<Integer> authorize(VmElement vm);

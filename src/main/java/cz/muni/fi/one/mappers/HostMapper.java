@@ -14,7 +14,10 @@ import java.util.logging.Logger;
 import org.opennebula.client.host.Host;
 
 /**
- *
+ * This class maps OpenNebula's Host class to HostElement class.
+ * Retreives from OpenNebula's Host instance its attributes by using OpenNebula's Java API.
+ * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * 
  * @author Andras Urge
  */
 public class HostMapper {

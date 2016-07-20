@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * This class represents a User.
+ * Each user has a unique ID, and belongs to a group.
+ * 
  * @author Gabriela Podolnikova
  */
 public class UserElement {

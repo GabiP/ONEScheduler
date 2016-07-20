@@ -16,7 +16,10 @@ import java.util.logging.Logger;
 import org.opennebula.client.vm.VirtualMachine;
 
 /**
- *
+ * This class maps OpenNebula's VirtualMachine class to VmElement class.
+ * Retreives from OpenNebula's VirtualMachine instance its attributes by using OpenNebula's Java API.
+ * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * 
  * @author Andras Urge
  */
 public class VmMapper {

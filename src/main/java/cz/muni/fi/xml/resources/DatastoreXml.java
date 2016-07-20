@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.resources;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 /**
- *
+ * This class represents the Datastore retrived from xml.
  * @author Gabriela Podolnikova
  */
 public class DatastoreXml {

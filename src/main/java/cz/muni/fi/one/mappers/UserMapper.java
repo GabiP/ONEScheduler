@@ -10,7 +10,10 @@ import cz.muni.fi.scheduler.resources.UserElement;
 import org.opennebula.client.user.User;
 
 /**
- *
+ * This class maps OpenNebula's User class to UserElement class.
+ * Retreives from OpenNebula's User instance its attributes by using OpenNebula's Java API.
+ * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * 
  * @author Andras Urge
  */
 public class UserMapper {

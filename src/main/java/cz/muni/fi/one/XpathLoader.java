@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one;
 
 import cz.muni.fi.scheduler.resources.nodes.AbstractNode;
@@ -11,7 +6,8 @@ import java.util.List;
 import org.opennebula.client.PoolElement;
 
 /**
- *
+ * An auxiliary method that is used for retreiving data from xml representation of OpenNebula's objects.
+ * 
  * @author Andras Urge
  */
 public class XpathLoader {
@@ -41,6 +37,17 @@ public class XpathLoader {
         return list;
     }
     
+    /**
+     * Retrieves a list of nodes (e.g.: DiskNode, HistoryNode).
+     * 
+     * @param <T> a type of class that we want to create = the node.
+     * @param element the element from which we are retreiving the node.
+     * @param clazz a type of class that we want to create = the node.
+     * @param xpathExpr a string defining the xpath expression
+     * @return the list of desired nodes
+     * @throws InstantiationException
+     * @throws IllegalAccessException 
+     */
     public static <T extends AbstractNode> List<T> getNodeList(PoolElement element, Class<T> clazz, String xpathExpr) throws InstantiationException, IllegalAccessException {
         List<T> list = new ArrayList<>();
         int i = 1;        

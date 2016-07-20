@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
@@ -26,30 +21,12 @@ public class HostXmlPool implements IHostPool {
     @JacksonXmlProperty(localName = "HOST")
     @JacksonXmlElementWrapper(useWrapping = false)
     private List<HostXml> hosts;
-    
-    private List<HostElement> cachedHosts;
 
     @Override
     public List<HostElement> getHosts() {
-        cachedHosts = HostXmlMapper.map(hosts);
         return Collections.unmodifiableList(HostXmlMapper.map(hosts));
     }
     
-    @Override
-    public List<HostElement> getCachedHosts() {
-        return cachedHosts;
-    }
-    
-    @Override
-    public HostElement getCachedHosts(Integer id) {
-        for (HostElement h : cachedHosts) {
-            if (h.getId() == id) {
-                return h;
-            }
-        }
-        return null;
-    }
-
     @Override
     public List<HostElement> getActiveHosts() {
         List<HostElement> activeHosts = new ArrayList<>();

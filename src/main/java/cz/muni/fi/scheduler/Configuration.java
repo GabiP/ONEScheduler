@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler;
 
 import java.io.FileInputStream;
@@ -11,8 +6,10 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- *
- * @author gabi
+ * This class provides access to property files. These files hold the
+ * configuration for the scheduler.
+ * 
+ * @author Gabriela Podolnikova
  */
 public class Configuration {
     
@@ -24,10 +21,20 @@ public class Configuration {
         is.close();
     }
     
-     public String getString(String key) {
+    public String getString(String key) {
         String str;
         str = props.getProperty(key);
         return str;
+    }
+     
+    public String[] getStringArray(String key) {
+        String value = props.getProperty(key);
+        return extractStringArray(value);
+    }
+
+    private static String[] extractStringArray(String value) {
+        String[] s = value.split("\\s*,\\s*");
+        return s;
     }
      
     public boolean getBoolean(String key) {

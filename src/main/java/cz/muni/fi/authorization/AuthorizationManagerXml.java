@@ -12,8 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author gabi
+ * This class represents authorization manager for XML representation of cloud resources.
+ * We do not provide ACLs XML file. Therefore we assume that all users can use all resources.
+ * Which means that for every VM we return all active hosts available in the system.
+ * 
+ * @author Gabriela Podolnikova
  */
 public class AuthorizationManagerXml implements IAuthorizationManager {
 

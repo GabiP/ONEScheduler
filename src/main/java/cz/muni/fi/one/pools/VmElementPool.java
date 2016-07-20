@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.VmMapper;
@@ -17,14 +12,15 @@ import org.opennebula.client.vm.VirtualMachine;
 import org.opennebula.client.vm.VirtualMachinePool;
 
 /**
- *
+ * This class represents OpenNebula's VirtualMachinePool containing all instances of virtual machines in the system.
+ * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
+ * Each OpenNebula's instance of VirtualMachine is mapped to our VmElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class VmElementPool implements IVmPool{
 
     private VirtualMachinePool vmp;
-    
-    // TODO: add caching to improve performance
 
     public VmElementPool(Client oneClient) {
         vmp = new VirtualMachinePool(oneClient);
@@ -55,6 +51,12 @@ public class VmElementPool implements IVmPool{
         return getVms(Pool.ALL, state); 
     }
     
+    /**
+     * Goes through the pool and maps all vms.
+     * @param userId the id of the owner of the vms we want to obtain
+     * @param state the state of the vms that we want to obtain
+     * @return the list of VmElements
+     */
     @Override
     public ArrayList<VmElement> getVms(int userId, int state) {
         ArrayList<VmElement> vms = new ArrayList<>();

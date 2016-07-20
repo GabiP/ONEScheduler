@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.resources;
 
 import cz.muni.fi.scheduler.resources.nodes.DiskNode;
@@ -13,7 +8,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * This class represents an OpenNebula Vm
+ * This class represents a Virtual Machine.
+ * A Virtual Machine within the OpenNebula system consists of:
+ * - A capacity in terms memory and CPU
+ * - A set of NICs attached to one or more virtual networks
+ * - A set of disk images
+ * - A state file (optional) or recovery file, that contains the memory image of a running VM plus some hypervisor specific information.
+ * For further information on creating Virtual machines please refer to: http://docs.opennebula.org/4.14/user/virtual_resource_management/vm_guide.html
  * 
  * @author Gabriela Podolnikova
  */
@@ -75,36 +76,6 @@ public class VmElement {
     private String schedDsRequirements;
     
     private List<PciNode> pcis;
-    
-    
-    public boolean evaluateSchedReqs(HostElement host) {
-        if (schedRequirements == null) {
-            return true;
-        }
-        String[] reqs = schedRequirements.split("\\|");
-        boolean fits = false;
-        if (schedRequirements.equals("")) {
-            System.out.println("Vm does not have any requirements");
-            return true;
-        }
-        for (String req: reqs) {
-            req = req.trim();
-            System.out.println("inside reqs: " + req);
-            Integer id = Integer.parseInt(req.substring(req.indexOf("=")+2, req.length()-1));
-            System.out.println("Evaluate sched reqs: " + id);
-            if (req.contains("ID")) {
-                if (host.getId() == id) {
-                    fits = true;
-                }
-            }
-            if (req.contains("CLUSTER")) {
-                if (host.getClusterId() == id) {
-                    fits = true;
-                }
-            }
-        }
-        return fits;
-    }
         
     public int getRunTime() {        
         int runTime = 0;  
@@ -120,7 +91,16 @@ public class VmElement {
             }
         }
         return runTime;
-    }    
+    }
+    
+    public int getDiskSizes() {
+        int sizeValue = 0;
+        for (DiskNode disk : disks) {
+            sizeValue += disk.getSize();
+        }
+        return sizeValue;
+    }
+    
     
     /**
      * @return the id

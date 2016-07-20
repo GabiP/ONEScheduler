@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.resources;
 
 import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * This class represents a Cluster.
+ * A Cluster is a group of Hosts. Clusters can have associated Datastores and Virtual Networks.
  * @author Gabriela Podolnikova
  */
 public class ClusterElement {
