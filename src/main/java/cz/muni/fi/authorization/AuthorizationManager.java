@@ -168,6 +168,17 @@ public class AuthorizationManager implements IAuthorizationManager {
                 result.remove(hostId);
             }
         }
-        return result;
+        return getOnlyActiveHosts(result);
+    }
+    
+    public List<Integer> getOnlyActiveHosts(List<Integer> hosts) {
+         List<Integer> result = new ArrayList<>();
+         for (Integer id: hosts) {
+             HostElement host = hostPool.getHost(id);
+             if ((host.getState() == 1 || host.getState() == 2) ) {
+                 result.add(host.getId());
+             }
+         }
+         return result;
     }
 }

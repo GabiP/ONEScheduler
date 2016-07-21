@@ -16,6 +16,7 @@ import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import java.io.IOException;
 import org.opennebula.client.Client;
+import org.opennebula.client.ClientConfigurationException;
 
 /**
  * This class creates a connection with OpenNebula by creating the instance of the Client class.
@@ -45,17 +46,9 @@ public class ManagerOne implements IManager{
      * @param secret A string containing the ONE user:password tuple. Can be null
      * @param endpoint Where the rpc server is listening, must be something like "http://localhost:2633/RPC2". Can be null
      */
-    public ManagerOne(String secret, String endpoint) {
-        try {           
-            oneClient = new Client(secret, endpoint);            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            loadOnePools(oneClient);
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+    public ManagerOne(String secret, String endpoint) throws IOException, ClientConfigurationException {
+        oneClient = new Client(secret, endpoint);
+        loadOnePools(oneClient);
     }
     
     public void loadOnePools(Client oneClient) throws IOException {

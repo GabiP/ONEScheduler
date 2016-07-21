@@ -44,7 +44,8 @@ public class HostElementPool implements IHostPool{
             Host element = itr.next();
             System.out.println("Host: " + element + "   state: " + element.state() + " id: " + element.getId());
             HostElement h = HostMapper.map(element);
-            getHosts().add(h);
+            System.out.println("HostElement: " + h);
+            hosts.add(h);
         }
         return hosts;
     }

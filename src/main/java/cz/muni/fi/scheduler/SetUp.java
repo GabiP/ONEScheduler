@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class containd the main method.
+ * This class contains the main method.
  * Loads the configuration file and retreives its attributes.
  * Creates instance of a manager depending on whether we use OpenNebula or our own xml files.
  * Then creates an instance of a Scheduler and starts the scheduling.
@@ -74,11 +74,12 @@ public class SetUp {
             }
             resultManager = new XmlResultManager(hostPoolPath, clusterPoolPath, userPoolPath, vmPoolPath, datastorePoolPath);
         } else {
-            if (secret == null || endpoint == null) {
+            try {
+                manager = new ManagerOne(secret, endpoint);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
                 System.out.println("Could not reach OpenNebula. Check if endpoint or secret has the right configuration.");
                 return;
-            } else {
-                manager = new ManagerOne(secret, endpoint);
             }
         }
         
@@ -93,6 +94,10 @@ public class SetUp {
     }
     
     private static void printPlan(Map<HostElement, List<VmElement>> plan ) {
+        if (plan == null) {
+            System.out.println("No schedule.");
+            return;
+        }
         for (HostElement host : plan.keySet()) {
             System.out.println(host);
             System.out.println("Its vms: ");
