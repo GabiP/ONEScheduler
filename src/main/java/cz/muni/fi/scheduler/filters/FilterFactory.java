@@ -6,25 +6,25 @@ package cz.muni.fi.scheduler.filters;
  */
 public class FilterFactory {
     /**
-     * Create a IFilter instance. The creation is based on using the reflection,
+     * Create a IHostFilter instance. The creation is based on using the reflection,
      * hence the caller must have sufficient security privilege etc.
      *
      * @param className
      *            the class name; it must be a valid class name on the classpath;
-     *            the class must implement the IFilter interface
+            the class must implement the IHostFilter interface
      *
      * @return the instance of the filter but not initialized yet
      *
      * @throws RuntimeException
      *             if the filter could not be properly created
      */
-    public static IFilter createFilter(String className) {
+    public static IHostFilter createFilter(String className) {
         try {
             // Make the instance of the filter
             final Class<?> pluginClass = Class.forName(className);
             final Object result = pluginClass.newInstance();
 
-            return (IFilter)result;
+            return (IHostFilter)result;
         } catch (SecurityException e) {
             throw new RuntimeException("Could not create filter: " + className, e);
         } catch (ClassNotFoundException e) {

@@ -1,8 +1,6 @@
 package cz.muni.fi.scheduler.filters;
 
-import cz.muni.fi.scheduler.Scheduler;
-import cz.muni.fi.scheduler.elementpools.IClusterPool;
-import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 
@@ -13,7 +11,7 @@ import cz.muni.fi.scheduler.resources.VmElement;
  * 
  * @author Gabriela Podolnikova
  */
-public interface IFilter {
+public interface IHostFilter {
     
-    public boolean test(VmElement vm, HostElement host, IClusterPool clusterPool, IDatastorePool dsPool, Scheduler scheduler);
+    public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData);
 }

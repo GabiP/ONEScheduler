@@ -4,19 +4,18 @@ import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.filters.FilterFactory;
-import cz.muni.fi.scheduler.filters.IFilter;
+import cz.muni.fi.scheduler.filters.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.io.IOException;
+import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import cz.muni.fi.scheduler.filters.IHostFilter;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
@@ -27,47 +26,37 @@ import java.util.Map;
  */
 public class Scheduler {
     
-    IAuthorizationManager authorizationManager;
+    private IAuthorizationManager authorizationManager;
     
-    IHostPool hostPool;
+    private IHostPool hostPool;
     
-    IVmPool vmPool;    
+    private IVmPool vmPool;    
     
-    IClusterPool clusterPool;
+    private IClusterPool clusterPool;
     
-    IDatastorePool dsPool;
+    private IDatastorePool dsPool;
     
-    List<VmElement> pendingVms;
+    private List<VmElement> pendingVms;
     
-    List<HostElement> activeHosts;
+    private List<HostElement> activeHosts;
     
-    IResultManager resultManager;
-    
-    /**
-     * This map is used for computing the cpu usages.
-     * Every time we match a host with a virtual machine the cpu usage needs to be increased.
-     * We are storing the used space.
-     */
-    Map<HostElement, Float> cpuUsages;
+    private IResultManager resultManager;
     
     /**
-     * This map is used for computing the memory usages.
-     * Every time we match a host with a virtual machine the memory usage needs to be increased.
-     * We are storing the used space.
+     * This attribute holds all important data for scheduling.
+     * Needs to be updated every new cycle.
      */
-    Map<HostElement, Integer> memoryUsages;
-    
-    /**
-     * This map is used for computing the disk usages.
-     * Every time we match a host with a virtual machine the disk usage needs to be decreased.
-     * We are storing the free space.
-     */
-    Map<HostElement, Integer> diskUsages;
+    private SchedulerData schedulerData;
     
     /**
      * The list of filters to be used for matching the host for a virtual machine.
      */
-    List<IFilter> filters;
+    private List<IHostFilter> hostFilters;
+    
+    /**
+     * The list of filters to be used for matching the datastore for a virtual machine.
+     */
+    private List<IDatastoreFilter> datastoreFilters;
     
     /**
      * Queues with waiting VMs.
@@ -77,14 +66,15 @@ public class Scheduler {
      */
     private LinkedList queue = new LinkedList();
 
-    Scheduler(IVmPool vmPool, IHostPool hostPool, IClusterPool clusterPool, IDatastorePool dsPool, IAuthorizationManager authorizationManager, IResultManager resultManager, List<IFilter> filters) {
+    Scheduler(IVmPool vmPool, IHostPool hostPool, IClusterPool clusterPool, IDatastorePool dsPool, IAuthorizationManager authorizationManager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters) {
         this.vmPool = vmPool;
         this.hostPool = hostPool;
         this.clusterPool = clusterPool;
         this.dsPool = dsPool;
         this.authorizationManager = authorizationManager;
         this.resultManager = resultManager;
-        this.filters = filters;
+        this.hostFilters = hostFilters;
+        this.datastoreFilters = datastoreFilters;
     }
     
     /**
@@ -94,12 +84,10 @@ public class Scheduler {
      * @return the map with the plan
      */
     public Map<HostElement, List<VmElement>> schedule() {
+        //initialize scheduler data entity
+        schedulerData = new SchedulerData(hostPool, vmPool, clusterPool, dsPool);
         //get active hosts
         activeHosts = hostPool.getActiveHosts();
-        //initialize capacity maps
-        cpuUsages = initializeCpuCapacity(activeHosts);
-        memoryUsages = initializeMemoryCapacity(activeHosts);
-        diskUsages = initializeDiskCapacity(activeHosts);
         //get pendings, state = 1 is pending
         pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
@@ -139,15 +127,21 @@ public class Scheduler {
             }
             //filter authorized hosts for vm
             List<HostElement> filteredHosts = filterAuthorizedHosts(authorizedHosts, vm);
+            //filter datastores for vm
+            List<DatastoreElement> filteredDatastores = filterDatastores(dsPool.getDatastores(), vm);
             // deploy if filtered hosts is not empty
-            if (!filteredHosts.isEmpty()) {
+            if (!filteredHosts.isEmpty() && !filteredDatastores.isEmpty()) {
+                //run algorithms to chose host and datastores
                 HostElement chosenHost = filteredHosts.get(0);
-                plan = putValueToMap(plan, chosenHost, vm);
-                System.out.println("Deploying vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
+                
+                //Schedule the VM on chosen host
+                plan = putValueToPlan(plan, chosenHost, vm);
+                System.out.println("Scheduling vm: " + vm.getVmId() + " on host: " + filteredHosts.get(0).getId());
                 // change capacities
-                cpuUsages = addCpuCapacity(chosenHost, vm, cpuUsages);
-                memoryUsages = addMemoryCapacity(chosenHost, vm, memoryUsages);
-                diskUsages = addDiskCapacity(chosenHost, vm, diskUsages);
+                schedulerData.addHostCpuCapacity(chosenHost, vm);
+                schedulerData.addHostMemoryCapacity(chosenHost, vm);
+                schedulerData.addHostRunningVm(chosenHost);
+                //TODO: update datastore usages
             }
             queue.poll();
         }
@@ -168,7 +162,7 @@ public class Scheduler {
             /*if (match(h, vm)) {
                 filteredHosts.add(h);
             }*/
-            boolean matched = getResultsFromFilters(filters, h, vm);
+            boolean matched = getResultedHostsFromFilters(hostFilters, h, vm);
             if (matched) {
                 filteredHosts.add(h);
             }
@@ -176,7 +170,18 @@ public class Scheduler {
         return filteredHosts;
     }
     
-    public Map<HostElement, List<VmElement>> putValueToMap(Map<HostElement, List<VmElement>> plan, HostElement host, VmElement vm) {
+    public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, VmElement vm) {
+        List<DatastoreElement> filteredDatastores = new ArrayList<>();
+        for (DatastoreElement ds: datastores) {
+            boolean matched = getResultedDatastoresFromFilters(datastoreFilters, ds, vm);
+            if (matched) {
+                filteredDatastores.add(ds);
+            }
+        }
+        return filteredDatastores;
+    }
+    
+    public Map<HostElement, List<VmElement>> putValueToPlan(Map<HostElement, List<VmElement>> plan, HostElement host, VmElement vm) {
         if (plan.containsKey(host)) {
             plan.get(host).add(vm);
         } else {
@@ -194,63 +199,26 @@ public class Scheduler {
      * @param vm the virtual machine to be tested
      * @return true if the host and vm match, false othewise
      */
-    public boolean getResultsFromFilters(List<IFilter> filters, HostElement h, VmElement vm) {
+    public boolean getResultedHostsFromFilters(List<IHostFilter> filters, HostElement h, VmElement vm) {
          boolean result = true;
-         for (IFilter filter: filters) {
-             result = result && filter.test(vm, h, clusterPool, dsPool, this);
+         for (IHostFilter filter: filters) {
+             result = result && filter.test(vm, h, schedulerData);
          }
          return result;
      }
     
-    public Map<HostElement, Float> initializeCpuCapacity(List<HostElement> hosts) {
-        Map<HostElement, Float> usages = new HashMap<>();
-        for (HostElement host: hosts) {
-            usages.put(host, host.getCpu_usage());
-        }
-        return usages;
-    }
-    
-    public Map<HostElement, Integer> initializeMemoryCapacity(List<HostElement> hosts) {
-        Map<HostElement, Integer> usages = new HashMap<>();
-        for (HostElement host: hosts) {
-            usages.put(host, host.getMem_usage());
-        }
-        return usages;
-    }
-    
-    public Map<HostElement, Integer> initializeDiskCapacity(List<HostElement> hosts) {
-        Map<HostElement, Integer> usages = new HashMap<>();
-        for (HostElement h: hosts) {
-            usages.put(h, h.getFree_disk());
-        }
-        return usages;
-    }
-    
-    public Map<HostElement, Float> addCpuCapacity(HostElement host, VmElement vm, Map<HostElement, Float> usages) {
-        usages.replace(host, usages.get(host), usages.get(host) + vm.getCpu());
-        return usages;
-    }
-    
-    public Map<HostElement, Integer> addMemoryCapacity(HostElement host, VmElement vm, Map<HostElement, Integer> usages) {
-        usages.replace(host, usages.get(host), usages.get(host) + vm.getMemory());
-        return usages;
-    }
-    
-    public Map<HostElement, Integer> addDiskCapacity(HostElement host, VmElement vm, Map<HostElement, Integer> usages) {
-        usages.replace(host, usages.get(host), usages.get(host) - vm.getDiskSizes());
-        return usages;
-    }
-    public Map<HostElement, Float> getCpuUsages() {
-        return cpuUsages;
-    }
-
-    public Map<HostElement, Integer> getMemoryUsages() {
-        return memoryUsages;
-    }
-
-    public Map<HostElement, Integer> getMemoryUsagesDs() {
-        return diskUsages;
-    }
-    
-
+    /**
+     * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
+     * @param filters filters to be used
+     * @param h the host to be tested
+     * @param vm the virtual machine to be tested
+     * @return true if the host and vm match, false othewise
+     */
+    public boolean getResultedDatastoresFromFilters(List<IDatastoreFilter> filters, DatastoreElement ds, VmElement vm) {
+         boolean result = true;
+         for (IDatastoreFilter filter: filters) {
+             result = result && filter.test(vm, ds, schedulerData);
+         }
+         return result;
+     }
 }

@@ -6,6 +6,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import java.io.IOException;
 
 /**
  *
@@ -13,10 +14,10 @@ import cz.muni.fi.scheduler.elementpools.IVmPool;
  */
 public interface IManager {
     
-    public IAuthorizationManager getAuthorizationManager();
-    public IClusterPool getClusterPool();
-    public IDatastorePool getDatastorePool();
-    public IHostPool getHostPool();
-    public IUserPool getUserPool();
-    public IVmPool getVmPool();
+    public IAuthorizationManager getAuthorizationManager() throws IOException;
+    public IClusterPool getClusterPool() throws IOException;
+    public IDatastorePool getDatastorePool() throws IOException;
+    public IHostPool getHostPool() throws IOException;
+    public IUserPool getUserPool() throws IOException;
+    public IVmPool getVmPool() throws IOException;
 }

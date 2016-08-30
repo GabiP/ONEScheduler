@@ -1,15 +1,22 @@
 package cz.muni.fi.scheduler;
 
+import cz.muni.fi.authorization.IAuthorizationManager;
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IHostPool;
+import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.filters.FilterFactory;
-import cz.muni.fi.scheduler.filters.IFilter;
+import cz.muni.fi.scheduler.filters.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import cz.muni.fi.scheduler.filters.IHostFilter;
 
 /**
  * This class contains the main method.
@@ -40,7 +47,19 @@ public class SetUp {
     
     private static String datastorePoolPath;
     
-    private static String[] filters;
+    private static int cycleinterval;
+    
+    private static int numberofqueues;
+    
+    private static String[] hostFilters;
+    
+    private static String[] datastoreFilters;
+    
+    private static String[] hostPolicies;
+    
+    private static String[] datastorePolicies;
+    
+    private static String[] fairshare;
     
     private static IManager manager;
     
@@ -62,16 +81,17 @@ public class SetUp {
         userPoolPath = configuration.getString("userpoolpath");
         vmPoolPath = configuration.getString("vmpoolpath");
         datastorePoolPath = configuration.getString("datastorepoolpath");
-        filters = configuration.getStringArray("filters");
-        List<IFilter> listfilters = getFilters(filters);
+        cycleinterval = configuration.getInt("cycleinterval");
+        numberofqueues = configuration.getInt("numberofqueues");
+        hostFilters = configuration.getStringArray("filters");
+        List<IHostFilter> listHostFilters = getFilters(hostFilters);
+        List<IDatastoreFilter> listDatastoreFilters = getFilters(datastoreFilters);
+        hostPolicies = configuration.getStringArray("hostPolicies");
+        datastorePolicies = configuration.getStringArray("datastorePolicies");
+        fairshare = configuration.getStringArray("fairshare");
         
         if (useXml) {
-            try {
-                manager = new ManagerXML(hostPoolPath, clusterPoolPath, userPoolPath, vmPoolPath, datastorePoolPath);
-            } catch (IOException ex) {
-                System.err.println("Could not load xml files!" + ex);
-                return;
-            }
+            manager = new ManagerXML(hostPoolPath, clusterPoolPath, userPoolPath, vmPoolPath, datastorePoolPath);
             resultManager = new XmlResultManager(hostPoolPath, clusterPoolPath, userPoolPath, vmPoolPath, datastorePoolPath);
         } else {
             try {
@@ -83,14 +103,27 @@ public class SetUp {
             }
         }
         
-        Scheduler scheduler = new Scheduler(manager.getVmPool(), manager.getHostPool(), manager.getClusterPool(), manager.getDatastorePool(), manager.getAuthorizationManager(), resultManager, listfilters);
-        
-        Map<HostElement, List<VmElement>> plan = scheduler.schedule();
-        /*boolean writeResultsSuccess = scheduler.storeResults();
-        if (!writeResultsSuccess) {
-            System.out.println("Could not store results into XML file.");
-        }*/
-        printPlan(plan);
+        while (true) {
+            try {
+                IVmPool vmPool = manager.getVmPool();
+                IHostPool hostPool = manager.getHostPool();
+                IClusterPool clusterPool = manager.getClusterPool();
+                IDatastorePool datastorePool = manager.getDatastorePool();
+                IAuthorizationManager authorizationManager = manager.getAuthorizationManager();
+                Scheduler scheduler = new Scheduler(vmPool, hostPool, clusterPool, datastorePool, authorizationManager, resultManager, listHostFilters, listDatastoreFilters);
+                
+                Map<HostElement, List<VmElement>> plan = scheduler.schedule();
+                
+                /*boolean writeResultsSuccess = scheduler.storeResults();
+                if (!writeResultsSuccess) {
+                System.out.println("Could not store results into XML file.");
+                }*/
+                printPlan(plan);
+                TimeUnit.SECONDS.sleep(cycleinterval);
+            } catch (IOException | InterruptedException ex) {
+                Logger.getLogger(SetUp.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }       
     }
     
     private static void printPlan(Map<HostElement, List<VmElement>> plan ) {
@@ -108,14 +141,14 @@ public class SetUp {
         }
     }
 
-    public static List<IFilter> getFilters(String[] stringfilters) {
-        List<IFilter> filters = new ArrayList<>();
+    public static List getFilters(String[] stringfilters) {
+        List filters = new ArrayList<>();
         for (int i = 0; i < stringfilters.length; i++) {
             String filterString = stringfilters[i];
             if (!filterString.contains(".")) {
                 filterString = "cz.muni.fi.scheduler.filters." + filterString;
             }
-            IFilter f = FilterFactory.createFilter(filterString);
+            IHostFilter f = FilterFactory.createFilter(filterString);
             filters.add(f);
         }
         return filters;

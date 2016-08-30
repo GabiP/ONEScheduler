@@ -24,6 +24,17 @@ public class DatastoreElement {
     //0 - image, 1 - system, 2 - file
     private Integer type;
     
+    //0 - for monitoring
+    private Integer state;
+    
+    /**
+     * We check if shared equals "YES":
+     * Not equal: the total/used/free_mb atributes are provided.
+     * Equal: OpenNebula does not know the capacity of this datastore.
+     *        The capacity information can be found only in HostElement -> DatastoreNode
+     */
+    private String shared;
+    
     private Integer owner_u;
     private Integer owner_m;
     private Integer owner_a;
@@ -42,11 +53,17 @@ public class DatastoreElement {
     private Integer free_mb;
     private Integer used_mb;    
     
-    //shared - yes or no, how to get it
-    
     public void addUsedMb(Integer mb) {
         used_mb += mb;
         free_mb -= mb;
+    }
+    
+    public Boolean isShared() {
+        return ("YES".equals(this.shared));
+    }
+    
+    public Boolean isMonitored() {
+        return (Objects.equals(0, this.state));
     }
     
     /**
@@ -338,5 +355,33 @@ public class DatastoreElement {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return the state
+     */
+    public Integer getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the shared
+     */
+    public String getShared() {
+        return shared;
+    }
+
+    /**
+     * @param shared the shared to set
+     */
+    public void setShared(String shared) {
+        this.shared = shared;
     }
 }

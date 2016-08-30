@@ -26,15 +26,11 @@ import java.util.List;
  */
 public class ManagerXML implements IManager {
     
-    private IVmPool vmPool;
-            
-    private IHostPool hostPool;
-    
-    private IUserPool userPool;
-    
-    private IClusterPool clusterPool;
-    
-    private IDatastorePool dsPool;
+    private String hostPoolPath;
+    private String clusterPoolPath;
+    private String userPoolPath;
+    private String vmPoolPath;
+    private String datastorePoolPath;
     
     /**
      * Creates all pools necessary for scheduling by reading the xmls.
@@ -45,53 +41,53 @@ public class ManagerXML implements IManager {
      * @param datastorePoolPath the path to datastorepool.xml
      * @throws IOException 
      */
-    public ManagerXML(String hostPoolPath, String clusterPoolPath, String userPoolPath, String vmPoolPath, String datastorePoolPath) throws IOException {
+    public ManagerXML(String hostPoolPath, String clusterPoolPath, String userPoolPath, String vmPoolPath, String datastorePoolPath) {
+        this.hostPoolPath = hostPoolPath;
+        this.clusterPoolPath = clusterPoolPath;
+        this.userPoolPath = userPoolPath;
+        this.vmPoolPath = vmPoolPath;
+        this.datastorePoolPath = datastorePoolPath;
+    }
+
+
+    @Override
+    public IAuthorizationManager getAuthorizationManager() throws IOException{
+        return new AuthorizationManagerXml(getHostPool());
+    }
+
+    @Override
+    public IClusterPool getClusterPool() throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        String clusterPoolMessage = new String(Files.readAllBytes(Paths.get(clusterPoolPath)));
+        return xmlMapper.readValue(clusterPoolMessage, ClusterXmlPool.class);
+    }
+
+    @Override
+    public IDatastorePool getDatastorePool() throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        String dsPoolMessage = new String(Files.readAllBytes(Paths.get(datastorePoolPath)));
+        return xmlMapper.readValue(dsPoolMessage, DatastoreXmlPool.class);
+    }
+
+    @Override
+    public IHostPool getHostPool() throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String hostPoolMessage = new String(Files.readAllBytes(Paths.get(hostPoolPath)));
-        hostPool = xmlMapper.readValue(hostPoolMessage, HostXmlPool.class);
-        
-        String clusterPoolMessage = new String(Files.readAllBytes(Paths.get(clusterPoolPath)));
-        clusterPool = xmlMapper.readValue(clusterPoolMessage, ClusterXmlPool.class);
-        
+        return xmlMapper.readValue(hostPoolMessage, HostXmlPool.class);
+    }
+
+    @Override
+    public IUserPool getUserPool() throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
         String userPoolMessage = new String(Files.readAllBytes(Paths.get(userPoolPath)));
-        userPool = xmlMapper.readValue(userPoolMessage, UserXmlPool.class);
-        
+        return xmlMapper.readValue(userPoolMessage, UserXmlPool.class);
+    }
+
+    @Override
+    public IVmPool getVmPool() throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
         String vmPoolMessage = new String(Files.readAllBytes(Paths.get(vmPoolPath)));
-        vmPool = xmlMapper.readValue(vmPoolMessage, VmXmlPool.class);
-        
-        String dsPoolMessage = new String(Files.readAllBytes(Paths.get(datastorePoolPath)));
-        dsPool = xmlMapper.readValue(dsPoolMessage, DatastoreXmlPool.class);
-    }
-
-
-    @Override
-    public IAuthorizationManager getAuthorizationManager() {
-        return new AuthorizationManagerXml(hostPool);
-    }
-
-    @Override
-    public IClusterPool getClusterPool() {
-        return clusterPool;
-    }
-
-    @Override
-    public IDatastorePool getDatastorePool() {
-        return dsPool;
-    }
-
-    @Override
-    public IHostPool getHostPool() {
-        return hostPool;
-    }
-
-    @Override
-    public IUserPool getUserPool() {
-        return userPool;
-    }
-
-    @Override
-    public IVmPool getVmPool() {
-        return vmPool;
+        return xmlMapper.readValue(vmPoolMessage, VmXmlPool.class);
     }
     
 }

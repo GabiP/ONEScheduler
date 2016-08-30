@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  *
- * @author gabi
+ * @author Gabriela Podolnikova
  */
 public class HostXmlMapper {
     
@@ -49,6 +49,7 @@ public class HostXmlMapper {
         h.setRunningVms(host.getRunningVms());
         h.setReservedCpu(host.getReservedCpu());
         h.setReservedMemory(host.getReservedMemory());
+        h.setVms(host.getVms());
         h.setPcis(mapPcis(host.getPcis()));
         h.setDatastores(mapDatastores(host.getDatastores()));
         return h;

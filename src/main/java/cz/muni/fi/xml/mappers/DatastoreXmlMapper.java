@@ -31,6 +31,8 @@ public class DatastoreXmlMapper {
         ds.setUid(datastore.getUid());
         ds.setName(datastore.getName());
         ds.setType(datastore.getType());
+        ds.setState(datastore.getState());
+        ds.setShared(datastore.getShared());
         ds.setFree_mb(datastore.getFree_mb());
         ds.setTotal_mb(datastore.getTotal_mb());
         ds.setUsed_mb(datastore.getUsed_mb());

@@ -5,6 +5,7 @@ import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +55,8 @@ public class HostElement {
     private Integer reservedCpu;
     
     private Integer reservedMemory;
+    
+    private List<Integer> vms;
         
     private List<PciNode> pcis;
         
@@ -93,7 +96,7 @@ public class HostElement {
 
     @Override
     public String toString() {
-        return "HostElement{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", pcis=" + pcis + ", datastores=" + datastores + '}';
+        return "HostElement{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", vms=" + vms + ", pcis=" + pcis + ", datastores=" + datastores + '}';
     }
     
     /**
@@ -118,17 +121,57 @@ public class HostElement {
          free_mem += vm.getMemory();
     }
     
-    public DatastoreElement getHostsFreeDatastore(Integer sizeValue, IClusterPool clusterPool, IDatastorePool dsPool, Map<DatastoreElement, Integer> dsMemUsages) {
+    /**
+     * This method returns host's datastore that has enough capacity to host the VM.
+     * It is necessary to check if the datastore is monitored and shared.
+     * Based on that we check the values differently.
+     * @param sizeValue the capacity of all VM's disks
+     * @param clusterPool all clusters in the system
+     * @param dsPool all datasores in the system
+     * @param datastoreStorageCapacity actual datastore usage in the system during the scheduling process
+     * @return the suitable datastore
+     */
+    public DatastoreElement getHostsSuitableDatastore(Integer sizeValue, IClusterPool clusterPool, IDatastorePool dsPool, Map<DatastoreElement, Integer> datastoreStorageCapacity) {
         ClusterElement cluster = clusterPool.getCluster(this.clusterId);
         List<Integer> datastoresIds = cluster.getDatastores();
          for (Integer dsId : datastoresIds) {
             DatastoreElement ds = dsPool.getDatastore(dsId);
-            Integer free_mb = dsMemUsages.get(ds);
+            Integer free_mb = datastoreStorageCapacity.get(ds);
             if (free_mb > sizeValue) {
                 return ds;
             }
         }
-        return null;
+        return null;     
+    }
+    
+    /**
+     * 
+     * @param sizeValue the capacity of all VM's disks
+     * @param clusterPool all clusters in the system
+     * @param dsPool all datasores in the system
+     * @param datastoreNodestorageCapacity actual host's datastore usage in the system during the scheduling process
+     * @return the index of the suitable datastore in the list of all datastore that this host has
+     */     
+    public Integer getHostsSuitableDatastoreNode(Integer sizeValue, IClusterPool clusterPool, IDatastorePool dsPool, Map<HostElement, List<Integer>> datastoreNodestorageCapacity) {
+        Integer indexOfSuitableNode = null;
+        for (DatastoreNode ds: datastores) {
+            List<Integer> datastoresUsages = datastoreNodestorageCapacity.get(ds);
+            for (int i = 0; i < datastoresUsages.size(); i ++) {
+                Integer freeSpace = datastoresUsages.get(i);
+                if (freeSpace > sizeValue) {
+                    indexOfSuitableNode = i;
+                }
+            }
+        }
+        return indexOfSuitableNode;
+    }
+    
+    public List<Integer> getDatastoresIds() {
+        List<Integer> ids = new ArrayList<>();
+        for (DatastoreNode dsNode: datastores) {
+            ids.add(dsNode.getId_ds());
+        }
+        return ids;
     }
     
     /**
@@ -395,5 +438,19 @@ public class HostElement {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @return the vms
+     */
+    public List<Integer> getVms() {
+        return vms;
+    }
+
+    /**
+     * @param vms the vms to set
+     */
+    public void setVms(List<Integer> vms) {
+        this.vms = vms;
     }
 }

@@ -27,6 +27,8 @@ public class DatastoreMapper {
         result.setGid(XpathLoader.getInt(ds, "/DATASTORE/GID"));
         result.setName(ds.xpath("/DATASTORE/NAME"));
         result.setType(XpathLoader.getInt(ds, "/DATASTORE/TYPE"));
+        result.setState(XpathLoader.getInt(ds, "/DATASTORE/STATE"));
+        result.setShared(ds.xpath("/DATASTORE/TEMPLATE/SHARED"));
         result.setOwner_u(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/OWNER_U"));
         result.setOwner_m(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/OWNER_M"));
         result.setOwner_a(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/OWNER_A"));

@@ -50,4 +50,22 @@ public class Configuration {
         bool = Boolean.parseBoolean(value);
         return bool;
     }
+    
+    /**
+     * Gets int value from properties.
+     *
+     * @param key the configuration item key
+     *
+     * @return the value as int
+     */
+    public int getInt(String key) {
+        String value = props.getProperty(key);
+        return extractInt(value);
+    }
+
+    private static int extractInt(String value) {
+        int i;
+        i = Integer.parseInt(value);
+        return i;
+    }
 }

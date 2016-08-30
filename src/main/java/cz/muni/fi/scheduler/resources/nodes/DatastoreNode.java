@@ -23,7 +23,7 @@ public class DatastoreNode extends AbstractNode {
          total_mb = Integer.parseInt(host.xpath(xpathExpr + "/TOTAL_MB"));
          used_mb = Integer.parseInt(host.xpath(xpathExpr + "/USED_MB"));
     }
-
+    
     /**
      * @return the id_ds
      */

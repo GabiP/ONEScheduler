@@ -39,7 +39,11 @@ public class VmElement {
     * for values see vm.xsd
     */
     private Integer lcm_state;
-        
+    
+    /**
+     * 1 if the VM is considered for rescheduling,
+     * 0 otherwise.
+     */
     private Integer resched;
         
     private String deploy_id;
@@ -101,6 +105,9 @@ public class VmElement {
         return sizeValue;
     }
     
+    public Boolean isResched() {
+        return (Objects.equals(1, this.resched));
+    }   
     
     /**
      * @return the id

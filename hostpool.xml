@@ -41,5 +41,6 @@
             <USED_MB>10</USED_MB>
         </DS>
     </DATASTORES>
+    <VMS/>
   </HOST>
 </HOSTPOOL>

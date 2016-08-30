@@ -24,6 +24,13 @@ public class DatastoreXml {
     @JacksonXmlProperty(localName = "TYPE")
     private Integer type;
     
+    //0 - for monitoring
+    @JacksonXmlProperty(localName = "STATE")
+    private Integer state;
+    
+    @JacksonXmlProperty(localName = "SHARED")
+    private String shared;
+    
     //in node permissions
     @JacksonXmlProperty(localName = "")
     private Integer owner_u;
@@ -211,5 +218,33 @@ public class DatastoreXml {
     @Override
     public String toString() {
         return "DatastoreXml{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", cluster_id=" + cluster_id + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
+    }
+
+    /**
+     * @return the state
+     */
+    public Integer getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(Integer state) {
+        this.state = state;
+    }
+
+    /**
+     * @return the shared
+     */
+    public String getShared() {
+        return shared;
+    }
+
+    /**
+     * @param shared the shared to set
+     */
+    public void setShared(String shared) {
+        this.shared = shared;
     }
 }

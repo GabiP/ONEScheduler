@@ -67,6 +67,9 @@ public class HostXml {
     
     @JacksonXmlProperty(localName = "RESERVED_MEMORY")
     private Integer reservedMemory;
+    
+    @JacksonXmlProperty(localName = "VMS")
+    private List<Integer> vms;
         
     @JacksonXmlProperty(localName = "PCI_DEVICES")
     private List<PciNodeXml> pcis;
@@ -100,7 +103,7 @@ public class HostXml {
 
     @Override
     public String toString() {
-        String text =  "HostXml{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", pcis=" + pcis + ", datastores=" + datastores + '}';
+        String text =  "HostXml{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", vms=" + vms + ", pcis=" + pcis + ", datastores=" + datastores + '}';
         text += "\n\t Datastores: ";
         for(DatastoreNodeXml xml : datastores) {
             text += xml + ", ";
@@ -346,6 +349,20 @@ public class HostXml {
 
     public void setDatastores(List<DatastoreNodeXml> datastores) {
         this.datastores = datastores;
+    }
+
+    /**
+     * @return the vms
+     */
+    public List<Integer> getVms() {
+        return vms;
+    }
+
+    /**
+     * @param vms the vms to set
+     */
+    public void setVms(List<Integer> vms) {
+        this.vms = vms;
     }
 
     

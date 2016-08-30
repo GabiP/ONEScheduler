@@ -1,0 +1,53 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package cz.muni.fi.scheduler.filters;
+
+import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.resources.VmElement;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Checks whether the given Datastore satisfies the given VM's requirements.
+ * For example: if the specified datastore is the datastore that the VM requires.
+ * 
+ * @author Gabriela Podolnikova
+ */
+public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilter {
+
+    @Override
+    public boolean test(VmElement vm, DatastoreElement ds, SchedulerData schedulerData) {
+        if (vm.getSchedDsRequirements() == null) {
+            return true;
+        }
+        if (vm.getSchedDsRequirements().equals("")) {
+            System.out.println("Vm does not have any datastore requirements");
+            return true;
+        }
+        String[] reqs = vm.getSchedDsRequirements().split("\\|");
+        boolean fits = false;
+        for (String req: reqs) {
+            req = req.trim();
+            if (req.contains("ID")) {
+                Integer id = Integer.parseInt(req.substring(req.indexOf("=")+2, req.length()-1));
+                if (Objects.equals(ds.getId(), id)) {
+                    fits = true;
+                } else {
+                    
+                }
+            }
+            if (req.contains("NAME")) {
+                String name = req.substring(req.indexOf("=")+2, req.length()-1);
+                if (Objects.equals(ds.getName(), name)) {
+                    fits = true;
+                }
+            }
+        }
+        return fits;
+    }
+}
