@@ -21,7 +21,7 @@ public class MaxMinCalculator implements IUserPriorityCalculator {
     
     private IVmPool vmPool;
 
-    public MaxMinCalculator(VmElementPool vmPool) {
+    public MaxMinCalculator(IVmPool vmPool) {
         this.vmPool = vmPool;
     }
 
@@ -31,14 +31,15 @@ public class MaxMinCalculator implements IUserPriorityCalculator {
         for (Integer userId : userIds) {
             List<VmElement> vms = vmPool.getAllVmsByUser(userId);
             float priority = 0;
+            System.out.println("DEBUG: USERID: " + userId);
             for (VmElement vm : vms) {
                 float penalty = vm.getCpu();
                 float runTime = vm.getRunTime();
                 if (runTime == 0) {
                     runTime = getMaxRuntime(vms);
                 }
-                priority += runTime*penalty;
-                System.out.println("VM Stats: id-" + vm.getVmId() + " walltime-" + runTime + " penalty-" + penalty);
+                priority += runTime*penalty;                
+                System.out.println("DEBUG:\tVM Stats: id-" + vm.getVmId() + " walltime-" + runTime + " penalty-" + penalty);
             }
             userPriorities.put(userId, priority);
         }

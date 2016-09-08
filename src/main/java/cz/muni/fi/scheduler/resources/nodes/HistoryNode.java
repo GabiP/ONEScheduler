@@ -15,7 +15,6 @@ public class HistoryNode extends AbstractNode {
     
     private long startTime;
     private long endTime;
-    private int runTime;
     
     /**
      * REASON values:
@@ -30,7 +29,11 @@ public class HistoryNode extends AbstractNode {
         startTime = Integer.parseInt(vm.xpath(xpathExpr + "/RSTIME"));
         endTime = Integer.parseInt(vm.xpath(xpathExpr + "/RETIME"));
         reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));        
-    }
+    }  
+    
+    public boolean isClosed() {
+        return (startTime > 0) && (endTime > 0) && (endTime > startTime);
+    }   
     
     public void setReason(int reason) {
         this.reason = reason;
@@ -43,10 +46,6 @@ public class HistoryNode extends AbstractNode {
     public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
-
-    public void setRunTime(int runTime) {
-        this.runTime = runTime;
-    }
     
     public int getReason() {
         return reason;
@@ -58,49 +57,10 @@ public class HistoryNode extends AbstractNode {
 
     public long getEndTime() {
         return endTime;
-    }
-
-    public int getRunTime() {
-        // TODO : agree with Dalibor how to handle missing End Time
-        if (endTime != 0) {
-            runTime = (int) (endTime - startTime);
-        } else {
-            runTime = (int) (System.currentTimeMillis()/1000L - startTime);
-        }
-        return runTime;
-    }
-    
-    public boolean isClosed() {
-        return (reason != 0);
     }    
     
-    // TODO: remove (just for debugging purposes)
-    public String formatStartTime() {
-        Date date = new Date(startTime*1000L); // *1000 is to convert seconds to milliseconds
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
-        return sdf.format(date);
-    }        
-    
-    // TODO: remove (just for debugging purposes)
-    public String formatRunTime() {
-        int daySecs = 24*3600;
-        int hourSecs = 3600;
-        int minSecs = 60;
-               
-        int time = runTime;
-        int days = time / daySecs;
-        time -= days*daySecs;
-        int hours = time / hourSecs;
-        time -= hours*hourSecs;
-        int minutes = time / minSecs;
-        time -= minutes*minSecs;        
-        
-        return days + "d " + hours+":"+minutes+ ":"+time;
-    }
-
     @Override
     public String toString() {
-        return "HistoryNode{" + "startTime=" + startTime + ", endTime=" + endTime + ", runTime=" + runTime + ", reason=" + reason + '}';
-    }
-    
+        return "HistoryNode{" + "startTime=" + startTime + ", endTime=" + endTime + ", reason=" + reason + '}';
+    }    
 }

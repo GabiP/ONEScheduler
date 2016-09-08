@@ -65,9 +65,10 @@ public class VmXmlPool implements IVmPool {
             }
             
             if (state != VirtualMachinePool.ALL_VM) {
-                hasState = (vm.getState() == state);
                 if (state == VirtualMachinePool.NOT_DONE) {
-                    hasState = hasState && (vm.getState() != 6);
+                    hasState = (vm.getState() != 6);
+                } else {
+                    hasState = (vm.getState() == state);                 
                 }
             }
             
