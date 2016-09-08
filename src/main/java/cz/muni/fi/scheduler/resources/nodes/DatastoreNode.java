@@ -24,6 +24,11 @@ public class DatastoreNode extends AbstractNode {
          used_mb = Integer.parseInt(host.xpath(xpathExpr + "/USED_MB"));
     }
     
+    public void update(Integer vmUsage) {
+        free_mb -= vmUsage;
+        used_mb += vmUsage;
+    }
+    
     /**
      * @return the id_ds
      */

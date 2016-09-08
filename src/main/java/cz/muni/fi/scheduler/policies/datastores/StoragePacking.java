@@ -7,9 +7,13 @@ package cz.muni.fi.scheduler.policies.datastores;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Packing policy for selecting datastore.
@@ -23,15 +27,32 @@ import java.util.List;
 public class StoragePacking implements IStoragePolicy {
 
     @Override
-    public List<DatastoreElement> sortDatastores(List<DatastoreElement> datastores, VmElement vm, SchedulerData schedulerData) {
-        List<DatastoreElement> result = new ArrayList<>();
-        DatastoreElement lessFreeSpace = datastores.get(0);
-        for (DatastoreElement ds: datastores) {
-            if (ds.getFree_mb() < lessFreeSpace.getFree_mb()) {
-                lessFreeSpace = ds;
+    public DatastoreElement selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
+        Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity = schedulerData.getDatastoreNodeStorageCapacity();
+        List<DatastoreNode> datastoreNodes = datastoreNodeStorageCapacity.get(host);
+        Map<DatastoreElement, Integer> datastoreStorageCapacity = schedulerData.getDatastoreStorageCapacity();
+        Integer lessFreeSpace = Integer.MAX_VALUE;
+        Integer capacity;
+        DatastoreElement result = null;
+        for (DatastoreElement ds : datastores) {
+            if (ds.isShared()) {
+                capacity = datastoreStorageCapacity.get(ds);
+                if(capacity < lessFreeSpace) {
+                    result = ds;
+                    lessFreeSpace = capacity;
+                }
+            } else {
+                for (DatastoreNode dsNode : datastoreNodes) {
+                    if (ds.getId().intValue() == dsNode.getId_ds().intValue()) {
+                        capacity = dsNode.getFree_mb();
+                        if (capacity < lessFreeSpace) {
+                            result = ds;
+                            lessFreeSpace = capacity;
+                        }
+                    }
+                }
             }
         }
         return result;
-    }
-    
+    } 
 }

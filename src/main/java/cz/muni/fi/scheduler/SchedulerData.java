@@ -48,7 +48,8 @@ public class SchedulerData {
      * Every time we match a host with a virtual machine the free space on hosts datastores needs to be decreased.
      * We are storing the free space.
      */
-    private Map<HostElement, List<Integer>> datastoreNodeStorageCapacity;
+    //private Map<HostElement, List<Integer>> datastoreNodeStorageCapacity;
+    private Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity;
     
     /**
      * This map is used for computing the free space on datastore directly.
@@ -70,7 +71,7 @@ public class SchedulerData {
         this.cpuUsages = initializeHostsCpuCapacity(hostPool.getActiveHosts());
         this.memoryUsages = initializeHostMemoryCapacity(hostPool.getActiveHosts());
         this.datastoreNodeStorageCapacity = initializeDatastoreNodeStorageCapacity(hostPool.getActiveHosts());
-        this.datastoreStorageCapacity = initializeDatastoreStorageCapacity(dsPool.getDatastores());
+        this.datastoreStorageCapacity = initializeDatastoreStorageCapacity(dsPool.getSystemDs());
         this.runningVms = initializeHostRunningVms(hostPool.getActiveHosts());
     }
     
@@ -90,7 +91,7 @@ public class SchedulerData {
         return usages;
     }
     
-    public Map<HostElement, List<Integer>> initializeDatastoreNodeStorageCapacity(List<HostElement> hosts) {
+    /*public Map<HostElement, List<Integer>> initializeDatastoreNodeStorageCapacity(List<HostElement> hosts) {
         Map<HostElement, List<Integer>> usages = new HashMap<>();
         for (HostElement h: hosts) {
             List<DatastoreNode> datastores = h.getDatastores();
@@ -99,9 +100,29 @@ public class SchedulerData {
             }
         }
         return usages;
+    }*/
+    
+    public Map<HostElement, List<DatastoreNode>> initializeDatastoreNodeStorageCapacity(List<HostElement> hosts) {
+        Map<HostElement, List<DatastoreNode>> usages = new HashMap<>();
+        for (HostElement h: hosts) {
+            List<DatastoreNode> datastores = onlySystemDsNode(h.getDatastores(), dsPool);
+            usages.put(h, datastores);
+        }
+        return usages;
     }
     
-     public Map<HostElement, List<Integer>> putValueToUsage(Map<HostElement, List<Integer>> map, HostElement host, Integer usage) {
+    private List<DatastoreNode> onlySystemDsNode(List<DatastoreNode> datastores, IDatastorePool dsPool) {
+        List<DatastoreNode> systemDsNodes = new ArrayList<>();
+        for (DatastoreNode dsNode: datastores) {
+            DatastoreElement ds = dsPool.getDatastore(dsNode.getId_ds());
+            if (ds.isSystem()) {
+                systemDsNodes.add(dsNode);
+            }
+        }
+        return systemDsNodes;
+    }
+    
+    /*public Map<HostElement, List<Integer>> putValueToUsage(Map<HostElement, List<Integer>> map, HostElement host, Integer usage) {
         if (map.containsKey(host)) {
             map.get(host).add(usage);
         } else {
@@ -110,7 +131,7 @@ public class SchedulerData {
             map.put(host, values);
         }
         return map;
-    }
+    }*/
     
     public Map<DatastoreElement, Integer> initializeDatastoreStorageCapacity(List<DatastoreElement> datastores) {
         Map<DatastoreElement, Integer> usages = new HashMap<>();
@@ -138,11 +159,18 @@ public class SchedulerData {
         return memoryUsages;
     }
     
-    public Map<HostElement, List<Integer>> addDatastoreNodeStorageCapacity(HostElement host, VmElement vm, Integer index) {
+    /*public Map<HostElement, List<Integer>> addDatastoreNodeStorageCapacity(HostElement host, VmElement vm, Integer index) {
         List<Integer> usagesToUpdate = datastoreNodeStorageCapacity.get(host);
         Integer use = usagesToUpdate.get(index);
         usagesToUpdate.set(index, use -vm.getDiskSizes());
         datastoreNodeStorageCapacity.replace(host, datastoreNodeStorageCapacity.get(host), usagesToUpdate);
+        return datastoreNodeStorageCapacity;
+    }*/
+    
+    public Map<HostElement, List<DatastoreNode>> addDatastoreNodeStorageCapacity(HostElement host, DatastoreNode ds, VmElement vm) {
+        List<DatastoreNode> usageToUpdate = datastoreNodeStorageCapacity.get(host);
+        DatastoreNode dsToUpdate = usageToUpdate.get(usageToUpdate.indexOf(ds));
+        dsToUpdate.update(vm.getDiskSizes());
         return datastoreNodeStorageCapacity;
     }
     
@@ -204,11 +232,19 @@ public class SchedulerData {
         this.memoryUsages = memoryUsages;
     }
 
-    public Map<HostElement, List<Integer>> getDatastoreNodeStorageCapacity() {
+    /*public Map<HostElement, List<Integer>> getDatastoreNodeStorageCapacity() {
         return datastoreNodeStorageCapacity;
     }
 
     public void setDatastoreNodeStorageCapacity(Map<HostElement, List<Integer>> datastoreNodeStorageCapacity) {
+        this.datastoreNodeStorageCapacity = datastoreNodeStorageCapacity;
+    }*/
+    
+    public Map<HostElement, List<DatastoreNode>> getDatastoreNodeStorageCapacity() {
+        return datastoreNodeStorageCapacity;
+    }
+
+    public void setDatastoreNodeStorageCapacity(Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity) {
         this.datastoreNodeStorageCapacity = datastoreNodeStorageCapacity;
     }
 

@@ -66,6 +66,10 @@ public class DatastoreElement {
         return (Objects.equals(0, this.state));
     }
     
+    public Boolean isSystem() {
+        return (Objects.equals(1, this.type));
+    }
+    
     /**
      * @return the id
      */

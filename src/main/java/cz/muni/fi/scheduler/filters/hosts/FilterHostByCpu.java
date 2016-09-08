@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.filters;
+package cz.muni.fi.scheduler.filters.hosts;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;

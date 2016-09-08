@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package cz.muni.fi.scheduler.filters;
+package cz.muni.fi.scheduler.filters.datastores;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,7 +21,7 @@ import java.util.Objects;
 public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilter {
 
     @Override
-    public boolean test(VmElement vm, DatastoreElement ds, SchedulerData schedulerData) {
+    public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         if (vm.getSchedDsRequirements() == null) {
             return true;
         }

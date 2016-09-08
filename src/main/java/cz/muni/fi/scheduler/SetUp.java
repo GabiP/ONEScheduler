@@ -5,8 +5,10 @@ import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import cz.muni.fi.scheduler.fairshare.FairshareFactory;
+import cz.muni.fi.scheduler.fairshare.IUserPriorityCalculator;
 import cz.muni.fi.scheduler.filters.FilterFactory;
-import cz.muni.fi.scheduler.filters.IDatastoreFilter;
+import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.IOException;
@@ -16,7 +18,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import cz.muni.fi.scheduler.filters.IHostFilter;
+import cz.muni.fi.scheduler.filters.hosts.IHostFilter;
+import cz.muni.fi.scheduler.policies.PolicyFactory;
+import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
+import cz.muni.fi.scheduler.policies.datastores.StoragePacking;
+import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
+import cz.muni.fi.scheduler.policies.hosts.Packing;
 
 /**
  * This class contains the main method.
@@ -83,12 +90,27 @@ public class SetUp {
         datastorePoolPath = configuration.getString("datastorepoolpath");
         cycleinterval = configuration.getInt("cycleinterval");
         numberofqueues = configuration.getInt("numberofqueues");
-        hostFilters = configuration.getStringArray("filters");
-        List<IHostFilter> listHostFilters = getFilters(hostFilters);
-        List<IDatastoreFilter> listDatastoreFilters = getFilters(datastoreFilters);
+        hostFilters = configuration.getStringArray("hostFilters");
+        datastoreFilters = configuration.getStringArray("datastoreFilters");
         hostPolicies = configuration.getStringArray("hostPolicies");
         datastorePolicies = configuration.getStringArray("datastorePolicies");
         fairshare = configuration.getStringArray("fairshare");
+        
+        List<IHostFilter> listHostFilters = FilterFactory.getHostFilters(hostFilters);
+        List<IDatastoreFilter> listDatastoreFilters = FilterFactory.getDatastoreFilters(datastoreFilters);
+        List<IPlacementPolicy> listPlacementPolicies = PolicyFactory.getPlacementPolicies(hostPolicies);
+        List<IStoragePolicy> listStoragePolicy = PolicyFactory.getStoragePolicies(datastorePolicies);
+        List<IUserPriorityCalculator> listFairshare = FairshareFactory.getFairshares(fairshare);
+        
+        //check if policies are set, if not use default.
+        if (listPlacementPolicies.isEmpty()) {
+            IPlacementPolicy defaultPolicy = new Packing();
+            listPlacementPolicies.add(defaultPolicy);
+        }
+        if (listStoragePolicy.isEmpty()) {
+            IStoragePolicy defaultPolicy = new StoragePacking();
+            listStoragePolicy.add(defaultPolicy);
+        }
         
         if (useXml) {
             manager = new ManagerXML(hostPoolPath, clusterPoolPath, userPoolPath, vmPoolPath, datastorePoolPath);
@@ -105,12 +127,7 @@ public class SetUp {
         
         while (true) {
             try {
-                IVmPool vmPool = manager.getVmPool();
-                IHostPool hostPool = manager.getHostPool();
-                IClusterPool clusterPool = manager.getClusterPool();
-                IDatastorePool datastorePool = manager.getDatastorePool();
-                IAuthorizationManager authorizationManager = manager.getAuthorizationManager();
-                Scheduler scheduler = new Scheduler(vmPool, hostPool, clusterPool, datastorePool, authorizationManager, resultManager, listHostFilters, listDatastoreFilters);
+                Scheduler scheduler = new Scheduler(manager, resultManager, listHostFilters, listDatastoreFilters, listPlacementPolicies, listStoragePolicy, listFairshare);
                 
                 Map<HostElement, List<VmElement>> plan = scheduler.schedule();
                 
@@ -141,16 +158,5 @@ public class SetUp {
         }
     }
 
-    public static List getFilters(String[] stringfilters) {
-        List filters = new ArrayList<>();
-        for (int i = 0; i < stringfilters.length; i++) {
-            String filterString = stringfilters[i];
-            if (!filterString.contains(".")) {
-                filterString = "cz.muni.fi.scheduler.filters." + filterString;
-            }
-            IHostFilter f = FilterFactory.createFilter(filterString);
-            filters.add(f);
-        }
-        return filters;
-    }
+    
 }
