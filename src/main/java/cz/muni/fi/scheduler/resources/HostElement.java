@@ -99,6 +99,16 @@ public class HostElement {
         return "HostElement{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", vms=" + vms + ", pcis=" + pcis + ", datastores=" + datastores + '}';
     }
     
+    public DatastoreNode getDatastoreNode(Integer id) {
+        DatastoreNode result = null;
+        for (DatastoreNode dsNode: datastores) {
+            if (dsNode.getId_ds().equals(id)) {
+                result = dsNode;
+            }
+        }
+        return result;
+    }
+    
     /**
      * Increases cpu and memory on current host. And decreases free cpu and memory.
      * @param vm virtual machine with information for increasing the capacity

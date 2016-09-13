@@ -5,11 +5,13 @@
  */
 package cz.muni.fi.scheduler.policies.datastores;
 
+import cz.muni.fi.scheduler.RankPair;
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +27,7 @@ import java.util.Objects;
 public class StorageStriping implements IStoragePolicy {
 
     @Override
-    public DatastoreElement selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
+    public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
         Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity = schedulerData.getDatastoreNodeStorageCapacity();
         List<DatastoreNode> datastoreNodes = datastoreNodeStorageCapacity.get(host);
         Map<DatastoreElement, Integer> datastoreStorageCapacity = schedulerData.getDatastoreStorageCapacity();
@@ -51,6 +53,17 @@ public class StorageStriping implements IStoragePolicy {
                 }
             }
         }
-        return result;
+        return new RankPair(result, moreFreeSpace);
+    }
+    
+    @Override    
+    public DatastoreElement getBestRankedDatastore(List<RankPair> values) {
+        RankPair best = values.get(0);
+        for (RankPair pair: values) {
+            if (pair.getRank() > best.getRank()) {
+                best = pair;
+            }
+        }
+        return best.getDs();
     }
 }

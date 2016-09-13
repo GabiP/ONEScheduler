@@ -40,6 +40,8 @@ public class SetUp {
     
     private static boolean useXml;
     
+    private static boolean preferHostFit;
+    
     private static String secret;
     
     private static String endpoint;
@@ -81,6 +83,7 @@ public class SetUp {
         }
         
         useXml = configuration.getBoolean("useXml");
+        preferHostFit = configuration.getBoolean("preferHostFit");
         endpoint = configuration.getString("endpoint");
         secret = configuration.getString("secret");
         hostPoolPath = configuration.getString("hostpoolpath");
@@ -127,15 +130,15 @@ public class SetUp {
         
         while (true) {
             try {
-                Scheduler scheduler = new Scheduler(manager, resultManager, listHostFilters, listDatastoreFilters, listPlacementPolicies, listStoragePolicy, listFairshare);
+                Scheduler scheduler = new Scheduler(manager, resultManager, listHostFilters, listDatastoreFilters, listPlacementPolicies, listStoragePolicy, listFairshare, numberofqueues, preferHostFit);
                 
-                Map<HostElement, List<VmElement>> plan = scheduler.schedule();
+                List<Match> plan = scheduler.schedule();
                 
                 /*boolean writeResultsSuccess = scheduler.storeResults();
                 if (!writeResultsSuccess) {
                 System.out.println("Could not store results into XML file.");
                 }*/
-                printPlan(plan);
+                //printPlan(plan);
                 TimeUnit.SECONDS.sleep(cycleinterval);
             } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(SetUp.class.getName()).log(Level.SEVERE, null, ex);

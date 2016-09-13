@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.resources.nodes;
 
+import java.util.List;
 import org.opennebula.client.PoolElement;
 
 /**

@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.scheduler.policies.datastores;
 
+import cz.muni.fi.scheduler.RankPair;
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -27,7 +28,7 @@ import java.util.Objects;
 public class StoragePacking implements IStoragePolicy {
 
     @Override
-    public DatastoreElement selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
+    public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
         Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity = schedulerData.getDatastoreNodeStorageCapacity();
         List<DatastoreNode> datastoreNodes = datastoreNodeStorageCapacity.get(host);
         Map<DatastoreElement, Integer> datastoreStorageCapacity = schedulerData.getDatastoreStorageCapacity();
@@ -53,6 +54,17 @@ public class StoragePacking implements IStoragePolicy {
                 }
             }
         }
-        return result;
-    } 
+        return new RankPair(result, lessFreeSpace);
+    }
+    
+    @Override    
+    public DatastoreElement getBestRankedDatastore(List<RankPair> values) {
+        RankPair best = values.get(0);
+        for (RankPair pair: values) {
+            if (pair.getRank() < best.getRank()) {
+                best = pair;
+            }
+        }
+        return best.getDs();
+    }
 }

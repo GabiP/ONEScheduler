@@ -5,10 +5,10 @@
  */
 package cz.muni.fi.scheduler.policies.datastores;
 
+import cz.muni.fi.scheduler.RankPair;
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
 
 /**
@@ -18,6 +18,8 @@ import java.util.List;
  */
 public interface IStoragePolicy {
     
-    public DatastoreElement selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData);
+    public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData);
+    
+    public DatastoreElement getBestRankedDatastore(List<RankPair> values);
     
 }
