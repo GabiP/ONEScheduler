@@ -86,13 +86,16 @@ public class VmElement {
         for (int i=0; i<histories.size(); i++) {
             HistoryNode history = histories.get(i);
             boolean isActive = (state == 3);
+            // TODO: is last in histories really the last history?
             boolean isLast = (i == histories.size() - 1);
-            if (history.isClosed() || (isActive && isLast)) {
-                runTime += history.getRunTime();
-            } else {     
-                // There is a history record that should have been closed
-                // TODO : calculate runtime
-            }
+            
+            if (history.isClosed()) {
+                runTime += (int) (history.getEndTime() - history.getStartTime());
+            } 
+            else if (isActive && isLast && history.getStartTime() > 0) {
+                // TODO: get Snapshot Time
+                runTime += (int) (System.currentTimeMillis()/1000L - history.getStartTime());
+            }            
         }
         return runTime;
     }
