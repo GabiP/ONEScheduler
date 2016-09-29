@@ -3,14 +3,14 @@ ONEScheduler is a custom cloud scheduler for OpenNebula and is currently still u
 ONEScheduler is being developed as a replacement for current scheduler that OpenNebula provides.
 Unlike the OpenNebula's scheduler, our scheduler has modular design and can be easily extended.
 
-###ONEScheduler offers:
+#####ONEScheduler offers:
 - fair-sharing algorithms
 - better handling of the hosts and datastores suitable for the virtual machine
 - simple interfaces for policies
 - ease of incorporating new scheduling and fair-sharing policies
 - its own configuration file (configuration.properties)
 
-###ONEScheduler will introduce:
+#####ONEScheduler will introduce:
 - possibility of testing new algorithms in a simulation mode
 - possibility of running many algorithms in parallel and choosing the best solution
 
