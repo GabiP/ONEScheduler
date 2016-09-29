@@ -17,7 +17,7 @@ Unlike the OpenNebula's scheduler, our scheduler has modular design and can be e
 ONEScheduler is a maven project and for running it just download or clone the project and run it in your IDE.
 
 ONEScheduler can be used in two modes:
-(You can swith between these two modes in the configuration file under "useXml" field)
+(You can switch between these two modes in the configuration file under "useXml" field)
 - connecting to OpenNebula and obtaining the xml files from OpenNebula (useXml=false)
 - providing the xml files in form of "hostpool.xml", "vmpool.xml" etc. (useXml=true) (This mode will be used for the simulations)
 
