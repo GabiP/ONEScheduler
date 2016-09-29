@@ -22,8 +22,8 @@ ONEScheduler can be used in two modes:
 - providing the xml files in form of "hostpool.xml", "vmpool.xml" etc. (useXml=true) (This mode will be used for the simulations)
 
 For connecting to OpenNebula you need to fill the "secret" and "endpoint" field in configuration file.
-"secret" - A string containing the ONE user:password tuple. Can be null.
-"endpoint" - Where the rpc server is listening, must be something like "http://localhost:2633/RPC2". Can be null.
+- "secret" - A string containing the ONE user:password tuple. Can be null.
+- "endpoint" - Where the rpc server is listening, must be something like "http://localhost:2633/RPC2". Can be null.
 
 For running it as a replacement of OpenNebula, you should shut down the OpenNebula scheduler daemon.
 
