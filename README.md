@@ -1,5 +1,5 @@
 ##ONEScheduler
-ONEScheduler is a custom cloud scheduler for OpenNebula and is currently still under developement. First release is expected in January 2017.
+ONEScheduler is a custom cloud scheduler for OpenNebula and is currently under development. First release is expected in January 2017.
 ONEScheduler is being developed as a replacement for current scheduler that OpenNebula provides.
 Unlike the OpenNebula's scheduler, our scheduler has modular design and can be easily extended.
 
