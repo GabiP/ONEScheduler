@@ -8,7 +8,10 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * @author Andras Urge
  */
 @JacksonXmlRootElement(localName = "HISTORY")
-public class HistoryNodeXml {
+public class HistoryNodeXml {    
+    
+    @JacksonXmlProperty(localName = "SEQ")
+    private int sequence;
     
     @JacksonXmlProperty(localName = "RSTIME")
     private long startTime;
@@ -18,6 +21,14 @@ public class HistoryNodeXml {
     
     @JacksonXmlProperty(localName = "REASON")
     private int reason; 
+
+    public int getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
 
     public long getStartTime() {
         return startTime;

@@ -17,17 +17,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * This class is responsible for ordering the given Virtual Machines. 
+ * The strategy of the ordering depends on the chosen AbstractPriorityCalculator.
+ * 
  * @author Andras Urge
  */
 public class FairShareOrderer {
     
-    private IUserPriorityCalculator priorityCalculator;
+    private AbstractPriorityCalculator priorityCalculator;
 
-    public FairShareOrderer(IUserPriorityCalculator priorityCalculator) {
+    public FairShareOrderer(AbstractPriorityCalculator priorityCalculator) {
         this.priorityCalculator = priorityCalculator;
     }
     
+    /**
+     * Orders the inputted Virtual Machines based on the chosen 
+     * AbstractPriorityCalculator. 
+     * 
+     * @param vms The Virtual Machines to order
+     * @return The ordered Virtual Machines
+     */
     public List<VmElement> orderVms(List<VmElement> vms) {
         Map<Integer, Float> userPriorities = priorityCalculator.getUserPriorities(getUserIds(vms));
         Map<VmElement, Float> vmPriorities = new HashMap<>();
@@ -40,6 +49,12 @@ public class FairShareOrderer {
         return orderedVms;
     }
 
+    /**
+     * Returns the set of user IDs for the inputted virtual machines.
+     * 
+     * @param vms
+     * @return Set of user IDs
+     */    
     private Set<Integer> getUserIds(List<VmElement> vms) {
         Set<Integer> userIds = new HashSet<>();
         for (VmElement vm : vms) {
@@ -48,6 +63,12 @@ public class FairShareOrderer {
         return userIds;
     }
 
+    /**
+     * Sorts the map by comparing the values
+     * 
+     * @param map 
+     * @return Sorted map
+     */
     private static List sortByValue(Map map) { 
         // Create List from Map
         List list = new LinkedList(map.entrySet());
@@ -62,6 +83,5 @@ public class FairShareOrderer {
             orderedKeys.add(((Map.Entry) it.next()).getKey());
         } 
         return orderedKeys;
-    }
-    
+    }    
 }

@@ -22,11 +22,13 @@
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
+                <SEQ>0</SEQ>
                 <RSTIME>1456231287</RSTIME>
                 <RETIME>1461223290</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>1</SEQ>
                 <RSTIME>1467280843</RSTIME>
                 <RETIME>1467280895</RETIME>
                 <REASON>1</REASON>
@@ -62,11 +64,13 @@
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
+                <SEQ>0</SEQ>
                 <RSTIME>1467280843</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>1</SEQ>
                 <RSTIME>1467282298</RSTIME>
                 <RETIME>0</RETIME>
                 <REASON>0</REASON>
@@ -99,11 +103,13 @@
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
+                <SEQ>0</SEQ>
                 <RSTIME>1467280843</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>1</SEQ>
                 <RSTIME>1467282298</RSTIME>
                 <RETIME>0</RETIME>
                 <REASON>0</REASON>
@@ -136,16 +142,19 @@
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
+                <SEQ>0</SEQ>
                 <RSTIME>1456264052</RSTIME>
                 <RETIME>1461223291</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>1</SEQ>
                 <RSTIME>1467280824</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>2</SEQ>
                 <RSTIME>1467280824</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>0</REASON>
@@ -178,16 +187,19 @@
         </DISKS>
         <HISTORY_RECORDS>
             <HISTORY>
+                <SEQ>0</SEQ>
                 <RSTIME>1456264052</RSTIME>
                 <RETIME>1461223291</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>1</SEQ>
                 <RSTIME>1467280824</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>2</REASON>
             </HISTORY>
             <HISTORY>
+                <SEQ>2</SEQ>
                 <RSTIME>1467280824</RSTIME>
                 <RETIME>1467281433</RETIME>
                 <REASON>0</REASON>

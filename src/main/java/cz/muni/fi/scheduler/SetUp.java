@@ -6,7 +6,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.FairshareFactory;
-import cz.muni.fi.scheduler.fairshare.IUserPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.filters.FilterFactory;
 import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -103,7 +103,7 @@ public class SetUp {
         List<IDatastoreFilter> listDatastoreFilters = FilterFactory.getDatastoreFilters(datastoreFilters);
         List<IPlacementPolicy> listPlacementPolicies = PolicyFactory.getPlacementPolicies(hostPolicies);
         List<IStoragePolicy> listStoragePolicy = PolicyFactory.getStoragePolicies(datastorePolicies);
-        List<IUserPriorityCalculator> listFairshare = FairshareFactory.getFairshares(fairshare);
+        List<AbstractPriorityCalculator> listFairshare = FairshareFactory.getFairshares(fairshare);
         
         //check if policies are set, if not use default.
         if (listPlacementPolicies.isEmpty()) {

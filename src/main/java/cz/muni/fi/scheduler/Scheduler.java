@@ -5,7 +5,7 @@ import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.IUserPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -70,7 +70,7 @@ public class Scheduler {
     /**
      * The list of fairshare policies to be used for sorting the virtual machines based on their user's priority.
      */
-    private List<IUserPriorityCalculator> listFairshare;  
+    private List<AbstractPriorityCalculator> listFairshare;  
     
     /**
      * Queues with waiting VMs.
@@ -84,7 +84,7 @@ public class Scheduler {
     
     private boolean preferHostFit;
 
-    Scheduler(IManager manager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters, List<IPlacementPolicy> listPlacementPolicies, List<IStoragePolicy> listStoragePolicy, List<IUserPriorityCalculator> listFairshare, int numberOfQueues, boolean preferHostFit) throws IOException {
+    Scheduler(IManager manager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters, List<IPlacementPolicy> listPlacementPolicies, List<IStoragePolicy> listStoragePolicy, List<AbstractPriorityCalculator> listFairshare, int numberOfQueues, boolean preferHostFit) throws IOException {
         this.vmPool = manager.getVmPool();
         this.hostPool = manager.getHostPool();
         this.clusterPool = manager.getClusterPool();

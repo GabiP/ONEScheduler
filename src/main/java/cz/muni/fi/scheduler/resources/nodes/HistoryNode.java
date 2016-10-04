@@ -1,7 +1,5 @@
 package cz.muni.fi.scheduler.resources.nodes;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.opennebula.client.PoolElement;
 
 /**
@@ -13,7 +11,10 @@ import org.opennebula.client.PoolElement;
  */
 public class HistoryNode extends AbstractNode {
     
+    private int sequence;
+    
     private long startTime;
+    
     private long endTime;
     
     /**
@@ -26,6 +27,7 @@ public class HistoryNode extends AbstractNode {
         
     @Override
     public void load(PoolElement vm, String xpathExpr) {
+        sequence = Integer.parseInt(vm.xpath(xpathExpr + "/SEQ"));
         startTime = Integer.parseInt(vm.xpath(xpathExpr + "/RSTIME"));
         endTime = Integer.parseInt(vm.xpath(xpathExpr + "/RETIME"));
         reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));        
@@ -34,6 +36,10 @@ public class HistoryNode extends AbstractNode {
     public boolean isClosed() {
         return (startTime > 0) && (endTime > 0) && (endTime > startTime);
     }   
+
+    public void setSequence(int sequence) {
+        this.sequence = sequence;
+    }
     
     public void setReason(int reason) {
         this.reason = reason;
@@ -45,6 +51,10 @@ public class HistoryNode extends AbstractNode {
 
     public void setEndTime(long endTime) {
         this.endTime = endTime;
+    }
+    
+    public int getSequence() {
+        return sequence;
     }
     
     public int getReason() {

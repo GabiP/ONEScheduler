@@ -88,6 +88,7 @@ public class VmXmlMapper {
     
     public static HistoryNode map(HistoryNodeXml history) {
         HistoryNode result = new HistoryNode();
+        result.setSequence(history.getSequence());        
         result.setStartTime(history.getStartTime());        
         result.setEndTime(history.getEndTime());        
         result.setReason(history.getReason());
