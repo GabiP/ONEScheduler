@@ -17,8 +17,8 @@ import cz.muni.fi.scheduler.resources.VmElement;
  */
 public class MaxMinCalculator extends AbstractPriorityCalculator {
     
-    public MaxMinCalculator(IVmPool vmPool) {
-        super(vmPool);
+    public MaxMinCalculator(IVmPool vmPool, boolean useHistoryRecords) {
+        super(vmPool, useHistoryRecords);
     }    
     
     @Override

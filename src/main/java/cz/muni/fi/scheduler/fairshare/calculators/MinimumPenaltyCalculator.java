@@ -25,8 +25,8 @@ public class MinimumPenaltyCalculator extends AbstractPriorityCalculator {
     private IHostPool hostPool;
     private List<HostElement> hosts;
 
-    public MinimumPenaltyCalculator(IVmPool vmPool, IHostPool hostPool) {
-        super(vmPool);
+    public MinimumPenaltyCalculator(IVmPool vmPool, IHostPool hostPool, boolean useHistoryRecords) {
+        super(vmPool, useHistoryRecords);
         this.hostPool = hostPool;
         // TODO: filter and use only deployable hosts        
         hosts = hostPool.getHosts(); 

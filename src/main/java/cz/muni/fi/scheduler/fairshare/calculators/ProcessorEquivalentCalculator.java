@@ -24,8 +24,8 @@ public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
     private Float availableCpu;    
     private Integer availableMemory;
 
-    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool) {
-        super(vmPool);
+    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool, boolean useHistoryRecords) {
+        super(vmPool, useHistoryRecords);
         this.hostPool = hostPool;
         availableCpu = getAvailableCpu();
         availableMemory = getAvailableMemory();

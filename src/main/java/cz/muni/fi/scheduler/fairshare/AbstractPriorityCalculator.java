@@ -25,9 +25,11 @@ import java.util.Set;
 public abstract class AbstractPriorityCalculator {
         
     private IVmPool vmPool; 
+    private boolean useHistoryRecords;
 
-    public AbstractPriorityCalculator(IVmPool vmPool) {
+    public AbstractPriorityCalculator(IVmPool vmPool, boolean useHistoryRecords) {
         this.vmPool = vmPool;
+        this.useHistoryRecords = useHistoryRecords;
     }
     
     /**
@@ -49,7 +51,7 @@ public abstract class AbstractPriorityCalculator {
                     priority += getMaxRuntime(vms) * getPenalty(vm);
                 } 
                 else {
-                    priority += getPriority(vm);     
+                    priority += getPriority(vm, useHistoryRecords);     
                 }
                 System.out.println(userId + " - Priority: " + priority);
             }
@@ -78,12 +80,26 @@ public abstract class AbstractPriorityCalculator {
     }    
     
     /**
-     * Calculates the priority of a virtual machine based on its history.
+     * Calculates the priority of a virtual machine.
      * 
      * @param vm 
      * @return The priority of the virtual machine
      */
-    private float getPriority(VmElement vm) {        
+    private float getPriority(VmElement vm, boolean useHistoryRecord) { 
+        if (useHistoryRecord) {
+            return getPriorityFromHistory(vm);
+        } 
+        return vm.getRunTime()*getPenalty(vm);
+    }     
+    
+    /**
+     * Calculates the priority of a virtual machine based on its historical
+     * parameters.
+     * 
+     * @param vm 
+     * @return The priority of the virtual machine
+     */
+    private float getPriorityFromHistory(VmElement vm) { 
         float priority = 0;  
         for (HistoryNode history : vm.getHistories()) {
             HistoryRecord record = HistoryRecordManager.loadHistoryRecord(vm, history);
