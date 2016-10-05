@@ -51,6 +51,7 @@ public abstract class AbstractPriorityCalculator {
                 else {
                     priority += getPriority(vm);     
                 }
+                System.out.println(userId + " - Priority: " + priority);
             }
             userPriorities.put(userId, priority);
         }

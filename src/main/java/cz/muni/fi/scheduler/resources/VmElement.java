@@ -104,8 +104,6 @@ public class VmElement {
     public int getHistoryRuntime(HistoryNode history) {
         int runTime = 0;
         boolean isActive = (state == 3);
-        // TODO: is last in histories really the last history?
-        //     : does indexOf work as expected?
         boolean isLast = (histories.indexOf(history) == histories.size() - 1);
         
         if (history.isClosed()) {

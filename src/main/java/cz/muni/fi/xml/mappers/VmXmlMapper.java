@@ -58,7 +58,6 @@ public class VmXmlMapper {
         return result;
     }
     
-    // TODO : create new Mappers or Leave these here ???
     public static List<DiskNode> mapDisks(List<DiskNodeXml> disks) {
         List<DiskNode> result = new ArrayList<>();
         if (disks != null) {
@@ -91,9 +90,7 @@ public class VmXmlMapper {
         result.setSequence(history.getSequence());        
         result.setStartTime(history.getStartTime());        
         result.setEndTime(history.getEndTime());        
-        result.setReason(history.getReason());
-        // TODO : think about how to handle runtime        
-        
+        result.setReason(history.getReason());   
         return result;
     }
     
