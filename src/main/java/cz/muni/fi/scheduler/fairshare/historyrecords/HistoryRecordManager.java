@@ -14,7 +14,6 @@ import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
  * 
  * @author Andras Urge
  */
-// TODO: class should be probably used only for ONE
 public class HistoryRecordManager {
     
     // TODO: maybe change to JavaDB

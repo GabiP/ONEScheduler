@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+   <bean id="clusterPool" class="cz.muni.fi.xml.pools.ClusterXmlPool">
+       <constructor-arg value="vmpool.xml"/>
+   </bean>
+   
+   <bean id="datastorePool" class="cz.muni.fi.xml.pools.DatastoreXmlPool">
+       <constructor-arg value="datastorepool.xml"/>
+   </bean>
+   
+   <bean id="hostPool" class="cz.muni.fi.xml.pools.HostXmlPool">
+       <constructor-arg value="hostpool.xml"/>
+   </bean>
+   
+   <bean id="userPool" class="cz.muni.fi.xml.pools.UserXmlPool">
+       <constructor-arg value="userpool.xml"/>
+   </bean>
+   
+   <bean id="vmPool" class="cz.muni.fi.xml.pools.VmXmlPool">
+       <constructor-arg value="vmpool.xml"/>
+   </bean>
+
+</beans>

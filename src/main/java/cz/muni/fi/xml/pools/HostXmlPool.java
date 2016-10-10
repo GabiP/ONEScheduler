@@ -1,12 +1,13 @@
 package cz.muni.fi.xml.pools;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.xml.mappers.HostXmlMapper;
-import cz.muni.fi.xml.resources.HostXml;
+import cz.muni.fi.xml.resources.HostXmlList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,16 +16,20 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "HOSTPOOL")
 public class HostXmlPool implements IHostPool {    
     
-    @JacksonXmlProperty(localName = "HOST")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<HostXml> hosts;
+    private List<HostElement> hosts;
+
+    public HostXmlPool(String hostPoolPath) throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        String hostPoolMessage = new String(Files.readAllBytes(Paths.get(hostPoolPath)));
+        HostXmlList xmlList = xmlMapper.readValue(hostPoolMessage, HostXmlList.class);
+        hosts = HostXmlMapper.map(xmlList.getHosts());
+    }
 
     @Override
     public List<HostElement> getHosts() {
-        return Collections.unmodifiableList(HostXmlMapper.map(hosts));
+        return Collections.unmodifiableList(hosts);
     }
     
     @Override
@@ -49,7 +54,7 @@ public class HostXmlPool implements IHostPool {
 
     @Override
     public HostElement getHost(int id) {
-        for (HostElement h : HostXmlMapper.map(hosts)) {
+        for (HostElement h : hosts) {
             if (h.getId() == id) {
                 return h;
             }
