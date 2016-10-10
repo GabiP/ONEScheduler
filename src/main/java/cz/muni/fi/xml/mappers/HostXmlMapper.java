@@ -8,9 +8,9 @@ package cz.muni.fi.xml.mappers;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
-import cz.muni.fi.xml.resources.DatastoreNodeXml;
+import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;
 import cz.muni.fi.xml.resources.HostXml;
-import cz.muni.fi.xml.resources.PciNodeXml;
+import cz.muni.fi.xml.resources.nodes.PciNodeXml;
 import java.util.ArrayList;
 import java.util.List;
 

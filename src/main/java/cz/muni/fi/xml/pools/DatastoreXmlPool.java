@@ -13,7 +13,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.xml.mappers.DatastoreXmlMapper;
 import cz.muni.fi.xml.resources.DatastoreXml;
-import cz.muni.fi.xml.resources.DatastoreXmlList;
+import cz.muni.fi.xml.resources.lists.DatastoreXmlList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

@@ -1,5 +1,9 @@
 package cz.muni.fi.xml.resources;
 
+import cz.muni.fi.xml.resources.nodes.DiskNodeXml;
+import cz.muni.fi.xml.resources.nodes.PciNodeXml;
+import cz.muni.fi.xml.resources.nodes.NicNodeXml;
+import cz.muni.fi.xml.resources.nodes.HistoryNodeXml;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import java.util.List;
 

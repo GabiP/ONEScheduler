@@ -3,29 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.xml.resources;
+package cz.muni.fi.xml.resources.lists;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import cz.muni.fi.xml.resources.ClusterXml;
 import java.util.List;
 
 /**
  *
  * @author Andras Urge
  */
-@JacksonXmlRootElement(localName = "VMPOOL")
-public class VmXmlList {
+@JacksonXmlRootElement(localName = "CLUSTERPOOL")
+public class ClusterXmlList {
     
-    @JacksonXmlProperty(localName = "VM")
+    @JacksonXmlProperty(localName = "CLUSTER")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<VmXml> vms;
+    private List<ClusterXml> clusters;
 
-    public List<VmXml> getVms() {
-        return vms;
+    public List<ClusterXml> getClusters() {
+        return clusters;
     }
 
-    public void setVms(List<VmXml> vms) {
-        this.vms = vms;
-    }    
+    public void setClusters(List<ClusterXml> clusters) {
+        this.clusters = clusters;
+    }
 }

@@ -1,4 +1,4 @@
-package cz.muni.fi.xml.resources;
+package cz.muni.fi.xml.resources.nodes;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;

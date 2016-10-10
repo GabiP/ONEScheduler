@@ -9,7 +9,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.xml.mappers.ClusterXmlMapper;
-import cz.muni.fi.xml.resources.ClusterXmlList;
+import cz.muni.fi.xml.resources.lists.ClusterXmlList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

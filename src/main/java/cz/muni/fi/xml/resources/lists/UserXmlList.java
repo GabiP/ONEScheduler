@@ -3,29 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.xml.resources;
+package cz.muni.fi.xml.resources.lists;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import cz.muni.fi.xml.resources.UserXml;
 import java.util.List;
 
 /**
  *
  * @author Andras Urge
  */
-@JacksonXmlRootElement(localName = "CLUSTERPOOL")
-public class ClusterXmlList {
+@JacksonXmlRootElement(localName = "USERPOOL")
+public class UserXmlList {
     
-    @JacksonXmlProperty(localName = "CLUSTER")
+    @JacksonXmlProperty(localName = "USER")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<ClusterXml> clusters;
+    private List<UserXml> users;
 
-    public List<ClusterXml> getClusters() {
-        return clusters;
+    public List<UserXml> getUsers() {
+        return users;
     }
 
-    public void setClusters(List<ClusterXml> clusters) {
-        this.clusters = clusters;
+    public void setUsers(List<UserXml> users) {
+        this.users = users;
     }
 }

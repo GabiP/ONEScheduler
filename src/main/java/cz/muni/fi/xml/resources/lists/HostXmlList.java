@@ -3,29 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.xml.resources;
+package cz.muni.fi.xml.resources.lists;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import cz.muni.fi.xml.resources.HostXml;
 import java.util.List;
 
 /**
  *
  * @author Andras Urge
  */
-@JacksonXmlRootElement(localName = "USERPOOL")
-public class UserXmlList {
+@JacksonXmlRootElement(localName = "HOSTPOOL")
+public class HostXmlList {
     
-    @JacksonXmlProperty(localName = "USER")
+    @JacksonXmlProperty(localName = "HOST")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<UserXml> users;
+    private List<HostXml> hosts;
 
-    public List<UserXml> getUsers() {
-        return users;
+    public List<HostXml> getHosts() {
+        return hosts;
     }
 
-    public void setUsers(List<UserXml> users) {
-        this.users = users;
+    public void setHosts(List<HostXml> hosts) {
+        this.hosts = hosts;
     }
 }

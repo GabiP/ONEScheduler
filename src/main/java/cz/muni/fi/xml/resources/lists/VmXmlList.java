@@ -3,29 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.xml.resources;
+package cz.muni.fi.xml.resources.lists;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import cz.muni.fi.xml.resources.VmXml;
 import java.util.List;
 
 /**
  *
  * @author Andras Urge
  */
-@JacksonXmlRootElement(localName = "HOSTPOOL")
-public class HostXmlList {
+@JacksonXmlRootElement(localName = "VMPOOL")
+public class VmXmlList {
     
-    @JacksonXmlProperty(localName = "HOST")
+    @JacksonXmlProperty(localName = "VM")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<HostXml> hosts;
+    private List<VmXml> vms;
 
-    public List<HostXml> getHosts() {
-        return hosts;
+    public List<VmXml> getVms() {
+        return vms;
     }
 
-    public void setHosts(List<HostXml> hosts) {
-        this.hosts = hosts;
-    }
+    public void setVms(List<VmXml> vms) {
+        this.vms = vms;
+    }    
 }
