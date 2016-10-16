@@ -87,8 +87,8 @@ public class FairShareOrdererTest {
         List<VmElement> resultList = orderer.orderVms(vmList);
         
         assertEquals("First VM does not match.", resultList.get(0), vmList.get(1));
-        assertEquals("Second VM does not match.", vmList.get(2));
-        assertEquals("Third VM does not match.", vmList.get(0));
+        assertEquals("Second VM does not match.", resultList.get(1), vmList.get(2));
+        assertEquals("Third VM does not match.", resultList.get(2), vmList.get(0));
     }
     
     private List<VmElement> createVmData() {

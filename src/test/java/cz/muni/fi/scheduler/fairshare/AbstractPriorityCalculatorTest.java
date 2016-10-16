@@ -67,7 +67,28 @@ public class AbstractPriorityCalculatorTest {
     }
     
     @Test
-    public void testGetUserPriorities_WithFreshVm() {
+    public void testGetUserPriorities_WithFreshVms() {
+        List<VmElement> user1Vms = new ArrayList<>();
+        VmElement freshVm1 = createVm(3, 1, 2);
+        VmElement freshVm2 = createVm(4, 1, 2);
+        freshVm1.setHistories(new ArrayList<>());
+        freshVm2.setHistories(new ArrayList<>());
+        user1Vms.add(freshVm1);
+        user1Vms.add(freshVm2);
+        
+        when(vmPool.getAllVmsByUser(1)).thenReturn(user1Vms);
+        doReturn(10f).when(calculator).getPenalty(user1Vms.get(0));
+        doReturn(20f).when(calculator).getPenalty(user1Vms.get(1));
+        
+        Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
+        Map<Integer, Float> result = calculator.getUserPriorities(userIds);
+                
+        double delta = 0.0001; 
+        assertEquals("Priority does not match.", 0, result.get(1), delta);
+    }
+    
+    @Test
+    public void testGetUserPriorities_WithFreshAndFinishedVms() {
         List<VmElement> user1Vms = createFinishedVms();
         VmElement freshVm = createVm(3, 1, 2);
         freshVm.setHistories(new ArrayList<>());
