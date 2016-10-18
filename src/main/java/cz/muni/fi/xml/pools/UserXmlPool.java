@@ -5,13 +5,14 @@
  */
 package cz.muni.fi.xml.pools;
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.xml.mappers.UserXmlMapper;
-import cz.muni.fi.xml.resources.UserXml;
+import cz.muni.fi.xml.resources.lists.UserXmlList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,21 +20,25 @@ import java.util.List;
  *
  * @author Andras Urge
  */
-@JacksonXmlRootElement(localName = "USERPOOL")
 public class UserXmlPool implements IUserPool {
 
-    @JacksonXmlProperty(localName = "USER")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<UserXml> users;
-        
+    private List<UserElement> users;
+
+    public UserXmlPool(String userPoolPath) throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        String userPoolMessage = new String(Files.readAllBytes(Paths.get(userPoolPath)));
+        UserXmlList xmlList = xmlMapper.readValue(userPoolMessage, UserXmlList.class);
+        users = UserXmlMapper.map(xmlList.getUsers());
+    }
+    
     @Override
     public List<UserElement> getUsers() {
-        return Collections.unmodifiableList(UserXmlMapper.map(users));
+        return Collections.unmodifiableList(users);
     }
 
     @Override
     public UserElement getUser(int id) {
-        for (UserElement u : UserXmlMapper.map(users)) {
+        for (UserElement u : users) {
             if (u.getId() == id) {
                 return u;
             }

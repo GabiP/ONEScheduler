@@ -10,10 +10,10 @@ import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
 import cz.muni.fi.scheduler.resources.nodes.NicNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
-import cz.muni.fi.xml.resources.DiskNodeXml;
-import cz.muni.fi.xml.resources.HistoryNodeXml;
-import cz.muni.fi.xml.resources.NicNodeXml;
-import cz.muni.fi.xml.resources.PciNodeXml;
+import cz.muni.fi.xml.resources.nodes.DiskNodeXml;
+import cz.muni.fi.xml.resources.nodes.HistoryNodeXml;
+import cz.muni.fi.xml.resources.nodes.NicNodeXml;
+import cz.muni.fi.xml.resources.nodes.PciNodeXml;
 import cz.muni.fi.xml.resources.VmXml;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,6 @@ public class VmXmlMapper {
         return result;
     }
     
-    // TODO : create new Mappers or Leave these here ???
     public static List<DiskNode> mapDisks(List<DiskNodeXml> disks) {
         List<DiskNode> result = new ArrayList<>();
         if (disks != null) {
@@ -88,11 +87,10 @@ public class VmXmlMapper {
     
     public static HistoryNode map(HistoryNodeXml history) {
         HistoryNode result = new HistoryNode();
+        result.setSequence(history.getSequence());        
         result.setStartTime(history.getStartTime());        
         result.setEndTime(history.getEndTime());        
-        result.setReason(history.getReason());
-        // TODO : think about how to handle runtime        
-        
+        result.setReason(history.getReason());   
         return result;
     }
     

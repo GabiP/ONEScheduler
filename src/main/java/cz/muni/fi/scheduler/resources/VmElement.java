@@ -80,23 +80,39 @@ public class VmElement {
     private String schedDsRequirements;
     
     private List<PciNode> pcis;
-        
+     
+    /**
+     * Calculates the time how long the virtual machine was really running.
+     * 
+     * @return The runtime
+     */
     public int getRunTime() {        
         int runTime = 0;  
-        for (int i=0; i<histories.size(); i++) {
-            HistoryNode history = histories.get(i);
-            boolean isActive = (state == 3);
-            // TODO: is last in histories really the last history?
-            boolean isLast = (i == histories.size() - 1);
-            
-            if (history.isClosed()) {
-                runTime += (int) (history.getEndTime() - history.getStartTime());
-            } 
-            else if (isActive && isLast && history.getStartTime() > 0) {
-                // TODO: get Snapshot Time
-                runTime += (int) (System.currentTimeMillis()/1000L - history.getStartTime());
-            }            
+        for (HistoryNode history : histories) {
+            runTime += getHistoryRuntime(history);
         }
+        return runTime;
+    }
+    
+    /**
+     * Calculates the time how long the virtual machine was really running
+     * during the given history.
+     * 
+     * @param history
+     * @return The runtime
+     */
+    public int getHistoryRuntime(HistoryNode history) {
+        int runTime = 0;
+        boolean isActive = (state == 3);
+        boolean isLast = (histories.indexOf(history) == histories.size() - 1);
+        
+        if (history.isClosed()) {
+            runTime = (int) (history.getEndTime() - history.getStartTime());
+        } 
+        else if (isActive && isLast && history.getStartTime() > 0) {
+            // TODO: get Snapshot Time
+            runTime = (int) (System.currentTimeMillis()/1000L - history.getStartTime());
+        }   
         return runTime;
     }
     

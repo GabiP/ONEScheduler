@@ -6,6 +6,7 @@ import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -39,4 +40,9 @@ public class PackingTest {
         panckingPolicy = new Packing();
     }
     
+    @Test
+    public void sortByValue() {
+        System.out.println("Test");
+    }
+     
 }

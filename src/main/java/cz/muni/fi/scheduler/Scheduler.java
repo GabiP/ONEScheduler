@@ -5,7 +5,7 @@ import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.IUserPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -70,7 +70,7 @@ public class Scheduler {
     /**
      * The list of fairshare policies to be used for sorting the virtual machines based on their user's priority.
      */
-    private List<IUserPriorityCalculator> listFairshare;  
+    private AbstractPriorityCalculator fairsharePolicy;  
     
     /**
      * Queues with waiting VMs.
@@ -84,7 +84,7 @@ public class Scheduler {
     
     private boolean preferHostFit;
 
-    Scheduler(IManager manager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters, List<IPlacementPolicy> listPlacementPolicies, List<IStoragePolicy> listStoragePolicy, List<IUserPriorityCalculator> listFairshare, int numberOfQueues, boolean preferHostFit) throws IOException {
+    Scheduler(IManager manager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters, List<IPlacementPolicy> listPlacementPolicies, List<IStoragePolicy> listStoragePolicy, AbstractPriorityCalculator fairsharePolicy, int numberOfQueues, boolean preferHostFit) throws IOException {
         this.vmPool = manager.getVmPool();
         this.hostPool = manager.getHostPool();
         this.clusterPool = manager.getClusterPool();
@@ -95,7 +95,7 @@ public class Scheduler {
         this.datastoreFilters = datastoreFilters;
         this.listPlacementPolicies = listPlacementPolicies;
         this.listStoragePolicy = listStoragePolicy;
-        this.listFairshare = listFairshare;
+        this.fairsharePolicy = fairsharePolicy;
         this.numberOfQueues = numberOfQueues;
         this.preferHostFit = preferHostFit;
     }
@@ -154,23 +154,10 @@ public class Scheduler {
             //TODO: sort by every chosen policy in threads
             IPlacementPolicy placementPolicy = listPlacementPolicies.get(0);
             List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, vm, schedulerData);
-            /**
-             * This map contains hosts sorted by the placement policy.
-             * It means that the first host in this map suites the most current vm in the queue.
-             * Each host has datastores that the vm can be put on, and also the datastores are sorted by the storage policy.
-             * LinkedHashMap preserves order in which the objects are entered.
-             */
-            Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
-            //filter datastores for vm and host
-            for (HostElement host: sortedHosts) {
-                List<DatastoreElement> filteredDatastores = filterDatastores(dsPool.getSystemDs(), host, vm);
-                if (!filteredDatastores.isEmpty()) {
-                    //TODO: pick in threads by every chosen policy
-                    IStoragePolicy storagePolicy = listStoragePolicy.get(0);
-                    RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
-                    sortedCandidates.put(host, ds);
-                }
-            }
+            
+            //TODO: threading for policies
+            Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, listStoragePolicy.get(0));
+
             // deploy if filtered hosts is not empty
             if (!sortedCandidates.isEmpty()) {
                 //pick the host and datastore. We chose the best host, or the best datastore.
@@ -187,6 +174,28 @@ public class Scheduler {
             queue.poll();
         }
         return plan;
+    }
+    
+    /**
+     * This method creates a map containing hosts sorted by the placement policy. It means that the
+     * first host in this map suites the most current vm in the queue. Each host
+     * has datastores that the vm can be put on, and also the datastores are
+     * sorted by the storage policy. LinkedHashMap preserves order in which the
+     * objects are entered.
+     * @param sortedHosts list of hosts sorted by the placement policy
+     * @param vm the current virtual machine int he queue
+     * @return the map containing the hosts and datastores (candidates) suitable for vm and sorted by policies
+     */
+    public Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
+        Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
+        for (HostElement host : sortedHosts) {
+            List<DatastoreElement> filteredDatastores = filterDatastores(dsPool.getSystemDs(), host, vm);
+            if (!filteredDatastores.isEmpty()) {
+                RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
+                sortedCandidates.put(host, ds);
+            }
+        }
+        return sortedCandidates;
     }
     
     /**

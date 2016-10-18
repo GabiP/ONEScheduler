@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.xml.pools;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -12,6 +13,10 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.xml.mappers.DatastoreXmlMapper;
 import cz.muni.fi.xml.resources.DatastoreXml;
+import cz.muni.fi.xml.resources.lists.DatastoreXmlList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,21 +25,25 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "DATASTOREPOOL")
 public class DatastoreXmlPool implements IDatastorePool {
     
-    @JacksonXmlProperty(localName = "DATASTORE")
-    @JacksonXmlElementWrapper(useWrapping = false)    
-    private List<DatastoreXml> datastores;        
+    private List<DatastoreElement> datastores;   
+
+    public DatastoreXmlPool(String dsPoolPath) throws IOException {
+        XmlMapper xmlMapper = new XmlMapper();
+        String dsPoolMessage = new String(Files.readAllBytes(Paths.get(dsPoolPath)));
+        DatastoreXmlList xmlList = xmlMapper.readValue(dsPoolMessage, DatastoreXmlList.class);
+        datastores = DatastoreXmlMapper.map(xmlList.getDatastores());
+    }
                     
     @Override
     public List<DatastoreElement> getDatastores() {
-        return Collections.unmodifiableList(DatastoreXmlMapper.map(datastores));
+        return Collections.unmodifiableList(datastores);
     }
 
     @Override
     public DatastoreElement getDatastore(int id) {
-        for (DatastoreElement ds : DatastoreXmlMapper.map(datastores)) {
+        for (DatastoreElement ds : datastores) {
             if (ds.getId() == id) {
                 return ds;
             }

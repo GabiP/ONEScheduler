@@ -15,25 +15,25 @@ import java.util.List;
  */
 public class FairshareFactory {
     /**
-     * Create a IUserPriorityCalculator instance. The creation is based on using the reflection,
+     * Create an AbstractPriorityCalculator instance. The creation is based on using the reflection,
      * hence the caller must have sufficient security privilege etc.
      *
      * @param className
      *            the class name; it must be a valid class name on the classpath;
-            the class must implement the IUserPriorityCalculator interface
+            the class must implement the AbstractPriorityCalculator interface
      *
      * @return the instance of the policy but not initialized yet
      *
      * @throws RuntimeException
      *             if the policy could not be properly created
      */
-    public static IUserPriorityCalculator createFairshare(String className) {
+    public static AbstractPriorityCalculator createFairshare(String className) {
         try {
             // Make the instance of the filter
             final Class<?> pluginClass = Class.forName(className);
             final Object result = pluginClass.newInstance();
 
-            return (IUserPriorityCalculator)result;
+            return (AbstractPriorityCalculator)result;
         } catch (SecurityException e) {
             throw new RuntimeException("Could not create policy: " + className, e);
         } catch (ClassNotFoundException e) {
@@ -47,16 +47,11 @@ public class FairshareFactory {
         }
     }
     
-    public static List<IUserPriorityCalculator> getFairshares(String[] stringfairshares) {
-        List<IUserPriorityCalculator> fairshares = new ArrayList<>();
-        for (int i = 0; i < stringfairshares.length; i++) {
-            String fairshareString = stringfairshares[i];
-            if (!fairshareString.contains(".")) {
-                fairshareString = "cz.muni.fi.scheduler.fairshare." + fairshareString;
-            }
-            IUserPriorityCalculator f = FairshareFactory.createFairshare(fairshareString);
-            fairshares.add(f);
+    public static AbstractPriorityCalculator getFairshare(String fairshare) {
+        if (!fairshare.contains(".")) {
+            fairshare = "cz.muni.fi.scheduler.fairshare." + fairshare;
         }
-        return fairshares;
+        AbstractPriorityCalculator f = FairshareFactory.createFairshare(fairshare);
+        return f;
     }
 }

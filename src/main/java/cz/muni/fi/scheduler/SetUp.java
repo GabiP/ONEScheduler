@@ -6,7 +6,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.FairshareFactory;
-import cz.muni.fi.scheduler.fairshare.IUserPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.filters.FilterFactory;
 import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -68,7 +68,7 @@ public class SetUp {
     
     private static String[] datastorePolicies;
     
-    private static String[] fairshare;
+    private static String fairshare;
     
     private static IManager manager;
     
@@ -97,13 +97,13 @@ public class SetUp {
         datastoreFilters = configuration.getStringArray("datastoreFilters");
         hostPolicies = configuration.getStringArray("hostPolicies");
         datastorePolicies = configuration.getStringArray("datastorePolicies");
-        fairshare = configuration.getStringArray("fairshare");
+        fairshare = configuration.getString("fairshare");
         
         List<IHostFilter> listHostFilters = FilterFactory.getHostFilters(hostFilters);
         List<IDatastoreFilter> listDatastoreFilters = FilterFactory.getDatastoreFilters(datastoreFilters);
         List<IPlacementPolicy> listPlacementPolicies = PolicyFactory.getPlacementPolicies(hostPolicies);
         List<IStoragePolicy> listStoragePolicy = PolicyFactory.getStoragePolicies(datastorePolicies);
-        List<IUserPriorityCalculator> listFairshare = FairshareFactory.getFairshares(fairshare);
+        AbstractPriorityCalculator fairsharePolicy = FairshareFactory.getFairshare(fairshare);
         
         //check if policies are set, if not use default.
         if (listPlacementPolicies.isEmpty()) {
@@ -130,7 +130,7 @@ public class SetUp {
         
         while (true) {
             try {
-                Scheduler scheduler = new Scheduler(manager, resultManager, listHostFilters, listDatastoreFilters, listPlacementPolicies, listStoragePolicy, listFairshare, numberofqueues, preferHostFit);
+                Scheduler scheduler = new Scheduler(manager, resultManager, listHostFilters, listDatastoreFilters, listPlacementPolicies, listStoragePolicy, fairsharePolicy, numberofqueues, preferHostFit);
                 
                 List<Match> plan = scheduler.schedule();
                 
@@ -138,7 +138,7 @@ public class SetUp {
                 if (!writeResultsSuccess) {
                 System.out.println("Could not store results into XML file.");
                 }*/
-                //printPlan(plan);
+                printPlan(plan);
                 TimeUnit.SECONDS.sleep(cycleinterval);
             } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(SetUp.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,15 +146,15 @@ public class SetUp {
         }       
     }
     
-    private static void printPlan(Map<HostElement, List<VmElement>> plan ) {
+    private static void printPlan(List<Match> plan ) {
         if (plan == null) {
             System.out.println("No schedule.");
             return;
         }
-        for (HostElement host : plan.keySet()) {
-            System.out.println(host);
+        for (Match match : plan) {
+            System.out.println(match.getHost());
             System.out.println("Its vms: ");
-            for (VmElement vm : plan.get(host)) {
+            for (VmElement vm : match.getVms()) {
                 System.out.println(vm);
             }
             System.out.println();
