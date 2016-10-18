@@ -25,8 +25,6 @@ public class SchedulerData {
     
     private IVmPool vmPool;    
     
-    private IClusterPool clusterPool;
-    
     private IDatastorePool dsPool;
     
     /**
@@ -64,9 +62,9 @@ public class SchedulerData {
      */
     private Map<HostElement, Integer> runningVms;
 
-    public SchedulerData(IHostPool hostPool, IVmPool vmPool, IClusterPool clusterPool, IDatastorePool dsPool) {
+    public SchedulerData(IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool) {
+        this.hostPool = hostPool;
         this.vmPool = vmPool;
-        this.clusterPool = clusterPool;
         this.dsPool = dsPool;
         this.cpuUsages = initializeHostsCpuCapacity(hostPool.getActiveHosts());
         this.memoryUsages = initializeHostMemoryCapacity(hostPool.getActiveHosts());
@@ -198,14 +196,6 @@ public class SchedulerData {
 
     public void setVmPool(IVmPool vmPool) {
         this.vmPool = vmPool;
-    }
-
-    public IClusterPool getClusterPool() {
-        return clusterPool;
-    }
-
-    public void setClusterPool(IClusterPool clusterPool) {
-        this.clusterPool = clusterPool;
     }
 
     public IDatastorePool getDsPool() {

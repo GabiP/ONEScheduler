@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.filters.hosts;
+package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -11,10 +11,10 @@ import java.util.Objects;
  * 
  * @author Gabriela Podolnikova
  */
-public class FilterHostsBySchedulingRequirements implements IHostFilter {
+public class FilterHostsBySchedulingRequirements implements IHostFilterStrategy {
 
     @Override
-    public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
+    public boolean test(VmElement vm, HostElement host) {
         if (vm.getSchedRequirements() == null) {
             return true;
         }

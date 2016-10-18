@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.filters.hosts;
+package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -12,10 +12,10 @@ import java.util.List;
  * 
  * @author Gabriela Podolnikova
  */
-public class FilterHostByPci implements IHostFilter {
+public class FilterHostByPci implements IHostFilterStrategy {
 
     @Override
-    public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
+    public boolean test(VmElement vm, HostElement host) {
         boolean pciFits = false;
         List<PciNode> pcis = host.getPcis();
         if (pcis.isEmpty() && vm.getPcis().isEmpty()) {

@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.filters.datastores;
+package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
@@ -18,7 +18,7 @@ import java.util.Objects;
  *
  * @author Gabriela Podolnikova
  */
-public class FilterDatastoresByStorage implements IDatastoreFilter {
+public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStrategy {
 
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {

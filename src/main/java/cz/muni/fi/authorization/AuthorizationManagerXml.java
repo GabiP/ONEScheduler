@@ -19,13 +19,10 @@ import java.util.List;
  * @author Gabriela Podolnikova
  */
 public class AuthorizationManagerXml implements IAuthorizationManager {
-
-    private final IHostPool hostPool;
     
     private List<HostElement> hosts = new ArrayList<>();
 
     public AuthorizationManagerXml(IHostPool hostPool) {
-        this.hostPool = hostPool;
         hosts = hostPool.getActiveHosts();
     }
     
@@ -36,7 +33,6 @@ public class AuthorizationManagerXml implements IAuthorizationManager {
             result.add(host.getId());
         }
         return result;
-        //return hostPool.getHostsIds();
     }
     
 }

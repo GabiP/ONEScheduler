@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package cz.muni.fi.scheduler.filters.datastores;
+package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
@@ -18,10 +18,10 @@ import java.util.Objects;
  * 
  * @author Gabriela Podolnikova
  */
-public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilter {
+public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilterStrategy {
 
     @Override
-    public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
+    public boolean test(VmElement vm, DatastoreElement ds, HostElement host){
         if (vm.getSchedDsRequirements() == null) {
             return true;
         }

@@ -6,6 +6,7 @@ import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
 import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -14,11 +15,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import cz.muni.fi.scheduler.filters.hosts.IHostFilter;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
+import cz.muni.fi.scheduler.filters.datastores.strategies.IDatastoreFilterStrategy;
+import cz.muni.fi.scheduler.filters.hosts.IHostFilter;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
@@ -34,12 +37,8 @@ public class Scheduler {
     private IHostPool hostPool;
     
     private IVmPool vmPool;    
-    
-    private IClusterPool clusterPool;
-    
+        
     private IDatastorePool dsPool;
-    
-    private IResultManager resultManager;
     
     /**
      * This attribute holds all important data for scheduling.
@@ -48,29 +47,29 @@ public class Scheduler {
     private SchedulerData schedulerData;
     
     /**
-     * The list of filters to be used for matching the host for a virtual machine.
+     * 
      */
-    private List<IHostFilter> hostFilters;
+    private IHostFilter hostFilter;
     
     /**
      * The list of filters to be used for matching the datastore for a virtual machine.
      */
-    private List<IDatastoreFilter> datastoreFilters;
+    private IDatastoreFilter datastoreFilter;
     
     /**
      * The list of policies to be used for sorting the hosts available for a virtual machine.
      */
-    private List<IPlacementPolicy> listPlacementPolicies;
+    private IPlacementPolicy placementPolicy;
     
     /**
      * The list of policies to be used for choosing the best ranked datastore available for a virtual machine and a host.
      */
-    private List<IStoragePolicy> listStoragePolicy;
+    private IStoragePolicy storagePolicy;
     
     /**
      * The list of fairshare policies to be used for sorting the virtual machines based on their user's priority.
      */
-    private AbstractPriorityCalculator fairsharePolicy;  
+    private FairShareOrderer fairshare;  
     
     /**
      * Queues with waiting VMs.
@@ -84,20 +83,20 @@ public class Scheduler {
     
     private boolean preferHostFit;
 
-    Scheduler(IManager manager, IResultManager resultManager, List<IHostFilter> hostFilters, List<IDatastoreFilter> datastoreFilters, List<IPlacementPolicy> listPlacementPolicies, List<IStoragePolicy> listStoragePolicy, AbstractPriorityCalculator fairsharePolicy, int numberOfQueues, boolean preferHostFit) throws IOException {
-        this.vmPool = manager.getVmPool();
-        this.hostPool = manager.getHostPool();
-        this.clusterPool = manager.getClusterPool();
-        this.dsPool = manager.getDatastorePool();
-        this.authorizationManager = manager.getAuthorizationManager();
-        this.resultManager = resultManager;
-        this.hostFilters = hostFilters;
-        this.datastoreFilters = datastoreFilters;
-        this.listPlacementPolicies = listPlacementPolicies;
-        this.listStoragePolicy = listStoragePolicy;
-        this.fairsharePolicy = fairsharePolicy;
+    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, IHostFilter hostFilter, IDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
+        this.authorizationManager = authorizationManager;
+        this.hostPool = hostPool;
+        this.vmPool = vmPool;
+        this.dsPool = dsPool;
+        this.hostFilter = hostFilter;
+        this.datastoreFilter = datastoreFilter;
+        this.placementPolicy = placementPolicy;
+        this.storagePolicy = storagePolicy;
+        this.fairshare = fairshare;
         this.numberOfQueues = numberOfQueues;
         this.preferHostFit = preferHostFit;
+        //initialize scheduler data entity
+        schedulerData = new SchedulerData(hostPool, vmPool, dsPool);
     }
     
     /**
@@ -107,19 +106,20 @@ public class Scheduler {
      * @return the map with the plan
      */
     public List<Match> schedule() {
-        //initialize scheduler data entity
-        schedulerData = new SchedulerData(hostPool, vmPool, clusterPool, dsPool);
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
             System.out.println("No pendings");
             return null;
         }
+        queues = new LinkedList<>();
         //TODO sort VM in queues by fairshare - using number of queues parameter
+        List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
         // VM queue construction
         for (int i = 0; i < numberOfQueues; i++) {
             LinkedList<VmElement> queue = new LinkedList<>();
-            queue.addAll(pendingVms);
+            queue.addAll(orderedVms);
+            queues.add(queue);
         }
         //process queue by queue or in parallel
         List<Match> plan = processQueue(queues.get(0));
@@ -137,7 +137,7 @@ public class Scheduler {
      * @param queue the queue to be processed
      * @return the map with the plan for one queue
      */
-    public List<Match> processQueue(LinkedList queue) {
+    private List<Match> processQueue(LinkedList queue) {
         List<Match> plan = new ArrayList<>();
         List<Integer> authorizedHosts;
         while (!queue.isEmpty()) {
@@ -150,13 +150,12 @@ public class Scheduler {
                 continue;
             }
             //filter authorized hosts for vm
-            List<HostElement> filteredHosts = filterAuthorizedHosts(authorizedHosts, vm);
+            List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm);
             //TODO: sort by every chosen policy in threads
-            IPlacementPolicy placementPolicy = listPlacementPolicies.get(0);
             List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, vm, schedulerData);
             
             //TODO: threading for policies
-            Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, listStoragePolicy.get(0));
+            Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
 
             // deploy if filtered hosts is not empty
             if (!sortedCandidates.isEmpty()) {
@@ -186,10 +185,10 @@ public class Scheduler {
      * @param vm the current virtual machine int he queue
      * @return the map containing the hosts and datastores (candidates) suitable for vm and sorted by policies
      */
-    public Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
+    private Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
         Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
-            List<DatastoreElement> filteredDatastores = filterDatastores(dsPool.getSystemDs(), host, vm);
+            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(dsPool.getSystemDs(), host, vm);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
                 sortedCandidates.put(host, ds);
@@ -214,7 +213,6 @@ public class Scheduler {
             chosenDs = entry.getValue().getDs();
         } else {
             //for each policy in threads pick the ds
-            IStoragePolicy storagePolicy = listStoragePolicy.get(0);
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
@@ -237,75 +235,12 @@ public class Scheduler {
         return result;
     }
     
-    /**
-     * Filters hosts that are authorized for the specified vm.
-     * Calls the filters for each host.
-     * @param authorizedHosts the hosts to be tested.
-     * @param vm the virtual machine to be tested
-     * @return the list of filtered hosts
-     */
-    public List<HostElement> filterAuthorizedHosts(List<Integer> authorizedHosts, VmElement vm) {
-        List<HostElement> filteredHosts = new ArrayList<>();
-        for (Integer hostId : authorizedHosts) {
-            HostElement h = hostPool.getHost(hostId);
-            /*if (match(h, vm)) {
-                filteredHosts.add(h);
-            }*/
-            boolean matched = getResultedHostsFromFilters(hostFilters, h, vm);
-            if (matched) {
-                filteredHosts.add(h);
-            }
-        }
-        return filteredHosts;
-    }
     
-    /**
-     * Filter datastores that belongs to the host and can host the vm.
-     * @param datastores all system datastores in the system
-     * @param host the host for matching the datastore
-     * @param vm the vm to be tested
-     * @return the list of filtered datastores
-     */
-    public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, HostElement host, VmElement vm) {
-        List<DatastoreElement> filteredDatastores = new ArrayList<>();
-        for (DatastoreElement ds: datastores) {
-            boolean matched = getResultedDatastoresFromFilters(datastoreFilters, host, ds, vm);
-            if (matched) {
-                filteredDatastores.add(ds);
-            }
-        }
-        return filteredDatastores;
-    }
+    
+    
 
     
-    /**
-     * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
-     * @param filters filters to be used
-     * @param h the host to be tested
-     * @param vm the virtual machine to be tested
-     * @return true if the host and vm match, false othewise
-     */
-    public boolean getResultedHostsFromFilters(List<IHostFilter> filters, HostElement h, VmElement vm) {
-         boolean result = true;
-         for (IHostFilter filter: filters) {
-             result = result && filter.test(vm, h, schedulerData);
-         }
-         return result;
-     }
+
     
-    /**
-     * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
-     * @param filters filters to be used
-     * @param host the host to be tested
-     * @param ds the datasotre to be tested
-     * @param vm the virtual machine to be tested
-     * @return true if the host and vm match, false othewise
-     */
-    public boolean getResultedDatastoresFromFilters(List<IDatastoreFilter> filters, HostElement host, DatastoreElement ds, VmElement vm) {
-         boolean result = true;
-         for (IDatastoreFilter filter: filters) {
-             result = result && filter.test(vm, ds, host, schedulerData);
-         }
-         return result;
-     }
+    
 }

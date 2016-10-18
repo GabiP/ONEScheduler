@@ -4,18 +4,18 @@
  * and open the template in the editor.
  */
 
-package cz.muni.fi.scheduler.filters.hosts;
+package cz.muni.fi.scheduler.filters.datastores.strategies;
 
+import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.util.List;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
-public interface IHostFilter {
+public interface ISchedulingDatastoreFilterStrategy {
 
-     public List<HostElement> getFilteredHosts(List<Integer> authorizedHosts, VmElement vm);
-    
+    public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData);
 }

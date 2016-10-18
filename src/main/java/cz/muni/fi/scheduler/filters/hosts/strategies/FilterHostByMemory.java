@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.filters.hosts;
+package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author Gabriela Podolnikova
  */
-public class FilterHostByMemory implements IHostFilter {
+public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     
     /**
      * Tests whether a VM can be hosted by the host.

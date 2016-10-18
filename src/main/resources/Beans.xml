@@ -5,6 +5,82 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+   <bean id="scheduler" class="cz.muni.fi.scheduler.Scheduler">
+       <constructor-arg index="0" ref="authorizationManager"/>
+       <constructor-arg index="1" ref="hostPool"/>
+       <constructor-arg index="2" ref="vmPool"/>
+       <constructor-arg index="3" ref="datastorePool"/>
+       <constructor-arg index="4" ref="schedulingHostFilter"/>
+       <constructor-arg index="5" ref="schedulingDatastoreFilter"/>
+       <constructor-arg index="6" ref="loadAware"/>
+       <constructor-arg index="7" ref="storagePacking"/>
+       <constructor-arg index="8" ref="fairshareOrderer"/>
+       <constructor-arg index="9" value="1"/>
+       <constructor-arg index="10" value="true"/>
+   </bean>
+   
+   <bean id="authorizationManager" class="cz.muni.fi.authorization.AuthorizationManagerXml">
+       <constructor-arg index="0" ref="hostPool"/>
+   </bean>
+   
+   <bean id="schedulingHostFilter" class="cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter">
+        <constructor-arg index="0" >
+            <list>
+                <ref bean="filterHostsBySchedulingRequirements"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1" >
+            <list>
+                <ref bean="filterHostByCpu"/>
+                <ref bean="filterHostByMemory"/>
+            </list>
+        </constructor-arg> 
+       <constructor-arg index="2" ref="hostPool"/>
+       <constructor-arg index="3" ref="schedulerData"/>
+   </bean>  
+    
+   <bean id="schedulerData" class="cz.muni.fi.scheduler.SchedulerData">
+       <constructor-arg index="0" ref="hostPool"/>
+       <constructor-arg index="1" ref="vmPool"/>
+       <constructor-arg index="2" ref="datastorePool"/>
+   </bean>
+   
+   <bean id="schedulingDatastoreFilter" class="cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter">
+        <constructor-arg index="0" >
+            <list>
+                <ref bean="filterDatastoresBySchedulingRequirements"/>
+            </list>
+        </constructor-arg>
+        <constructor-arg index="1" >
+            <list>
+                <ref bean="filterDatastoreByStorage"/>
+            </list>
+        </constructor-arg> 
+       <constructor-arg index="2" ref="schedulerData"/>
+   </bean>
+   
+   <bean id="filterDatastoresBySchedulingRequirements" class="cz.muni.fi.scheduler.filters.datastores.strategies.FilterDatastoresBySchedulingRequirements"/>
+   
+   <bean id="filterDatastoreByStorage" class="cz.muni.fi.scheduler.filters.datastores.strategies.FilterDatastoresByStorage"/>
+
+   <bean id="filterHostByCpu" class="cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByCpu"/>
+   
+   <bean id="filterHostByMemory" class="cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByMemory"/>
+   
+   <bean id="filterHostByPci" class="cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByPci"/>
+
+   <bean id="filterHostsBySchedulingRequirements" class="cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostsBySchedulingRequirements"/>
+   
+   <bean id="storagePacking" class="cz.muni.fi.scheduler.policies.datastores.StoragePacking"/>
+   
+   <bean id="storageStriping" class="cz.muni.fi.scheduler.policies.datastores.StorageStriping"/>
+   
+   <bean id="loadAware" class="cz.muni.fi.scheduler.policies.hosts.LoadAware"/>
+   
+   <bean id="packing" class="cz.muni.fi.scheduler.policies.hosts.Packing"/>
+   
+   <bean id="striping" class="cz.muni.fi.scheduler.policies.hosts.Striping"/>
+     
    <bean id="fairshareOrderer" class="cz.muni.fi.scheduler.fairshare.FairShareOrderer">
        <constructor-arg ref="priorityCalculator"/>
    </bean>
@@ -34,8 +110,20 @@
        <constructor-arg value="vmpool.xml"/>
    </bean>
    
+   <!--bean id="authorizationManager" class="cz.muni.fi.authorization.AuthorizationManager">
+       <constructor-arg index="0" ref="acls"/>
+       <constructor-arg index="1" ref="clusterPool"/>
+       <constructor-arg index="2" ref="hostPool"/>
+       <constructor-arg index="3" ref="datastorePool"/>
+       <constructor-arg index="4" ref="userPool"/>
+   </bean-->
+   
    <!--bean id="clusterPool" class="cz.muni.fi.one.pools.ClusterElementPool">
        <constructor-arg ref="oneClient"/>
+   </bean>
+   
+   <bean id="acls" class="cz.muni.fi.one.pools.AclElementPool">
+       <constructor-arg index="0" ref="acls"/>
    </bean>
    
    <bean id="datastorePool" class="cz.muni.fi.one.pools.DatastoreElementPool">
