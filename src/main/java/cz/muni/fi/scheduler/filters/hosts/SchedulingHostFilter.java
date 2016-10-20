@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public class SchedulingHostFilter implements IHostFilter {
+public class SchedulingHostFilter {
 
     /**
      * The list of filters to be used for matching the host for a virtual machine.
@@ -27,16 +27,10 @@ public class SchedulingHostFilter implements IHostFilter {
     private List<IHostFilterStrategy> hostFilters;
     
     private List<ISchedulingHostFilterStrategy> schedulingHostFilters;
-    
-    private IHostPool hostPool;
-    
-    private SchedulerData schedulerData;
 
-    public SchedulingHostFilter(List<IHostFilterStrategy> hostFilters, List<ISchedulingHostFilterStrategy> schedulingHostFilters, IHostPool hostPool, SchedulerData schedulerData) {
+    public SchedulingHostFilter(List<IHostFilterStrategy> hostFilters, List<ISchedulingHostFilterStrategy> schedulingHostFilters) {
         this.hostFilters = hostFilters;
         this.schedulingHostFilters = schedulingHostFilters;
-        this.hostPool = hostPool;
-        this.schedulerData = schedulerData;
     }
     
     /**
@@ -46,12 +40,10 @@ public class SchedulingHostFilter implements IHostFilter {
      * @param vm the virtual machine to be tested
      * @return the list of filtered hosts
      */
-    @Override
-    public List<HostElement> getFilteredHosts(List<Integer> authorizedHosts, VmElement vm) {
+    public List<HostElement> getFilteredHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
         List<HostElement> filteredHosts = new ArrayList<>();
-        for (Integer hostId : authorizedHosts) {
-            HostElement h = hostPool.getHost(hostId);
-            boolean matched = isSuitableHost(h, vm);
+        for (HostElement h : hosts) {
+            boolean matched = isSuitableHost(h, vm, schedulerData);
             if (matched) {
                 filteredHosts.add(h);
             }
@@ -66,7 +58,7 @@ public class SchedulingHostFilter implements IHostFilter {
      * @param vm the virtual machine to be tested
      * @return true if the host and vm match, false othewise
      */
-    public boolean isSuitableHost(HostElement h, VmElement vm) {
+    public boolean isSuitableHost(HostElement h, VmElement vm, SchedulerData schedulerData) {
          boolean result = true;
          for (IHostFilterStrategy filter: hostFilters) {
              result = result && filter.test(vm, h);

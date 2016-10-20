@@ -22,7 +22,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public class SchedulingDatastoreFilter implements IDatastoreFilter {
+public class SchedulingDatastoreFilter {
 
     /**
      * The list of filters to be used for matching the datastore for a virtual machine.
@@ -30,13 +30,10 @@ public class SchedulingDatastoreFilter implements IDatastoreFilter {
     private List<IDatastoreFilterStrategy> datastoreFilters;
     
     private List<ISchedulingDatastoreFilterStrategy> schedulingDatastoreFilters;
-        
-    private SchedulerData schedulerData;
 
-    public SchedulingDatastoreFilter(List<IDatastoreFilterStrategy> datastoreFilters, List<ISchedulingDatastoreFilterStrategy> schedulingDatastoreFilters, SchedulerData schedulerData) {
+    public SchedulingDatastoreFilter(List<IDatastoreFilterStrategy> datastoreFilters, List<ISchedulingDatastoreFilterStrategy> schedulingDatastoreFilters) {
         this.datastoreFilters = datastoreFilters;
         this.schedulingDatastoreFilters = schedulingDatastoreFilters;
-        this.schedulerData = schedulerData;
     }
     
     /**
@@ -46,10 +43,10 @@ public class SchedulingDatastoreFilter implements IDatastoreFilter {
      * @param vm the vm to be tested
      * @return the list of filtered datastores
      */
-    public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, HostElement host, VmElement vm) {
+    public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, HostElement host, VmElement vm, SchedulerData schedulerData) {
         List<DatastoreElement> filteredDatastores = new ArrayList<>();
         for (DatastoreElement ds: datastores) {
-            boolean matched = isSuitableDatastore(host, ds, vm);
+            boolean matched = isSuitableDatastore(host, ds, vm, schedulerData);
             if (matched) {
                 filteredDatastores.add(ds);
             }
@@ -64,7 +61,7 @@ public class SchedulingDatastoreFilter implements IDatastoreFilter {
      * @param vm the virtual machine to be tested
      * @return true if the host and vm match, false othewise
      */
-    public boolean isSuitableDatastore(HostElement host, DatastoreElement ds, VmElement vm) {
+    public boolean isSuitableDatastore(HostElement host, DatastoreElement ds, VmElement vm, SchedulerData schedulerData) {
          boolean result = true;
          for (IDatastoreFilterStrategy filter: datastoreFilters) {
              result = result && filter.test(vm, ds, host);

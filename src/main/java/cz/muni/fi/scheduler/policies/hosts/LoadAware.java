@@ -5,9 +5,7 @@
  */
 package cz.muni.fi.scheduler.policies.hosts;
 
-import cz.muni.fi.scheduler.Scheduler;
 import cz.muni.fi.scheduler.SchedulerData;
-import static cz.muni.fi.scheduler.policies.hosts.Packing.sortByValue;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
@@ -31,8 +29,7 @@ public class LoadAware implements IPlacementPolicy {
     @Override
     public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
-        Map<HostElement, Float> cpuUsages = schedulerData.getCpuUsages();
-        Map<HostElement, Float> freeCpus = getFreeCpus(hosts, cpuUsages);
+        Map<HostElement, Float> freeCpus = getFreeCpus(hosts, schedulerData);
         /*Float maxValueInMap=(Collections.max(freeCpus.values()));  // This will return max value in the Hashmap
         for (Map.Entry<HostElement, Float> entry : freeCpus.entrySet()) {  // Iterate through hashmap
             if (entry.getValue() == maxValueInMap) {
@@ -43,18 +40,18 @@ public class LoadAware implements IPlacementPolicy {
         return result;
     }
     
-    private Map<HostElement, Float> getFreeCpus(List<HostElement> hosts, Map<HostElement, Float> cpuUsages) {
+    private Map<HostElement, Float> getFreeCpus(List<HostElement> hosts, SchedulerData schedulerData) {
         Map<HostElement, Float> freeCpus = new HashMap<>();
         for (HostElement host: hosts) {
             Float maxCpu = host.getMax_cpu();
-            Float cpuUsage = cpuUsages.get(host);
+            Float cpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage();
             Float freeCpu = maxCpu - cpuUsage;
             freeCpus.put(host, freeCpu);
         }
         return freeCpus;
     }
     
-    public static <K, V extends Comparable<? super V>>  Map<K, V> sortByValue(Map<K, V> map) {
+    private static <K, V extends Comparable<? super V>>  Map<K, V> sortByValue(Map<K, V> map) {
         return map.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))

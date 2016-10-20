@@ -145,7 +145,7 @@ public class HostXml {
      * @return the mem_usage
      */
     public Integer getMem_usage() {
-        return mem_usage;
+        return mem_usage/1024;
     }
 
     /**
@@ -187,7 +187,7 @@ public class HostXml {
      * @return the max_mem
      */
     public Integer getMax_mem() {
-        return max_mem;
+        return max_mem/1024;
     }
 
     /**
@@ -229,7 +229,7 @@ public class HostXml {
      * @return the free_mem
      */
     public Integer getFree_mem() {
-        return free_mem;
+        return free_mem/1024;
     }
 
     /**
@@ -271,7 +271,7 @@ public class HostXml {
      * @return the used_mem
      */
     public Integer getUsed_mem() {
-        return used_mem;
+        return used_mem/1024;
     }
 
     /**
@@ -285,7 +285,7 @@ public class HostXml {
      * @return the used_cpu
      */
     public Integer getUsed_cpu() {
-        return used_cpu;
+        return used_cpu/100;
     }
 
     /**

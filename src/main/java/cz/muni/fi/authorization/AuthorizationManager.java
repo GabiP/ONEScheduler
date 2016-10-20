@@ -47,7 +47,7 @@ public class AuthorizationManager implements IAuthorizationManager {
      * @return an array with ids of authorized hosts
      */
     @Override
-    public List<Integer> authorize(VmElement vm) {
+    public List<HostElement> authorize(VmElement vm) {
         Integer uid = vm.getUid();
         List<Integer> userGroups = userPool.getUser(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
@@ -75,7 +75,7 @@ public class AuthorizationManager implements IAuthorizationManager {
             }
         }
         //match authorizedHosts and authorizedDatastores
-        List<Integer> result = matchHostsAndDatastores(authorizedHosts, authorizedDatastores);
+        List<HostElement> result = matchHostsAndDatastores(authorizedHosts, authorizedDatastores);
         return result;
     }
     
@@ -149,7 +149,7 @@ public class AuthorizationManager implements IAuthorizationManager {
      * @param authorizedDatastores the list af datastores to be macthed
      * @return the list of host's ids that the user is authorized to use
      */
-    public List<Integer> matchHostsAndDatastores(List<Integer> authorizedHosts, List<Integer> authorizedDatastores) {
+    public List<HostElement> matchHostsAndDatastores(List<Integer> authorizedHosts, List<Integer> authorizedDatastores) {
         List<Integer> result = new ArrayList<>(authorizedHosts);
         for (Integer hostId: authorizedHosts) {
             boolean hasSystemDs = false;
@@ -171,12 +171,12 @@ public class AuthorizationManager implements IAuthorizationManager {
         return getOnlyActiveHosts(result);
     }
     
-    public List<Integer> getOnlyActiveHosts(List<Integer> hosts) {
-         List<Integer> result = new ArrayList<>();
+    public List<HostElement> getOnlyActiveHosts(List<Integer> hosts) {
+         List<HostElement> result = new ArrayList<>();
          for (Integer id: hosts) {
              HostElement host = hostPool.getHost(id);
              if ((host.getState() == 1 || host.getState() == 2) ) {
-                 result.add(host.getId());
+                 result.add(host);
              }
          }
          return result;

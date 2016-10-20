@@ -5,9 +5,7 @@
  */
 package cz.muni.fi.scheduler.policies.hosts;
 
-import cz.muni.fi.scheduler.Scheduler;
 import cz.muni.fi.scheduler.SchedulerData;
-import static cz.muni.fi.scheduler.policies.hosts.Striping.sortByValue;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
@@ -15,7 +13,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
@@ -32,18 +29,19 @@ public class Packing implements IPlacementPolicy {
     public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
         /*HostElement moreVms = null;
-        Map<HostElement, Integer> runningVms = schedulerData.getRunningVms();
+        Map<HostElement, Integer> runningVms = schedulerData.getRunningVmsReservation();
         int maxValueInMap=(Collections.max(runningVms.values()));  // This will return max value in the Hashmap
         for (Entry<HostElement, Integer> entry : runningVms.entrySet()) {  // Iterate through hashmap
             if (entry.getValue() == maxValueInMap) {
                 moreVms = entry.getKey();
             }
         }*/
-        result.addAll(sortByValue(schedulerData.getRunningVms()).keySet());
+        Map<HostElement, Integer> listOfRunningVms = schedulerData.getActualRunningVms(hosts);
+        result.addAll(sortByValue(listOfRunningVms).keySet());
         return result;
     }
     
-    public static <K, V extends Comparable<? super V>>  Map<K, V> sortByValue(Map<K, V> map) {
+    private static <K, V extends Comparable<? super V>>  Map<K, V> sortByValue(Map<K, V> map) {
         return map.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))

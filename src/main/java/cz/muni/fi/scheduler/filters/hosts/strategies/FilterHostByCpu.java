@@ -22,9 +22,9 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
-        Map<HostElement, Float> cpuUsages = schedulerData.getCpuUsages();
-        System.out.println("Filtering Hosts by cpu: " + host.getMax_cpu() + "-" + cpuUsages.get(host) + "=" +(host.getMax_cpu() - cpuUsages.get(host)) + ">=" + vm.getCpu());
-        return ((host.getMax_cpu() - cpuUsages.get(host)) >= vm.getCpu());
+        Float actualCpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage();
+        System.out.println("Filtering Hosts by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=" + vm.getCpu());
+        return ((host.getMax_cpu() - actualCpuUsage) >= vm.getCpu());
     }
     
 }

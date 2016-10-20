@@ -31,11 +31,14 @@ public class HostElement {
     private Integer mem_usage;
     
     private Float cpu_usage;
-
+    
+    //in megabytes
     private Integer max_disk;
-
+    
+    //in megabytes
     private Integer max_mem;
 
+    //number of cores
     private Float max_cpu;
 
     private Integer free_disk;
@@ -107,28 +110,6 @@ public class HostElement {
             }
         }
         return result;
-    }
-    
-    /**
-     * Increases cpu and memory on current host. And decreases free cpu and memory.
-     * @param vm virtual machine with information for increasing the capacity
-     */
-    public void addCapacity(VmElement vm) {
-         cpu_usage += vm.getCpu();
-         mem_usage += vm.getMemory();
-         free_cpu -= vm.getCpu();
-         free_mem -= vm.getMemory();
-    }
-    
-    /**
-     * Decreases cpu and memory on current host. And increases free cpu and memory.
-     * @param vm virtual machine with information for increasing the capacity
-     */
-    public void delCapacity(VmElement vm) {
-         cpu_usage -= vm.getCpu();
-         mem_usage -= vm.getMemory();
-         free_cpu += vm.getCpu();
-         free_mem += vm.getMemory();
     }
     
     /**

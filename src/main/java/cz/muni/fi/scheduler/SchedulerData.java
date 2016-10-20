@@ -32,14 +32,14 @@ public class SchedulerData {
      * Every time we match a host with a virtual machine the cpu usage needs to be increased.
      * We are storing the used space.
      */
-    private Map<HostElement, Float> cpuUsages;
+    private Map<HostElement, Float> cpuReservation;
     
     /**
      * This map is used for computing the memory usages.
      * Every time we match a host with a virtual machine the memory usage needs to be increased.
      * We are storing the used space.
      */
-    private Map<HostElement, Integer> memoryUsages;
+    private Map<HostElement, Integer> memoryReservation;
     
     /**
      * This map is used for computing the free spaces in datastore nodes found on hosts.
@@ -66,27 +66,11 @@ public class SchedulerData {
         this.hostPool = hostPool;
         this.vmPool = vmPool;
         this.dsPool = dsPool;
-        this.cpuUsages = initializeHostsCpuCapacity(hostPool.getActiveHosts());
-        this.memoryUsages = initializeHostMemoryCapacity(hostPool.getActiveHosts());
         this.datastoreNodeStorageCapacity = initializeDatastoreNodeStorageCapacity(hostPool.getActiveHosts());
         this.datastoreStorageCapacity = initializeDatastoreStorageCapacity(dsPool.getSystemDs());
-        this.runningVms = initializeHostRunningVms(hostPool.getActiveHosts());
-    }
-    
-    public Map<HostElement, Float> initializeHostsCpuCapacity(List<HostElement> hosts) {
-        Map<HostElement, Float> usages = new HashMap<>();
-        for (HostElement host: hosts) {
-            usages.put(host, host.getCpu_usage());
-        }
-        return usages;
-    }
-    
-    public Map<HostElement, Integer> initializeHostMemoryCapacity(List<HostElement> hosts) {
-        Map<HostElement, Integer> usages = new HashMap<>();
-        for (HostElement host: hosts) {
-            usages.put(host, host.getMem_usage());
-        }
-        return usages;
+        cpuReservation = new HashMap<>();
+        memoryReservation = new HashMap<>();
+        runningVms = new HashMap<>();
     }
     
     /*public Map<HostElement, List<Integer>> initializeDatastoreNodeStorageCapacity(List<HostElement> hosts) {
@@ -139,22 +123,31 @@ public class SchedulerData {
         return usages;
     }
     
-    public Map<HostElement, Integer> initializeHostRunningVms(List<HostElement> hosts) {
-        Map<HostElement, Integer> usages = new HashMap<>();
-        for (HostElement h: hosts) {
-            usages.put(h, h.getRunningVms());
+    public Map<HostElement, Float> reserveHostCpuCapacity(HostElement host, VmElement vm) {
+        if (cpuReservation.containsKey(host)) {
+            cpuReservation.replace(host, cpuReservation.get(host), cpuReservation.get(host) + vm.getCpu());
+        } else {
+            cpuReservation.put(host, vm.getCpu());
         }
-        return usages;
+        return cpuReservation;
     }
     
-    public Map<HostElement, Float> addHostCpuCapacity(HostElement host, VmElement vm) {
-        cpuUsages.replace(host, cpuUsages.get(host), cpuUsages.get(host) + vm.getCpu());
-        return cpuUsages;
+    public Map<HostElement, Integer> reserveHostMemoryCapacity(HostElement host, VmElement vm) {
+        if (memoryReservation.containsKey(host)) {
+            memoryReservation.replace(host, memoryReservation.get(host), memoryReservation.get(host) + vm.getMemory());
+        } else {
+            memoryReservation.put(host, vm.getMemory());
+        }
+        return memoryReservation;
     }
-    
-    public Map<HostElement, Integer> addHostMemoryCapacity(HostElement host, VmElement vm) {
-        memoryUsages.replace(host, memoryUsages.get(host), memoryUsages.get(host) + vm.getMemory());
-        return memoryUsages;
+         
+    public Map<HostElement, Integer> reserveHostRunningVm(HostElement host) {
+        if (runningVms.containsKey(host)) {
+            runningVms.replace(host, runningVms.get(host), runningVms.get(host) + 1);
+        } else {
+            runningVms.put(host, 1);
+        }
+        return runningVms;
     }
     
     /*public Map<HostElement, List<Integer>> addDatastoreNodeStorageCapacity(HostElement host, VmElement vm, Integer index) {
@@ -176,12 +169,37 @@ public class SchedulerData {
         datastoreStorageCapacity.replace(ds, datastoreStorageCapacity.get(ds), datastoreStorageCapacity.get(ds) - vm.getDiskSizes());
         return datastoreStorageCapacity;
     }
-    
-    public Map<HostElement, Integer> addHostRunningVm(HostElement host) {
-        runningVms.replace(host, runningVms.get(host), runningVms.get(host) + 1);
-        return runningVms;
-    }
 
+    public Integer getReservedMemory(HostElement host) {
+        if (memoryReservation.containsKey(host)) {
+            return memoryReservation.get(host);
+        }
+        return 0;
+    }
+    
+    public Float getReservedCpu(HostElement host) {
+        if (cpuReservation.containsKey(host)) {
+            return cpuReservation.get(host);
+        }
+        return new Float("0.00");
+    }
+    
+    public Integer getReservedRunningVms(HostElement host) {
+        if (runningVms.containsKey(host)) {
+            return runningVms.get(host);
+        }
+        return 0;
+    }
+    
+    public Map<HostElement, Integer> getActualRunningVms(List<HostElement> hosts) {
+        Map<HostElement, Integer> actualRunningVms = new HashMap<>();
+        for (HostElement host: hosts) {
+            Integer numberofVms = runningVms.get(host) + host.getRunningVms();
+            actualRunningVms.put(host, numberofVms);
+        }
+        return actualRunningVms;
+    }
+    
     public IHostPool getHostPool() {
         return hostPool;
     }
@@ -206,52 +224,11 @@ public class SchedulerData {
         this.dsPool = dsPool;
     }
 
-    public Map<HostElement, Float> getCpuUsages() {
-        return cpuUsages;
-    }
-
-    public void setCpuUsages(Map<HostElement, Float> cpuUsages) {
-        this.cpuUsages = cpuUsages;
-    }
-
-    public Map<HostElement, Integer> getMemoryUsages() {
-        return memoryUsages;
-    }
-
-    public void setMemoryUsages(Map<HostElement, Integer> memoryUsages) {
-        this.memoryUsages = memoryUsages;
-    }
-
-    /*public Map<HostElement, List<Integer>> getDatastoreNodeStorageCapacity() {
-        return datastoreNodeStorageCapacity;
-    }
-
-    public void setDatastoreNodeStorageCapacity(Map<HostElement, List<Integer>> datastoreNodeStorageCapacity) {
-        this.datastoreNodeStorageCapacity = datastoreNodeStorageCapacity;
-    }*/
-    
     public Map<HostElement, List<DatastoreNode>> getDatastoreNodeStorageCapacity() {
         return datastoreNodeStorageCapacity;
-    }
-
-    public void setDatastoreNodeStorageCapacity(Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity) {
-        this.datastoreNodeStorageCapacity = datastoreNodeStorageCapacity;
     }
 
     public Map<DatastoreElement, Integer> getDatastoreStorageCapacity() {
         return datastoreStorageCapacity;
     }
-
-    public void setDatastoreStorageCapacity(Map<DatastoreElement, Integer> datastoreStorageCapacity) {
-        this.datastoreStorageCapacity = datastoreStorageCapacity;
-    }
-
-    public Map<HostElement, Integer> getRunningVms() {
-        return runningVms;
-    }
-
-    public void setRunningVms(Map<HostElement, Integer> runningVms) {
-        this.runningVms = runningVms;
-    }
-
 }

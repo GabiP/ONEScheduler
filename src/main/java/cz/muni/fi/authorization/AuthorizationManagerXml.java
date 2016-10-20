@@ -27,10 +27,10 @@ public class AuthorizationManagerXml implements IAuthorizationManager {
     }
     
     @Override
-    public List<Integer> authorize(VmElement vm) {
-        List<Integer> result = new ArrayList<>();
+    public List<HostElement> authorize(VmElement vm) {
+        List<HostElement> result = new ArrayList<>();
         for (HostElement host: hosts) {
-            result.add(host.getId());
+            result.add(host);
         }
         return result;
     }

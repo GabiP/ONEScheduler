@@ -36,24 +36,29 @@ public class SetUp {
                 
         while (true) {
             Scheduler scheduler = (Scheduler) context.getBean("scheduler");
-            List<Match> plan = scheduler.schedule();
+            List<List<Match>> plan = scheduler.schedule();
             printPlan(plan);
             TimeUnit.SECONDS.sleep(cycleinterval);
         }
     }
     
-    private static void printPlan(List<Match> plan ) {
+    private static void printPlan(List<List<Match>> plan ) {
         if (plan == null) {
             System.out.println("No schedule.");
             return;
         }
-        for (Match match : plan) {
-            System.out.println(match.getHost());
-            System.out.println("Its vms: ");
-            for (VmElement vm : match.getVms()) {
-                System.out.println(vm);
+        int i = 0;
+        for (List<Match> queue: plan) {
+            System.out.println("Queue number: " + i);
+            for (Match match : queue) {
+                System.out.println(match.getHost());
+                System.out.println("Its vms: ");
+                for (VmElement vm : match.getVms()) {
+                    System.out.println(vm);
+                }
+                System.out.println();
             }
-            System.out.println();
+            i++;
         }
     }
 

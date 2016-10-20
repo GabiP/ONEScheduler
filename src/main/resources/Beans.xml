@@ -15,7 +15,7 @@
        <constructor-arg index="6" ref="loadAware"/>
        <constructor-arg index="7" ref="storagePacking"/>
        <constructor-arg index="8" ref="fairshareOrderer"/>
-       <constructor-arg index="9" value="1"/>
+       <constructor-arg index="9" value="2"/>
        <constructor-arg index="10" value="true"/>
    </bean>
    
@@ -35,15 +35,7 @@
                 <ref bean="filterHostByMemory"/>
             </list>
         </constructor-arg> 
-       <constructor-arg index="2" ref="hostPool"/>
-       <constructor-arg index="3" ref="schedulerData"/>
    </bean>  
-    
-   <bean id="schedulerData" class="cz.muni.fi.scheduler.SchedulerData">
-       <constructor-arg index="0" ref="hostPool"/>
-       <constructor-arg index="1" ref="vmPool"/>
-       <constructor-arg index="2" ref="datastorePool"/>
-   </bean>
    
    <bean id="schedulingDatastoreFilter" class="cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter">
         <constructor-arg index="0" >
@@ -56,7 +48,6 @@
                 <ref bean="filterDatastoreByStorage"/>
             </list>
         </constructor-arg> 
-       <constructor-arg index="2" ref="schedulerData"/>
    </bean>
    
    <bean id="filterDatastoresBySchedulingRequirements" class="cz.muni.fi.scheduler.filters.datastores.strategies.FilterDatastoresBySchedulingRequirements"/>

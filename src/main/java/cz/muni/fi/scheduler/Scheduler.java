@@ -1,13 +1,12 @@
 package cz.muni.fi.scheduler;
 
 import cz.muni.fi.authorization.IAuthorizationManager;
-import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
-import cz.muni.fi.scheduler.filters.datastores.IDatastoreFilter;
+import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
+import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
@@ -17,11 +16,8 @@ import java.util.List;
 import java.util.Map;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
-import java.io.IOException;
 import java.util.LinkedHashMap;
-import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
-import cz.muni.fi.scheduler.filters.datastores.strategies.IDatastoreFilterStrategy;
-import cz.muni.fi.scheduler.filters.hosts.IHostFilter;
+import org.apache.commons.collections4.ListUtils;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
@@ -41,33 +37,33 @@ public class Scheduler {
     private IDatastorePool dsPool;
     
     /**
-     * This attribute holds all important data for scheduling.
-     * Needs to be updated every new cycle.
+     * SchedulerData holds data that are updated everytime a vm is placed on a host.
+     * Needs to be cleared every new cycle (after the plan is executed).
      */
     private SchedulerData schedulerData;
     
     /**
-     * 
+     * The hostFilter is used for filtering hosts. The filters that are used depends on configuration.
      */
-    private IHostFilter hostFilter;
+    private SchedulingHostFilter hostFilter;
     
     /**
-     * The list of filters to be used for matching the datastore for a virtual machine.
+     * The datastoreFilter is used for filtering datastores. The filters that are used depends on configuration.
      */
-    private IDatastoreFilter datastoreFilter;
+    private SchedulingDatastoreFilter datastoreFilter;
     
     /**
-     * The list of policies to be used for sorting the hosts available for a virtual machine.
+     * The policy to be used for sorting the hosts available for a virtual machine.
      */
     private IPlacementPolicy placementPolicy;
     
     /**
-     * The list of policies to be used for choosing the best ranked datastore available for a virtual machine and a host.
+     * The policy to be used for choosing the best ranked datastore available for a virtual machine and a host.
      */
     private IStoragePolicy storagePolicy;
     
     /**
-     * The list of fairshare policies to be used for sorting the virtual machines based on their user's priority.
+     * The fairshare policy to be used for sorting the virtual machines based on their user's priority.
      */
     private FairShareOrderer fairshare;  
     
@@ -77,13 +73,13 @@ public class Scheduler {
      * We will use list of LinkedLists for multiple queues.
      * For concurrent queues we can use: ConcurrentLinkedQueue
      */
-    private List<LinkedList<VmElement>> queues;
+    private List<List<VmElement>> queues;
     
     private int numberOfQueues;
     
     private boolean preferHostFit;
 
-    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, IHostFilter hostFilter, IDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
+    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter, SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
         this.authorizationManager = authorizationManager;
         this.hostPool = hostPool;
         this.vmPool = vmPool;
@@ -105,25 +101,30 @@ public class Scheduler {
      * Calls fairshare and calls the method to process queues.
      * @return the map with the plan
      */
-    public List<Match> schedule() {
+    public List<List<Match>> schedule() {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
             System.out.println("No pendings");
             return null;
         }
-        queues = new LinkedList<>();
-        //TODO sort VM in queues by fairshare - using number of queues parameter
+        //get list of vms ordered by fairshare
         List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
-        // VM queue construction
-        for (int i = 0; i < numberOfQueues; i++) {
-            LinkedList<VmElement> queue = new LinkedList<>();
-            queue.addAll(orderedVms);
-            queues.add(queue);
+        // VM queues construction
+        queues = initializeQueues(numberOfQueues, orderedVms);
+        //process queue by queue and create list of plans for each queues
+        List<List<Match>> result = new LinkedList<>();
+        for (List<VmElement> queue: queues) {
+            List<Match> plan = processQueue(queue);
+            result.add(plan);
         }
-        //process queue by queue or in parallel
-        List<Match> plan = processQueue(queues.get(0));
-        return plan;
+        return result;
+    }
+    
+    private List<List<VmElement>> initializeQueues(int numberOfQueues, List<VmElement> orderedVms) {
+        int numberOfVmsInQueue = (int) Math.ceil(orderedVms.size()/ new Float(numberOfQueues));
+        List<List<VmElement>> output = ListUtils.partition(orderedVms, numberOfVmsInQueue);
+        return output;
     }
 
     /**
@@ -137,40 +138,36 @@ public class Scheduler {
      * @param queue the queue to be processed
      * @return the map with the plan for one queue
      */
-    private List<Match> processQueue(LinkedList queue) {
+    private List<Match> processQueue(List<VmElement> queue) {
         List<Match> plan = new ArrayList<>();
-        List<Integer> authorizedHosts;
-        while (!queue.isEmpty()) {
-            VmElement vm = (VmElement) queue.peek();
+        List<HostElement> authorizedHosts;
+        for(VmElement vm: queue) {
             //check the authorization for this VM
             authorizedHosts = authorizationManager.authorize(vm);
             if (authorizedHosts.isEmpty()) {
                 System.out.println("Empty authorized hosts.");
-                queue.poll();
                 continue;
             }
             //filter authorized hosts for vm
-            List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm);
-            //TODO: sort by every chosen policy in threads
+            List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
+            //sort hosts
             List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, vm, schedulerData);
-            
-            //TODO: threading for policies
+            //filter and sort datastores for hosts
             Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
 
-            // deploy if filtered hosts is not empty
+            // deploy if sortedCandidates is not empty
             if (!sortedCandidates.isEmpty()) {
                 //pick the host and datastore. We chose the best host, or the best datastore.
                 Match match = createMatch(sortedCandidates);
                 plan = match.addVm(plan, vm);
                 System.out.println("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost() + "and ds: " + match.getDatastore());
                 // change capacities
-                schedulerData.addHostCpuCapacity(match.getHost(), vm);
-                schedulerData.addHostMemoryCapacity(match.getHost(), vm);
-                schedulerData.addHostRunningVm(match.getHost());
+                schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
+                schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
+                schedulerData.reserveHostRunningVm(match.getHost());
                 schedulerData.addDatastoreStorageCapacity(match.getDatastore(), vm);
                 schedulerData.addDatastoreNodeStorageCapacity(match.getHost(), match.getHost().getDatastoreNode(match.getDatastore().getId()), vm);
             }
-            queue.poll();
         }
         return plan;
     }
@@ -188,7 +185,7 @@ public class Scheduler {
     private Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
         Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
-            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(dsPool.getSystemDs(), host, vm);
+            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(dsPool.getSystemDs(), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
                 sortedCandidates.put(host, ds);
