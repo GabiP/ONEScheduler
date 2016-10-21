@@ -29,28 +29,23 @@ public class StoragePacking implements IStoragePolicy {
 
     @Override
     public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
-        Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity = schedulerData.getDatastoreNodeStorageCapacity();
-        List<DatastoreNode> datastoreNodes = datastoreNodeStorageCapacity.get(host);
-        Map<DatastoreElement, Integer> datastoreStorageCapacity = schedulerData.getDatastoreStorageCapacity();
         Integer lessFreeSpace = Integer.MAX_VALUE;
         Integer capacity;
         DatastoreElement result = null;
         for (DatastoreElement ds : datastores) {
+            Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (ds.isShared()) {
-                capacity = datastoreStorageCapacity.get(ds);
-                if(capacity < lessFreeSpace) {
+                capacity = ds.getFree_mb() - reservedStorage;
+                if (capacity < lessFreeSpace) {
                     result = ds;
                     lessFreeSpace = capacity;
                 }
             } else {
-                for (DatastoreNode dsNode : datastoreNodes) {
-                    if (ds.getId().intValue() == dsNode.getId_ds().intValue()) {
-                        capacity = dsNode.getFree_mb();
-                        if (capacity < lessFreeSpace) {
-                            result = ds;
-                            lessFreeSpace = capacity;
-                        }
-                    }
+                DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
+                capacity = dsNode.getFree_mb() - reservedStorage;
+                if (capacity < lessFreeSpace) {
+                    result = ds;
+                    lessFreeSpace = capacity;
                 }
             }
         }

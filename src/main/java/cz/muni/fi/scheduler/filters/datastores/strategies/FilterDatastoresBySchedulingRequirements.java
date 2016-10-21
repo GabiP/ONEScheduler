@@ -23,6 +23,7 @@ public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilte
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host){
         if (vm.getSchedDsRequirements() == null) {
+            System.out.println("Vm does not have any datastore requirements");
             return true;
         }
         if (vm.getSchedDsRequirements().equals("")) {

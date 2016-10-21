@@ -15,6 +15,7 @@ public class FilterHostsBySchedulingRequirements implements IHostFilterStrategy 
     @Override
     public boolean test(VmElement vm, HostElement host) {
         if (vm.getSchedRequirements() == null) {
+            System.out.println("Vm does not have any host requirements");
             return true;
         }
         if (vm.getSchedRequirements().equals("")) {

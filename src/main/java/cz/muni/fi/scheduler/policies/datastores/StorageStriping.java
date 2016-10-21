@@ -9,12 +9,8 @@ import cz.muni.fi.scheduler.RankPair;
 import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Striping policy for selecting datastore.
@@ -28,28 +24,23 @@ public class StorageStriping implements IStoragePolicy {
 
     @Override
     public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
-        Map<HostElement, List<DatastoreNode>> datastoreNodeStorageCapacity = schedulerData.getDatastoreNodeStorageCapacity();
-        List<DatastoreNode> datastoreNodes = datastoreNodeStorageCapacity.get(host);
-        Map<DatastoreElement, Integer> datastoreStorageCapacity = schedulerData.getDatastoreStorageCapacity();
         Integer moreFreeSpace = Integer.MIN_VALUE;
         Integer capacity;
         DatastoreElement result = null;
         for (DatastoreElement ds : datastores) {
+            Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (ds.isShared()) {
-                capacity = datastoreStorageCapacity.get(ds);
-                if(capacity > moreFreeSpace) {
+                capacity = ds.getFree_mb() - reservedStorage;
+                if (capacity > moreFreeSpace) {
                     result = ds;
                     moreFreeSpace = capacity;
                 }
             } else {
-                for (DatastoreNode dsNode : datastoreNodes) {
-                    if (ds.getId().intValue() == dsNode.getId_ds().intValue()) {
-                        capacity = dsNode.getFree_mb();
-                        if (capacity > moreFreeSpace) {
-                            result = ds;
-                            moreFreeSpace = capacity;
-                        }
-                    }
+                DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
+                capacity = dsNode.getFree_mb() - reservedStorage;
+                if (capacity > moreFreeSpace) {
+                    result = ds;
+                    moreFreeSpace = capacity;
                 }
             }
         }

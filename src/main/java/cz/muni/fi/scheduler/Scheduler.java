@@ -161,12 +161,11 @@ public class Scheduler {
                 Match match = createMatch(sortedCandidates);
                 plan = match.addVm(plan, vm);
                 System.out.println("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost() + "and ds: " + match.getDatastore());
-                // change capacities
+                // update reservations
                 schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
                 schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
                 schedulerData.reserveHostRunningVm(match.getHost());
-                schedulerData.addDatastoreStorageCapacity(match.getDatastore(), vm);
-                schedulerData.addDatastoreNodeStorageCapacity(match.getHost(), match.getHost().getDatastoreNode(match.getDatastore().getId()), vm);
+                schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
             }
         }
         return plan;
@@ -231,13 +230,4 @@ public class Scheduler {
         }
         return result;
     }
-    
-    
-    
-    
-
-    
-
-    
-    
 }
