@@ -7,6 +7,8 @@ package cz.muni.fi.scheduler.fairshare.calculators;
 
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
 
 /**
@@ -17,8 +19,8 @@ import cz.muni.fi.scheduler.resources.VmElement;
  */
 public class MaxMinCalculator extends AbstractPriorityCalculator {
     
-    public MaxMinCalculator(IVmPool vmPool, boolean useHistoryRecords) {
-        super(vmPool, useHistoryRecords);
+    public MaxMinCalculator(IVmPool vmPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
+        super(vmPool, userRecordManager, vmRecordManager);
     }    
     
     @Override

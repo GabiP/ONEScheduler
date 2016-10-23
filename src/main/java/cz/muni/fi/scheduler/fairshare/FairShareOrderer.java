@@ -5,16 +5,16 @@
  */
 package cz.muni.fi.scheduler.fairshare;
 
+import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class is responsible for ordering the given Virtual Machines. 
@@ -38,46 +38,44 @@ public class FairShareOrderer {
      * @return The ordered Virtual Machines
      */
     public List<VmElement> orderVms(List<VmElement> vms) {
-        Map<Integer, Float> userPriorities = priorityCalculator.getUserPriorities(getUserIds(vms));
+        Map<Integer, Float> userPriorities = priorityCalculator.getUserPriorities(VmListExtension.getUserIds(vms));
         Map<VmElement, Float> vmPriorities = new HashMap<>();
         for (VmElement vm : vms) {
             Float vmPriority = userPriorities.get(vm.getUid());
             vmPriorities.put(vm, vmPriority);
         }
-        List<VmElement> orderedVms = sortByValue(vmPriorities);
+        List<VmElement> orderedVms = orderByPriority(vmPriorities);
         
         return orderedVms;
     }
 
     /**
-     * Returns the set of user IDs for the inputted virtual machines.
+     * Orders the the virtual machines by their priority. In case some virtual
+     * machines have the same priority the ones which were created sooner will 
+     * go first.
      * 
-     * @param vms
-     * @return Set of user IDs
-     */    
-    private Set<Integer> getUserIds(List<VmElement> vms) {
-        Set<Integer> userIds = new HashSet<>();
-        for (VmElement vm : vms) {
-            userIds.add(vm.getUid());
-        }
-        return userIds;
-    }
-
-    /**
-     * Sorts the map by comparing the values
-     * 
-     * @param map 
-     * @return Sorted map
+     * @param map The virtual machine - priority pairs  
+     * @return Sorted virtual machines
      */
-    private static List sortByValue(Map map) { 
+    private static List<VmElement> orderByPriority(Map<VmElement, Float> map) {
+        // Create Comparator
+        Comparator<Map.Entry<VmElement, Float>> vmPriorityComparator = (Map.Entry<VmElement, Float> o1, Map.Entry<VmElement, Float> o2) -> {
+            int priorityCompare = o1.getValue().compareTo(o2.getValue());
+            if (priorityCompare != 0) {
+                return priorityCompare;
+            } else {
+                int idCompare = o1.getKey().getVmId().compareTo(o2.getKey().getVmId());
+                return idCompare;
+            }           
+        };
+        
         // Create List from Map
         List list = new LinkedList(map.entrySet());
        
-        // Sort List by the values
-        Collections.sort(list, (Map.Entry o1, Map.Entry o2) -> ((Comparable) o1.getValue())
-               .compareTo(o2.getValue()));
+        // Sort List by the Comparator
+        Collections.sort(list, vmPriorityComparator);
 
-        // Return the ordered keys
+        // Return the ordered keys from the List
         List orderedKeys = new ArrayList();
         for (Iterator it = list.iterator(); it.hasNext();) {
             orderedKeys.add(((Map.Entry) it.next()).getKey());

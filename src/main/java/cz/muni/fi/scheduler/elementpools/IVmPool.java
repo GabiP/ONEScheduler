@@ -12,7 +12,9 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public interface IVmPool {
+public interface IVmPool {    
+    
+    public VmElement getVm(int vmId);
     
     public List<VmElement> getVms();
     
