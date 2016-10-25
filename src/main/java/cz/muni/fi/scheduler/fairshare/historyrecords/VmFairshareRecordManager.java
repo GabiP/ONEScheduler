@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -71,25 +70,21 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         String recordData = record.getUserId() + "|" + record.getPriority() + "|" 
                 + record.getLastClosedHistory() + "|" + record.getLastCpu() + "|" + record.getLastMemory();
         properties.setProperty(Integer.toString(record.getVmId()), recordData);
-
-        File file = new File(filePath);
-        try (FileOutputStream fileOut = new FileOutputStream(file)) {
-            properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM");
-        } catch (IOException ex) {
-            Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        saveToFile();
     }    
     
     @Override
     public void delete(int vmId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        properties.remove(vmId);
+        saveToFile();
     }
 
     @Override
     public void delete(List<Integer> vmIds) {
         for (int id : vmIds) {
-            delete(id);
-        }
+            properties.remove(id);
+        }        
+        saveToFile();
     }
     
     /**
@@ -106,5 +101,14 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         newVm.setCpu(record.getLastCpu());
         newVm.setMemory(record.getLastMemory());
         return newVm;
+    }
+    
+    private void saveToFile() {
+        File file = new File(filePath);
+        try (FileOutputStream fileOut = new FileOutputStream(file)) {
+            properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM");
+        } catch (IOException ex) {
+            Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

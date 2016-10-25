@@ -40,7 +40,10 @@ public class UserFairshareRecordManager implements IUserFairshareRecordManager {
     @Override
     public void storePriority(int userId, float priority) {        
         properties.setProperty(Integer.toString(userId), Float.toString(priority));
-
+        saveToFile();        
+    }
+    
+    private void saveToFile() {
         File file = new File(filePath);
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "User priorities");

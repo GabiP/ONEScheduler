@@ -62,12 +62,13 @@ public abstract class AbstractPriorityCalculator {
         float activePriority = 0;
         for (VmElement vm : vms) {                
             if (vm.getRunTime() == 0 && vm.getState() != 6) {
-                // assign a starting priority if the vm didnt run yet
-                float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(vms));
+                // assign a starting priority if the vm didnt run yet                
+                List<VmElement> allVms = vmPool.getAllVmsByUser(userId);
+                float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(allVms));
                 activePriority +=  maxVmRuntime * getPenalty(vm);
             } 
             else {
-                activePriority += getPriority(vm, true);     
+                activePriority += getPriority(vm);     
             }
         }
         return activePriority;
@@ -75,11 +76,16 @@ public abstract class AbstractPriorityCalculator {
     
     private float calculatePastUserPriority(Integer userId) {
         float pastPriority = userRecordManager.getPriority(userId);
-        if (pastPriority == 0) {                
-            pastPriority += getPriority(vmPool.getVms(userId, 6), false);
+        List<VmElement> vms;
+        if (pastPriority == 0) { 
+            vms = vmPool.getVms(userId, 6);            
         } else {
-            pastPriority += getPriority(getNewlyDoneVms(userId), true);                
+            vms = getNewlyDoneVms(userId);              
         }  
+        for (VmElement vm : vms) {
+            pastPriority += getPriority(vm);
+        }
+        vmRecordManager.delete(VmListExtension.getVmIds(vms));
         return pastPriority;
     }
     
@@ -97,33 +103,23 @@ public abstract class AbstractPriorityCalculator {
         return newlyDoneVms;
     }
     
-    private float getPriority(List<VmElement> vms, boolean useFairshareRecord) {
-        float priority = 0;        
-        for (VmElement vm : vms) {
-            priority += getPriority(vm, useFairshareRecord);
-        }
-        return priority;
-    }
-    
     /**
      * Calculates the priority of a virtual machine.
      * 
      * @param vm 
      * @return The priority of the virtual machine
      */
-    private float getPriority(VmElement vm, boolean useFairshareRecord) { 
-        if (useFairshareRecord) {
-            float activePriority = calculateActiveVmPriority(vm);
-            float pastPriority = calculatePastVmPriority(vm);
-
+    private float getPriority(VmElement vm) {         
+        float activePriority = calculateActiveVmPriority(vm);
+        float pastPriority = calculatePastVmPriority(vm);
+        
+        // TODO: maybe remove if (should be ok like this, but without it calculation is more error proof)
+        if (vm.getState() != 6) {
             VmFairshareRecord newRecord = new VmFairshareRecord(
                     vm.getVmId(), vm.getUid(), pastPriority, vm.getLastClosedHistory().getSequence(), vm.getCpu(), vm.getMemory());
             vmRecordManager.storeRecord(newRecord);
-
-            return activePriority + pastPriority;
-        } else {
-            return vm.getRunTime()*getPenalty(vm);
         }
+        return activePriority + pastPriority;
     }  
     
     private float calculateActiveVmPriority(VmElement vm) {
