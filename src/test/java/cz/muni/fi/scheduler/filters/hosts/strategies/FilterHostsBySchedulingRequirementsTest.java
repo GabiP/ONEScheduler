@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package cz.muni.fi.scheduler.filters;
+package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostsBySchedulingRequirements;
 import cz.muni.fi.scheduler.resources.HostElement;
@@ -30,12 +30,31 @@ public class FilterHostsBySchedulingRequirementsTest {
         vm = new VmElement();
         host = new HostElement();
         filter = new FilterHostsBySchedulingRequirements(); 
-    }           
+    }
+    
+    @Test
+    public void testEmptyRequirements() {
+        vm.setSchedRequirements("");
+        assertTrue(filter.test(vm, host));
+    }
+    
+    @Test
+    public void testNullRequirements() {
+        assertTrue(filter.test(vm, host));
+    }
+        
             
     @Test
     public void testMoreHostsInVmTemplate() {
         host.setId(4);
         vm.setSchedRequirements("ID=\"4\" | ID=\"5\" | ID=\"6\" | CLUSTER_ID=\"100\"");
+        assertTrue(filter.test(vm, host));
+    }
+    
+    @Test
+    public void testMoreClustersInVmTemplate() {
+        host.setClusterId(0);
+        vm.setSchedRequirements("ID=\"4\" | ID=\"5\" | ID=\"6\" | CLUSTER_ID=\"100\" | CLUSTER_ID=\"0\"");
         assertTrue(filter.test(vm, host));
     }
     
