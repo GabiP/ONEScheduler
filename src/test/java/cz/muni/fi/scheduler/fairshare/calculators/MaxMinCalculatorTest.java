@@ -6,6 +6,8 @@
 package cz.muni.fi.scheduler.fairshare.calculators;
 
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +22,15 @@ public class MaxMinCalculatorTest {
     
     private MaxMinCalculator calculator; 
     private IVmPool vmPool; 
+    private IUserFairshareRecordManager userRecordManager;
+    private IVmFairshareRecordManager vmRecordManager;
     
     @Before
     public void setUp() {        
         vmPool = mock(IVmPool.class);
-        calculator = new MaxMinCalculator(vmPool, false);
+        userRecordManager = mock(IUserFairshareRecordManager.class);
+        vmRecordManager = mock(IVmFairshareRecordManager.class);
+        calculator = new MaxMinCalculator(vmPool, userRecordManager, vmRecordManager);
     }
 
     @Test(expected = NullPointerException.class) 

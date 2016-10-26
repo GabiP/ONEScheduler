@@ -78,9 +78,18 @@
    
    <bean id="priorityCalculator" class="cz.muni.fi.scheduler.fairshare.calculators.MaxMinCalculator">
        <constructor-arg index="0" ref="vmPool"/>
-       <constructor-arg index="1" value="false"/>
+       <constructor-arg index="1" ref="userRecordManager"/>
+       <constructor-arg index="2" ref="vmRecordManager"/>
+   </bean>
+   
+   <bean id="userRecordManager" class="cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager">
+       <constructor-arg value="userFairshareRecords.txt"/>
    </bean>
     
+   <bean id="vmRecordManager" class="cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager">
+       <constructor-arg value="vmFairshareRecords.txt"/>
+   </bean>
+   
    <bean id="clusterPool" class="cz.muni.fi.xml.pools.ClusterXmlPool">
        <constructor-arg value="clusterpool.xml"/>
    </bean>

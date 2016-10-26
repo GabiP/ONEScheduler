@@ -27,6 +27,12 @@ public class VmElementPool implements IVmPool{
     }
     
     @Override
+    public VmElement getVm(int vmId) {
+        vmp.info();
+        return VmMapper.map(vmp.getById(vmId));
+    }
+    
+    @Override
     public ArrayList<VmElement> getVms() {
         return getVms(Pool.ALL, VirtualMachinePool.NOT_DONE); 
     }

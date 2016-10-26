@@ -25,12 +25,22 @@ import org.opennebula.client.vm.VirtualMachinePool;
 public class VmXmlPool implements IVmPool {
     
     private List<VmElement> vms;
-
+    
     public VmXmlPool(String vmPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String vmPoolMessage = new String(Files.readAllBytes(Paths.get(vmPoolPath)));
         VmXmlList xmlList = xmlMapper.readValue(vmPoolMessage, VmXmlList.class);
         vms = VmXmlMapper.map(xmlList.getVms());
+    }
+    
+    @Override
+    public VmElement getVm(int vmId) {
+        for (VmElement vm : vms) {                       
+            if (vmId == vm.getVmId()) {
+                return vm;
+            }
+        }
+        return null;
     }
         
     @Override

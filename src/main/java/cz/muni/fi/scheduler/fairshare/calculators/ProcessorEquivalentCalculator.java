@@ -8,6 +8,8 @@ package cz.muni.fi.scheduler.fairshare.calculators;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 
@@ -24,8 +26,8 @@ public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
     private Float availableCpu;    
     private Integer availableMemory;
 
-    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool, boolean useHistoryRecords) {
-        super(vmPool, useHistoryRecords);
+    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
+        super(vmPool, userRecordManager, vmRecordManager);
         this.hostPool = hostPool;
         availableCpu = getAvailableCpu();
         availableMemory = getAvailableMemory();

@@ -4,6 +4,7 @@ import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.resources.nodes.NicNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -114,6 +115,26 @@ public class VmElement {
             runTime = (int) (System.currentTimeMillis()/1000L - history.getStartTime());
         }   
         return runTime;
+    }
+    
+    public List<HistoryNode> getClosedHistories() {
+        List<HistoryNode> closedHistories = new ArrayList<>();
+        for (HistoryNode h : histories) {
+            if (h.isClosed()) {
+                closedHistories.add(h);
+            }
+        }
+        return closedHistories;
+    }
+    
+    public HistoryNode getLastClosedHistory() {
+        for (int i=histories.size()-1; i>=0; i--) {
+            HistoryNode history = histories.get(i);
+            if (history.isClosed()) {
+                return history;
+            }
+        }
+        return null;
     }
     
     public int getDiskSizes() {

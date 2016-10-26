@@ -7,6 +7,8 @@ package cz.muni.fi.scheduler.fairshare.calculators;
 
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
@@ -26,13 +28,17 @@ public class ProcessorEquivalentCalculatorTest {
     private ProcessorEquivalentCalculator calculator; 
     private IVmPool vmPool; 
     private IHostPool hostPool;     
+    private IUserFairshareRecordManager userRecordManager;
+    private IVmFairshareRecordManager vmRecordManager;
     
     @Before
     public void setUp() {
         vmPool = mock(IVmPool.class);
         hostPool = mock(IHostPool.class);
+        userRecordManager = mock(IUserFairshareRecordManager.class);
+        vmRecordManager = mock(IVmFairshareRecordManager.class);
         when(hostPool.getHosts()).thenReturn(getHosts());
-        calculator = new ProcessorEquivalentCalculator(vmPool, hostPool, false);
+        calculator = new ProcessorEquivalentCalculator(vmPool, hostPool, userRecordManager, vmRecordManager);
     }
 
     @Test(expected = NullPointerException.class) 
