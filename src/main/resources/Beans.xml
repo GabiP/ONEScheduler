@@ -83,11 +83,11 @@
    </bean>
    
    <bean id="userRecordManager" class="cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager">
-       <constructor-arg value="userFairshareRecords.xml"/>
+       <constructor-arg value="userFairshareRecords.txt"/>
    </bean>
     
    <bean id="vmRecordManager" class="cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager">
-       <constructor-arg value="vmFairshareRecords.xml"/>
+       <constructor-arg value="vmFairshareRecords.txt"/>
    </bean>
    
    <bean id="clusterPool" class="cz.muni.fi.xml.pools.ClusterXmlPool">

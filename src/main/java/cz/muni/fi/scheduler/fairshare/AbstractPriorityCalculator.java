@@ -63,9 +63,7 @@ public abstract class AbstractPriorityCalculator {
         for (VmElement vm : vms) {                
             if (vm.getRunTime() == 0 && vm.getState() != 6) {
                 // assign a starting priority if the vm didnt run yet                
-                List<VmElement> allVms = vmPool.getAllVmsByUser(userId);
-                float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(allVms));
-                activePriority +=  maxVmRuntime * getPenalty(vm);
+                activePriority += getStartingPriority(vm);
             } 
             else {
                 activePriority += getPriority(vm);     
@@ -103,6 +101,17 @@ public abstract class AbstractPriorityCalculator {
         return newlyDoneVms;
     }
     
+    private float getStartingPriority(VmElement vm) {   
+        List<VmElement> allVms = vmPool.getAllVmsByUser(vm.getUid());
+        float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(allVms));
+        float startingPriority =  maxVmRuntime * getPenalty(vm);
+        
+        VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, 0);        
+        vmRecordManager.storeRecord(newRecord);
+            
+        return startingPriority;
+    }  
+    
     /**
      * Calculates the priority of a virtual machine.
      * 
@@ -115,8 +124,7 @@ public abstract class AbstractPriorityCalculator {
         
         // TODO: maybe remove if (should be ok like this, but without it calculation is more error proof)
         if (vm.getState() != 6) {
-            VmFairshareRecord newRecord = new VmFairshareRecord(
-                    vm.getVmId(), vm.getUid(), pastPriority, vm.getLastClosedHistory().getSequence(), vm.getCpu(), vm.getMemory());
+            VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, pastPriority);
             vmRecordManager.storeRecord(newRecord);
         }
         return activePriority + pastPriority;

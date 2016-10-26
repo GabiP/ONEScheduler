@@ -42,7 +42,7 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         if (recordData == null) {
             return null;
         }
-        String[] parts = recordData.split("|");
+        String[] parts = recordData.split("\\|");
         int userId = Integer.parseInt(parts[0]);
         float vmPriority = Float.parseFloat(parts[1]);
         int lastClosedHistory = Integer.parseInt(parts[2]);
@@ -75,16 +75,29 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
     
     @Override
     public void delete(int vmId) {
-        properties.remove(vmId);
+        properties.remove(Integer.toString(vmId));
         saveToFile();
     }
 
     @Override
     public void delete(List<Integer> vmIds) {
         for (int id : vmIds) {
-            properties.remove(id);
+            properties.remove(Integer.toString(id));
         }        
         saveToFile();
+    }
+    
+    @Override
+    public VmFairshareRecord createRecord(VmElement vm, float priority) {
+        int lastClosedHistoryId;
+        if (vm.getLastClosedHistory() == null) {
+            lastClosedHistoryId = -1;
+        } else {
+            lastClosedHistoryId = vm.getLastClosedHistory().getSequence();
+        }
+        
+        return new VmFairshareRecord(
+                vm.getVmId(), vm.getUid(), priority, lastClosedHistoryId, vm.getCpu(), vm.getMemory());        
     }
     
     /**

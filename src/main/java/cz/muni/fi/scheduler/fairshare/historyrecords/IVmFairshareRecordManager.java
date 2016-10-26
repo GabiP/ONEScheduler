@@ -24,6 +24,8 @@ public interface IVmFairshareRecordManager {
     
     public void delete(List<Integer> vmIds);
     
+    public VmFairshareRecord createRecord(VmElement vm, float priority);
+    
     /**
      * Creates a new VmElement by updating the data in the inputted 
      * VmElement from the given History Record.
