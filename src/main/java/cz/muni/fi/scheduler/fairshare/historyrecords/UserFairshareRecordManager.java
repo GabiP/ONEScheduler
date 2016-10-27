@@ -20,14 +20,16 @@ import java.util.logging.Logger;
 public class UserFairshareRecordManager implements IUserFairshareRecordManager {
     
     private Properties properties = new Properties();
-    private String filePath;
+    private File file;
 
     public UserFairshareRecordManager(String filePath) {
-        this.filePath = filePath;
-        try (FileInputStream in = new FileInputStream(filePath)) {
-            properties.load(in);
-        } catch (IOException ex) {
-            Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
+        this.file = new File(filePath);
+        if (file.exists()) {
+            try (FileInputStream in = new FileInputStream(filePath)) {
+                properties.load(in);
+            } catch (IOException ex) {
+                Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -44,7 +46,6 @@ public class UserFairshareRecordManager implements IUserFairshareRecordManager {
     }
     
     private void saveToFile() {
-        File file = new File(filePath);
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "User priorities");
         } catch (IOException ex) {

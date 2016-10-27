@@ -29,8 +29,9 @@ public class MinimumPenaltyCalculator extends AbstractPriorityCalculator {
     private IHostPool hostPool;
     private List<HostElement> hosts;
 
-    public MinimumPenaltyCalculator(IVmPool vmPool, IHostPool hostPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
+    public MinimumPenaltyCalculator(IVmPool vmPool, IHostPool hostPool, HostFilter hostFilter, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
         super(vmPool, userRecordManager, vmRecordManager);
+        this.hostFilter = hostFilter;
         this.hostPool = hostPool;       
         this.hosts = hostPool.getHosts(); 
     }    

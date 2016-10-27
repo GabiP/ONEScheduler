@@ -25,14 +25,16 @@ import java.util.logging.Logger;
 public class VmFairshareRecordManager implements IVmFairshareRecordManager {
     
     private Properties properties = new Properties();
-    private String filePath;
+    private File file;
 
     public VmFairshareRecordManager(String filePath) {
-        this.filePath = filePath;
-        try (FileInputStream in = new FileInputStream(filePath)) {
-            properties.load(in);
-        } catch (IOException ex) {
-            Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
+        this.file = new File(filePath);
+        if (file.exists()) {
+            try (FileInputStream in = new FileInputStream(filePath)) {
+                properties.load(in);
+            } catch (IOException ex) {
+                Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
@@ -117,7 +119,6 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
     }
     
     private void saveToFile() {
-        File file = new File(filePath);
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM");
         } catch (IOException ex) {

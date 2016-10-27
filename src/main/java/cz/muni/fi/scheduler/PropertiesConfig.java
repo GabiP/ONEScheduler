@@ -11,11 +11,11 @@ import java.util.Properties;
  * 
  * @author Gabriela Podolnikova
  */
-public class Configuration {
+public class PropertiesConfig {
     
     private final Properties props = new Properties();
     
-    public Configuration(String path) throws IOException {
+    public PropertiesConfig(String path) throws IOException {
         InputStream is = new FileInputStream(path);
         props.load(is);
         is.close();

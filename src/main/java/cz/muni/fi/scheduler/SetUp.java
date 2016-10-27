@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * This class contains the main method.
@@ -18,13 +18,13 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SetUp {
     
-    private static Configuration configuration;
+    private static PropertiesConfig configuration;
     
     private static int cycleinterval;
     
     public static void main(String[] args) throws InterruptedException {
         try {
-            configuration = new Configuration("configuration.properties");
+            configuration = new PropertiesConfig("configuration.properties");
         } catch (IOException e) {
             System.err.println("Could not load configuration file!" + e);
             return;
@@ -32,10 +32,10 @@ public class SetUp {
         
         cycleinterval = configuration.getInt("cycleinterval");
         
-        ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+        ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfig.class);
                 
         while (true) {
-            Scheduler scheduler = (Scheduler) context.getBean("scheduler");
+            Scheduler scheduler = context.getBean(Scheduler.class);
             List<List<Match>> plan = scheduler.schedule();
             printPlan(plan);
             TimeUnit.SECONDS.sleep(cycleinterval);
