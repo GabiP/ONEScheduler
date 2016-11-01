@@ -1,6 +1,7 @@
 package cz.muni.fi.xml.resources;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import java.util.List;
 
 /**
  * This class represents the Datastore retrived from xml.
@@ -59,8 +60,8 @@ public class DatastoreXml {
     @JacksonXmlProperty(localName = "")
     private Integer other_a;
     
-    @JacksonXmlProperty(localName = "CLUSTER_ID")
-    private Integer cluster_id;
+    @JacksonXmlProperty(localName = "CLUSTERS")
+    private List<Integer> clusters;
     
     @JacksonXmlProperty(localName = "TOTAL_MB")
     private Integer total_mb;
@@ -183,12 +184,12 @@ public class DatastoreXml {
         this.other_a = other_a;
     }
 
-    public Integer getCluster_id() {
-        return cluster_id;
+    public List<Integer> getClusters() {
+        return clusters;
     }
 
-    public void setCluster_id(Integer cluster_id) {
-        this.cluster_id = cluster_id;
+    public void setClusters(List<Integer> clusters) {
+        this.clusters = clusters;
     }
 
     public Integer getTotal_mb() {
@@ -217,7 +218,7 @@ public class DatastoreXml {
 
     @Override
     public String toString() {
-        return "DatastoreXml{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", cluster_id=" + cluster_id + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
+        return "DatastoreXml{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", clusters=" + clusters + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
     }
 
     /**

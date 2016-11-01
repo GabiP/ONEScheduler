@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.resources;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,7 +48,7 @@ public class DatastoreElement {
     private Integer other_m;
     private Integer other_a;
     
-    private Integer cluster_id;
+    private List<Integer> clusters;
     
     private Integer total_mb;
     private Integer free_mb;
@@ -253,17 +254,17 @@ public class DatastoreElement {
     }
 
     /**
-     * @return the cluster_id
+     * @return the clusters
      */
-    public Integer getCluster_id() {
-        return cluster_id;
+    public List<Integer> getClusters() {
+        return clusters;
     }
 
     /**
      * @param cluster_id the cluster_id to set
      */
-    public void setCluster_id(Integer cluster_id) {
-        this.cluster_id = cluster_id;
+    public void setClusters(List<Integer> clusters) {
+        this.clusters = clusters;
     }
 
     /**
@@ -324,7 +325,7 @@ public class DatastoreElement {
 
     @Override
     public String toString() {
-        return "DatastoreElement{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", cluster_id=" + cluster_id + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
+        return "DatastoreElement{" + "id=" + id + ", uid=" + uid + ", gid=" + gid + ", name=" + name + ", type=" + type + ", clusters=" + clusters + ", total_mb=" + total_mb + ", free_mb=" + free_mb + ", used_mb=" + used_mb + '}';
     }
     
     @Override
@@ -333,7 +334,7 @@ public class DatastoreElement {
         hash = 47 * hash + Objects.hashCode(this.getId());
         hash = 47 * hash + Objects.hashCode(this.getName());
         hash = 47 * hash + Objects.hashCode(this.getType());
-        hash = 47 * hash + Objects.hashCode(this.getCluster_id());
+        hash = 47 * hash + Objects.hashCode(this.getClusters());
         return hash;
     }
     
@@ -355,7 +356,7 @@ public class DatastoreElement {
         if (!Objects.equals(this.getType(), other.getType())) {
             return false;
         }
-        if (!Objects.equals(this.getCluster_id(), other.getCluster_id())) {
+        if (!Objects.equals(this.getClusters(), other.getClusters())) {
             return false;
         }
         return true;

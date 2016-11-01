@@ -6,7 +6,10 @@
         <NAME>system</NAME>
         <TYPE>1</TYPE>
         <STATE>0</STATE>
-        <CLUSTER_ID>100</CLUSTER_ID>
+        <CLUSTERS>
+            <ID>0</ID>
+            <ID>100</ID>
+        </CLUSTERS>
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
@@ -19,7 +22,9 @@
         <NAME>default</NAME>
         <TYPE>0</TYPE>
         <STATE>0</STATE>
-        <CLUSTER_ID>100</CLUSTER_ID>
+        <CLUSTERS>
+            <ID>100</ID>
+        </CLUSTERS>
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
@@ -32,7 +37,9 @@
         <NAME>files</NAME>
         <TYPE>2</TYPE>
         <STATE>0</STATE>
-        <CLUSTER_ID>100</CLUSTER_ID>
+        <CLUSTERS>
+            <ID>100</ID>
+        </CLUSTERS>
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>

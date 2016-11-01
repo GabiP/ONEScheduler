@@ -38,7 +38,7 @@ public class DatastoreMapper {
         result.setOther_u(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/GROUP_U"));
         result.setOther_m(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/OTHER_M"));
         result.setOther_a(XpathLoader.getInt(ds, "/DATASTORE/PERMISSIONS/OTHER_A"));
-        result.setCluster_id(XpathLoader.getInt(ds, "/DATASTORE/CLUSTER_ID"));
+        result.setClusters(XpathLoader.getIntList(ds, "/DATASTORE/CLUSTERS/ID"));
         result.setTotal_mb(XpathLoader.getInt(ds, "/DATASTORE/TOTAL_MB"));
         result.setFree_mb(XpathLoader.getInt(ds, "/DATASTORE/FREE_MB"));
         result.setUsed_mb(XpathLoader.getInt(ds, "/DATASTORE/USED_MB"));   

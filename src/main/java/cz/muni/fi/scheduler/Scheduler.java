@@ -108,6 +108,7 @@ public class Scheduler {
             System.out.println("No pendings");
             return null;
         }
+        System.out.println("Datastores: " + dsPool.getDatastores());
         //get list of vms ordered by fairshare
         List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
         // VM queues construction
