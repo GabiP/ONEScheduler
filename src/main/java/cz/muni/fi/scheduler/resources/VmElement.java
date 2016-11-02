@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.resources;
 
+import cz.muni.fi.scheduler.TimeManager;
 import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.resources.nodes.NicNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
@@ -111,8 +112,8 @@ public class VmElement {
             runTime = (int) (history.getEndTime() - history.getStartTime());
         } 
         else if (isActive && isLast && history.getStartTime() > 0) {
-            // TODO: get Snapshot Time
-            runTime = (int) (System.currentTimeMillis()/1000L - history.getStartTime());
+            long timeStamp = TimeManager.getInstance().getSchedulingTimeStamp().getTime() / 1000; 
+            runTime = (int) (timeStamp - history.getStartTime());
         }   
         return runTime;
     }
