@@ -3,6 +3,8 @@ package cz.muni.fi.scheduler.filters.hosts.strategies;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks whether the given Host satisfies the given VM's requirements.
@@ -12,14 +14,16 @@ import java.util.Objects;
  */
 public class FilterHostsBySchedulingRequirements implements IHostFilterStrategy {
 
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    
     @Override
     public boolean test(VmElement vm, HostElement host) {
         if (vm.getSchedRequirements() == null) {
-            System.out.println("Vm does not have any host requirements");
+            LOG.info("Vm does not have any host requirements");
             return true;
         }
         if (vm.getSchedRequirements().equals("")) {
-            System.out.println("Vm does not have any host requirements");
+            LOG.info("Vm does not have any host requirements");
             return true;
         }
         String[] reqs = vm.getSchedRequirements().split("\\|");

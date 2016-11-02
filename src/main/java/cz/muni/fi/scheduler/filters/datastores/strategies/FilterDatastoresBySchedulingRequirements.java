@@ -11,6 +11,8 @@ import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks whether the given Datastore satisfies the given VM's requirements.
@@ -19,15 +21,17 @@ import java.util.Objects;
  * @author Gabriela Podolnikova
  */
 public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilterStrategy {
+    
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host){
         if (vm.getSchedDsRequirements() == null) {
-            System.out.println("Vm does not have any datastore requirements");
+            LOG.info("Vm does not have any datastore requirements");
             return true;
         }
         if (vm.getSchedDsRequirements().equals("")) {
-            System.out.println("Vm does not have any datastore requirements");
+            LOG.info("Vm does not have any datastore requirements");
             return true;
         }
         String[] reqs = vm.getSchedDsRequirements().split("\\|");

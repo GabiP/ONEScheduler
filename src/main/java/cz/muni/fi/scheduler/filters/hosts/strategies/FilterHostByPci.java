@@ -4,6 +4,8 @@ import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks whether the given VM and Host has matching PCI devices.
@@ -13,25 +15,29 @@ import java.util.List;
  */
 public class FilterHostByPci implements IHostFilterStrategy {
 
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    
     @Override
     public boolean test(VmElement vm, HostElement host) {
-        boolean pciFits = false;
+        boolean pciFits = true;
         List<PciNode> pcis = host.getPcis();
-        if (pcis.isEmpty() && vm.getPcis().isEmpty()) {
-            return true;
-        }
-        if (!pcis.isEmpty() && vm.getPcis().isEmpty()) {
+        if (vm.getPcis().isEmpty()) {
+            LOG.info("Pci test invalid");
             return true;
         }
         if (pcis.isEmpty() && !vm.getPcis().isEmpty()) {
+            LOG.info("Pci test invalid");
             return false;
         }
-        for (PciNode pci: pcis) {
-            for (PciNode pciVm: vm.getPcis()) {
+        for (PciNode pciVm: vm.getPcis()) {
+            boolean foundPciMatch = false;
+            for (PciNode pci: pcis) {
                 if ((pci.getPci_class().equals(pciVm.getPci_class())) && (pci.getDevice().equals(pciVm.getDevice())) && (pci.getVendor().equals(pciVm.getVendor()))) {
-                    pciFits = true;
+                    foundPciMatch = true;
+                    break;
                 }
             }
+            pciFits = pciFits && foundPciMatch;
         }
         return pciFits;
     }

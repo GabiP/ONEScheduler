@@ -8,6 +8,8 @@ import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests whether current host has enough free space(mb) in datastores to host
@@ -20,11 +22,13 @@ import java.util.Objects;
  */
 public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStrategy {
 
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         //check if ds and host have the same clusterId
         if (!(ds.getClusters().contains(host.getClusterId()))) {
-            System.out.println("Filtering DS by storage. The DS and HOST ids don't match");
+            LOG.info("Filtering DS by storage. The DS and HOST ids don't match");
             return false;
         }
         //get the reserved storage for the datastore we are checking
@@ -54,7 +58,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
     
     private boolean testOnDs(Integer sizeValue, Integer reservedStorage, Integer freeSpace) {
         Integer actualStorage = freeSpace - reservedStorage;
-        System.out.println("Filtering ds by free memory: " + actualStorage + " checking " + sizeValue);
+        LOG.info("Filtering ds by free memory: " + actualStorage + " checking " + sizeValue);
         return (actualStorage > sizeValue);
     }
     
@@ -63,7 +67,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         for (DatastoreNode dsNode : datastores) {
             if (Objects.equals(dsId, dsNode.getId_ds())) {
                 Integer actualStorage = dsNode.getFree_mb() - reservedStorage;
-                System.out.println("Filtering Host's ds by free memory: " + actualStorage + " checking " + sizeValue);
+                LOG.info("Filtering Host's ds by free memory: " + actualStorage + " checking " + sizeValue);
                 matched = (actualStorage > sizeValue);
             }
         }

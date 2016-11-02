@@ -18,6 +18,8 @@ import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import java.util.LinkedHashMap;
 import org.apache.commons.collections4.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
@@ -78,6 +80,8 @@ public class Scheduler {
     private int numberOfQueues;
     
     private boolean preferHostFit;
+    
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter, SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
         this.authorizationManager = authorizationManager;
@@ -92,7 +96,7 @@ public class Scheduler {
         this.numberOfQueues = numberOfQueues;
         this.preferHostFit = preferHostFit;
         //initialize scheduler data entity
-        schedulerData = new SchedulerData(hostPool, vmPool, dsPool);
+        schedulerData = new SchedulerData();
     }
     
     /**
@@ -105,10 +109,9 @@ public class Scheduler {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
-            System.out.println("No pendings");
+            LOG.info("No pendings");
             return null;
         }
-        System.out.println("Datastores: " + dsPool.getDatastores());
         //get list of vms ordered by fairshare
         List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
         // VM queues construction
@@ -146,7 +149,7 @@ public class Scheduler {
             //check the authorization for this VM
             authorizedHosts = authorizationManager.authorize(vm);
             if (authorizedHosts.isEmpty()) {
-                System.out.println("Empty authorized hosts.");
+                LOG.info("Empty authorized hosts.");
                 continue;
             }
             //filter authorized hosts for vm
@@ -161,7 +164,7 @@ public class Scheduler {
                 //pick the host and datastore. We chose the best host, or the best datastore.
                 Match match = createMatch(sortedCandidates);
                 plan = match.addVm(plan, vm);
-                System.out.println("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost() + "and ds: " + match.getDatastore());
+                LOG.info("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
                 // update reservations
                 schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
                 schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
@@ -213,6 +216,7 @@ public class Scheduler {
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
+        LOG.info("Created match host: " + chosenHost.getId() + " and datastore " + chosenDs.getId());
         return new Match(chosenHost, chosenDs);
     }
     
