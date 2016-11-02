@@ -4,12 +4,16 @@ import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
 public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
+    
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
     /**
      * Tests whether a VM can be hosted by the host.
@@ -23,7 +27,7 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     @Override
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Integer actualMemoryUsage = schedulerData.getReservedMemory(host) + host.getMem_usage();
-        System.out.println("Filtering Hosts by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=" + vm.getMemory());
+        LOG.info("Filtering Hosts by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=" + vm.getMemory());
         return ((host.getMax_mem() - actualMemoryUsage) >= vm.getMemory());
     }
 }

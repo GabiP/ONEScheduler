@@ -21,12 +21,6 @@ import java.util.Map;
  */
 public class SchedulerData {
     
-    private IHostPool hostPool;
-    
-    private IVmPool vmPool;    
-    
-    private IDatastorePool dsPool;
-    
     /**
      * This map is used for computing the cpu usages.
      * Every time we match a host with a virtual machine the cpu usage needs to be increased.
@@ -52,10 +46,7 @@ public class SchedulerData {
      */
     private Map<DatastoreElement, Integer> reservedStorage;
 
-    public SchedulerData(IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool) {
-        this.hostPool = hostPool;
-        this.vmPool = vmPool;
-        this.dsPool = dsPool;
+    public SchedulerData() {
         cpuReservation = new HashMap<>();
         memoryReservation = new HashMap<>();
         runningVms = new HashMap<>();
@@ -128,34 +119,16 @@ public class SchedulerData {
     
     public Map<HostElement, Integer> getActualRunningVms(List<HostElement> hosts) {
         Map<HostElement, Integer> actualRunningVms = new HashMap<>();
+        Integer vmsOnHost;
         for (HostElement host: hosts) {
-            Integer numberofVms = runningVms.get(host) + host.getRunningVms();
+            if (!runningVms.containsKey(host)) {
+                vmsOnHost = 0;
+            } else {
+                vmsOnHost = runningVms.get(host);
+            }
+            Integer numberofVms = vmsOnHost + host.getRunningVms();
             actualRunningVms.put(host, numberofVms);
         }
         return actualRunningVms;
-    }
-    
-    public IHostPool getHostPool() {
-        return hostPool;
-    }
-
-    public void setHostPool(IHostPool hostPool) {
-        this.hostPool = hostPool;
-    }
-
-    public IVmPool getVmPool() {
-        return vmPool;
-    }
-
-    public void setVmPool(IVmPool vmPool) {
-        this.vmPool = vmPool;
-    }
-
-    public IDatastorePool getDsPool() {
-        return dsPool;
-    }
-
-    public void setDsPool(IDatastorePool dsPool) {
-        this.dsPool = dsPool;
     }
 }

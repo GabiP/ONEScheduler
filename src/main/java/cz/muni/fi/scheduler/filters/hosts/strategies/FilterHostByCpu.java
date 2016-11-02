@@ -4,12 +4,16 @@ import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
 public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
+    
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
     /**
      * Tests whether a VM can be hosted by the host.
@@ -23,7 +27,7 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
     @Override
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Float actualCpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage();
-        System.out.println("Filtering Hosts by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=" + vm.getCpu());
+        LOG.info("Filtering Hosts by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=" + vm.getCpu());
         return ((host.getMax_cpu() - actualCpuUsage) >= vm.getCpu());
     }
     

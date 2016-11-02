@@ -2,12 +2,16 @@ package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Andras Urge
  */
 public class FilterHostByMaxCpu implements IHostFilterStrategy {
+    
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
     /**
      * Tests whether the maximum CPU of a host is sufficient for the VM.
@@ -18,6 +22,7 @@ public class FilterHostByMaxCpu implements IHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host) {
+        LOG.info("Filtering: " + vm.getVmId() + " and " + host.getId());
         return host.getMax_cpu() >= vm.getCpu();
     }
     
