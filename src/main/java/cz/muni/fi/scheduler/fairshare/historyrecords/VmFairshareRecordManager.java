@@ -118,6 +118,11 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         return newVm;
     }
     
+    @Override
+    public void clearContent() {
+        file.delete();
+    }
+    
     private void saveToFile() {
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM");

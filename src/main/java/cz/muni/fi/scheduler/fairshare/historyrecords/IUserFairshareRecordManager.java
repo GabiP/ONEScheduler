@@ -14,4 +14,10 @@ public interface IUserFairshareRecordManager {
     public float getPriority(int userId);
     
     public void storePriority(int userId, float priority);
+    
+    public long getLastDecayTime();
+    
+    public void applyDecay(int decayValue);
+    
+    public void clearContent();    
 }

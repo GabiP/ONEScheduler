@@ -35,5 +35,6 @@ public interface IVmFairshareRecordManager {
      * @return The updated VmElement
      */
     public VmElement createVmFromRecord(VmElement vm, VmFairshareRecord record);
-
+    
+    public void clearContent(); 
 }

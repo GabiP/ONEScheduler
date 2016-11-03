@@ -1,7 +1,13 @@
 package cz.muni.fi.scheduler;
 
+import cz.muni.fi.config.RecordManagerConfig;
+import cz.muni.fi.config.SchedulerConfig;
+import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -23,6 +29,7 @@ public class SetUp {
     private static PropertiesConfig configuration;
     
     private static int cycleinterval;
+    private static boolean useXml;
     
     protected static final Logger LOG = LoggerFactory.getLogger(SetUp.class);
     
@@ -35,16 +42,50 @@ public class SetUp {
         }
         
         cycleinterval = configuration.getInt("cycleinterval");
+        useXml = configuration.getBoolean("useXml");
         
-        ApplicationContext context = new AnnotationConfigApplicationContext(BeanConfig.class);
+        if (useXml) {
+            clearFairshareRecords();
+        } 
                 
         while (true) {
-            LOG.info("Starting scheduling cycle.");
+            LOG.info("Starting scheduling cycle.");     
+            
+            ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
+            saveSchedulingTime();
+            checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
             Scheduler scheduler = context.getBean(Scheduler.class);
             List<List<Match>> plan = scheduler.schedule();
             printPlan(plan);
+            
             LOG.info("Another cycle will start in " + cycleinterval + "seconds.");
             TimeUnit.SECONDS.sleep(cycleinterval);
+        }
+    }
+    
+    private static void clearFairshareRecords() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(RecordManagerConfig.class); 
+        context.getBean(VmFairshareRecordManager.class).clearContent();
+        context.getBean(UserFairshareRecordManager.class).clearContent();
+    }
+
+    private static void saveSchedulingTime() {
+        if (useXml) {            
+            // TODO: add date from Dalibor
+            TimeManager.getInstance().setSchedulingTimeStamp(new Date());
+        } else {
+            TimeManager.getInstance().setSchedulingTimeStamp(new Date());
+        }
+    }
+    
+    private static void checkDecayTime(IUserFairshareRecordManager userRecordManager) {
+        long schedulingTime = TimeManager.getInstance().getSchedulingTimeStamp().getTime();
+        long lastDecayTime = userRecordManager.getLastDecayTime();
+        long decayMillisInterval = TimeUnit.DAYS.toMillis(configuration.getInt("decayDayInterval"));
+        
+        if (schedulingTime - lastDecayTime > decayMillisInterval) {
+            int decayValue = configuration.getInt("decayValue");
+            userRecordManager.applyDecay(decayValue);
         }
     }
     
@@ -67,6 +108,4 @@ public class SetUp {
             i++;
         }
     }
-
-    
 }

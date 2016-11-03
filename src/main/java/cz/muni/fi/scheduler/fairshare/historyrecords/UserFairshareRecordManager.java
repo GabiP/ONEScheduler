@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare.historyrecords;
 
+import cz.muni.fi.scheduler.TimeManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ import java.util.logging.Logger;
  * @author Andras Urge
  */
 public class UserFairshareRecordManager implements IUserFairshareRecordManager {
+    
+    private final static String LAST_DECAY_KEY = "lastDecay";
     
     private Properties properties = new Properties();
     private File file;
@@ -43,6 +46,31 @@ public class UserFairshareRecordManager implements IUserFairshareRecordManager {
     public void storePriority(int userId, float priority) {        
         properties.setProperty(Integer.toString(userId), Float.toString(priority));
         saveToFile();        
+    }
+
+    @Override
+    public long getLastDecayTime() {
+        String lastDecayTime = properties.getProperty(LAST_DECAY_KEY, "0");
+        return Long.parseLong(lastDecayTime);
+    }
+
+    @Override
+    public void applyDecay(int decayValue) {
+        for(String key : properties.stringPropertyNames()) {
+            if (!key.equals(LAST_DECAY_KEY)) {
+                int userId = Integer.parseInt(key);
+                float newPriority = getPriority(userId) / decayValue;
+                properties.setProperty(key, Float.toString(newPriority));
+            }
+        }
+        long timeStamp = TimeManager.getInstance().getSchedulingTimeStamp().getTime();
+        properties.setProperty(LAST_DECAY_KEY, Long.toString(timeStamp));
+        saveToFile();
+    }
+    
+    @Override
+    public void clearContent() {
+        file.delete();
     }
     
     private void saveToFile() {
