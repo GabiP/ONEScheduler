@@ -12,7 +12,7 @@ import cz.muni.fi.one.pools.DatastoreElementPool;
 import cz.muni.fi.one.pools.HostElementPool;
 import cz.muni.fi.one.pools.UserElementPool;
 import cz.muni.fi.one.pools.VmElementPool;
-import cz.muni.fi.scheduler.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;

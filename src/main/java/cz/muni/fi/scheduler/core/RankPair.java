@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package cz.muni.fi.scheduler;
+package cz.muni.fi.scheduler.core;
 
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 

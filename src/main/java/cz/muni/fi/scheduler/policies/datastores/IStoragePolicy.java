@@ -5,8 +5,8 @@
  */
 package cz.muni.fi.scheduler.policies.datastores;
 
-import cz.muni.fi.scheduler.RankPair;
-import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.core.RankPair;
+import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import java.util.List;

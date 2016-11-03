@@ -8,7 +8,7 @@ package cz.muni.fi.scheduler.filters.hosts;
 
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
 import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
-import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;

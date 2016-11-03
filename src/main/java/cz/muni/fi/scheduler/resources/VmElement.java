@@ -1,6 +1,6 @@
 package cz.muni.fi.scheduler.resources;
 
-import cz.muni.fi.scheduler.TimeManager;
+import cz.muni.fi.scheduler.core.TimeManager;
 import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.resources.nodes.NicNode;
 import cz.muni.fi.scheduler.resources.nodes.PciNode;

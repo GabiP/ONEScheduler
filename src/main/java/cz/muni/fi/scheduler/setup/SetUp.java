@@ -1,5 +1,8 @@
-package cz.muni.fi.scheduler;
+package cz.muni.fi.scheduler.setup;
 
+import cz.muni.fi.scheduler.core.TimeManager;
+import cz.muni.fi.scheduler.core.Match;
+import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.config.RecordManagerConfig;
 import cz.muni.fi.config.SchedulerConfig;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;

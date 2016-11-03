@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare.historyrecords;
 
-import cz.muni.fi.scheduler.TimeManager;
+import cz.muni.fi.scheduler.core.TimeManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

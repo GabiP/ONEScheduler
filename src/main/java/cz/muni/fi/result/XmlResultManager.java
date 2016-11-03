@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler;
+package cz.muni.fi.result;
 
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;

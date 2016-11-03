@@ -1,7 +1,7 @@
 package cz.muni.fi.scheduler.policies;
 
 
-import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import cz.muni.fi.scheduler.policies.hosts.Packing;
 import cz.muni.fi.scheduler.resources.HostElement;

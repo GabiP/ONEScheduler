@@ -8,7 +8,7 @@ package cz.muni.fi.scheduler.filters.datastores;
 
 import cz.muni.fi.scheduler.filters.datastores.strategies.IDatastoreFilterStrategy;
 import cz.muni.fi.scheduler.filters.datastores.strategies.ISchedulingDatastoreFilterStrategy;
-import cz.muni.fi.scheduler.SchedulerData;
+import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;

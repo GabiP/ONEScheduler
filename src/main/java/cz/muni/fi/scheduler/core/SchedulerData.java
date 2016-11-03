@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler;
+package cz.muni.fi.scheduler.core;
 
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;

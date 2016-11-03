@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler;
+package cz.muni.fi.scheduler.setup;
 
 import java.io.FileInputStream;
 import java.io.IOException;

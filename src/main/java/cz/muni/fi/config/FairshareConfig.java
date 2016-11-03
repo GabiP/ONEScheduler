@@ -6,7 +6,7 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.scheduler.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
 import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.calculators.MaxMinCalculator;

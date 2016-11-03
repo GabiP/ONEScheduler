@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.config;
 
-import cz.muni.fi.scheduler.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;

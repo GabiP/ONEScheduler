@@ -6,7 +6,7 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.scheduler.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.datastores.strategies.FilterDatastoresBySchedulingRequirements;
 import cz.muni.fi.scheduler.filters.datastores.strategies.FilterDatastoresByStorage;
