@@ -20,12 +20,12 @@ import static org.mockito.Mockito.when;
  *
  * @author Gabriela Podolnikova
  */
-public class FilterHostByCpuTest {
-
+public class FilterHostByMemoryTest {
+   
     private VmElement vm;
     private HostElement host;
     
-    private FilterHostByCpu filter;
+    private FilterHostByMemory filter;
     
     private SchedulerData schedulerData;
     
@@ -33,28 +33,28 @@ public class FilterHostByCpuTest {
     public void setUp() {
         vm = new VmElement();
         host = new HostElement();
-        filter = new FilterHostByCpu();
+        filter = new FilterHostByMemory();
         schedulerData = mock(SchedulerData.class);
     }
     
     @Test
     public void vmFitOnHost() {
-        vm.setCpu(0.1f);
-        host.setMax_cpu(0.5f);
-        host.setCpu_usage(0.0f);
-
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.2));
+        vm.setMemory(64);
+        host.setMax_mem(512);
+        host.setMem_usage(128);
+        
+        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(128));
 
         assertTrue(filter.test(vm, host, schedulerData));
     }
     
     @Test
     public void vmDoesNotFitsOnHost() {
-        vm.setCpu(0.1f);
-        host.setMax_cpu(0.5f);
-        host.setCpu_usage(0.0f);
-
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.5f));
+        vm.setMemory(64);
+        host.setMax_mem(128);
+        host.setMem_usage(64);
+        
+        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(64));
 
         assertFalse(filter.test(vm, host, schedulerData));
     }
@@ -62,11 +62,11 @@ public class FilterHostByCpuTest {
     
     @Test
     public void vmDoesNotFitsOnHost2() {
-        vm.setCpu(0.1f);
-        host.setMax_cpu(0.5f);
-        host.setCpu_usage(0.2f);
-
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.3f));
+        vm.setMemory(64);
+        host.setMax_mem(128);
+        host.setMem_usage(128);
+        
+        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(0));
 
         assertFalse(filter.test(vm, host, schedulerData));
     }

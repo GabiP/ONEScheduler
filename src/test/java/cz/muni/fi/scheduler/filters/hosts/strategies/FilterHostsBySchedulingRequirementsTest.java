@@ -6,7 +6,6 @@
 
 package cz.muni.fi.scheduler.filters.hosts.strategies;
 
-import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostsBySchedulingRequirements;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import static org.junit.Assert.assertFalse;

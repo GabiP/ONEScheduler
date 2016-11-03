@@ -5,9 +5,6 @@ import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,21 +34,20 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         boolean matched = false;
         if (ds.isShared()) {
             if (!ds.isMonitored()) {
+                LOG.info("Datastore is not monitored. Cannot be matched.");
                 return false;
             } else if (vm.isResched()) {
+                LOG.info("VM is rescheduled. We do not need to check the datastore.");
                 return true;
             } else {
                 //test capacity on ds directly
+                LOG.info("Datastore is shared and being checked.");
                 matched = testOnDs(sizeValue, reservedStorage, ds.getFree_mb());
             }
         } else {
-            //test ds capacity on host datastores or disks
-            List<DatastoreNode> datastores = host.getDatastores();
-            if (datastores.isEmpty()) {
-                matched = testOnHost(sizeValue, reservedStorage, host.getFree_disk());
-            } else {
-                matched = testOnDsNode(sizeValue, reservedStorage, datastores, ds.getId());
-            }
+            //test ds capacity on host datastores
+            LOG.info("Datastore is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
+            matched = testOnDsNode(sizeValue, reservedStorage, host, ds);
         }
         return matched;
     }
@@ -61,19 +57,21 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         LOG.info("Filtering ds by free memory: " + actualStorage + " checking " + sizeValue);
         return (actualStorage > sizeValue);
     }
-    
-    private boolean testOnDsNode(Integer sizeValue, Integer reservedStorage, List<DatastoreNode> datastores, Integer dsId) {
-        boolean matched = false;
-        for (DatastoreNode dsNode : datastores) {
-            if (Objects.equals(dsId, dsNode.getId_ds())) {
-                Integer actualStorage = dsNode.getFree_mb() - reservedStorage;
-                LOG.info("Filtering Host's ds by free memory: " + actualStorage + " checking " + sizeValue);
-                matched = (actualStorage > sizeValue);
-            }
+
+    private boolean testOnDsNode(Integer sizeValue, Integer reservedStorage, HostElement host, DatastoreElement ds) {
+        if (host.getDatastores()== null || host.getDatastores().isEmpty()) {
+            LOG.info("Datastores on hosts are empty or null. Returning false.");
+            return false;
         }
-        return matched;
+        DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
+        if (dsNode != null) {
+            return testOnDs(sizeValue, reservedStorage, dsNode.getFree_mb());
+        } else {
+            LOG.info("Ds: " + ds.getId() + " is not a datastore node of the host: " + host.getId());
+            return false;
+        }
     }
-    
+
     private boolean testOnHost(Integer sizeValue, Integer reservedStorage, Integer freeSpace) {
         Integer actualStorage = freeSpace - reservedStorage;
         return (actualStorage > sizeValue);

@@ -6,7 +6,6 @@
 
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
-import cz.muni.fi.scheduler.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
