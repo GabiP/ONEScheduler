@@ -12,5 +12,5 @@ import java.util.List;
  */
 public interface IPlacementPolicy {
     
-    public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData);
+    public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData);
 }

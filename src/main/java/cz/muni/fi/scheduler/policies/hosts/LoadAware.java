@@ -7,7 +7,6 @@ package cz.muni.fi.scheduler.policies.hosts;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 public class LoadAware implements IPlacementPolicy {
 
     @Override
-    public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
+    public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
         Map<HostElement, Float> freeCpus = getFreeCpus(hosts, schedulerData);
         /*Float maxValueInMap=(Collections.max(freeCpus.values()));  // This will return max value in the Hashmap

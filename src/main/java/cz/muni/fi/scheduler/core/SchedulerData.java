@@ -1,14 +1,8 @@
 package cz.muni.fi.scheduler.core;
 
-import cz.muni.fi.scheduler.elementpools.IClusterPool;
-import cz.muni.fi.scheduler.elementpools.IDatastorePool;
-import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

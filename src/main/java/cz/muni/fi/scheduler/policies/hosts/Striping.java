@@ -7,7 +7,6 @@ package cz.muni.fi.scheduler.policies.hosts;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,7 +24,7 @@ import java.util.stream.Collectors;
 public class Striping implements IPlacementPolicy {
 
     @Override
-    public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
+    public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
         /*HostElement lessVms = null;
         Map<HostElement, Integer> runningVms = schedulerData.getRunningVmsReservation();

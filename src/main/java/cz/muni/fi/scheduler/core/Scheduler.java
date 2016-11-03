@@ -152,10 +152,10 @@ public class Scheduler {
                 LOG.info("Empty authorized hosts.");
                 continue;
             }
-            //filter authorized hosts for vm
+            //filter authorized hosts for vm 
             List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
             //sort hosts
-            List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, vm, schedulerData);
+            List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, schedulerData);
             //filter and sort datastores for hosts
             Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
 

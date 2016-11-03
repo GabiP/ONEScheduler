@@ -14,6 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Packing policy:
@@ -24,9 +26,11 @@ import java.util.stream.Collectors;
  * @author Gabriela Podolnikova
  */
 public class Packing implements IPlacementPolicy {
-
+       
+    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    
     @Override
-    public List<HostElement> sortHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
+    public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
         /*HostElement moreVms = null;
         Map<HostElement, Integer> runningVms = schedulerData.getRunningVmsReservation();
@@ -36,7 +40,10 @@ public class Packing implements IPlacementPolicy {
                 moreVms = entry.getKey();
             }
         }*/
+        LOG.info("List of hosts: " + hosts);
         Map<HostElement, Integer> listOfRunningVms = schedulerData.getActualRunningVms(hosts);
+        LOG.info("List of hosts: " + listOfRunningVms.keySet());
+        LOG.info("List of running vms: " + listOfRunningVms.values());
         result.addAll(sortByValue(listOfRunningVms).keySet());
         return result;
     }

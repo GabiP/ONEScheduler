@@ -37,10 +37,12 @@ public class StorageStriping implements IStoragePolicy {
                 }
             } else {
                 DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
-                capacity = dsNode.getFree_mb() - reservedStorage;
-                if (capacity > moreFreeSpace) {
-                    result = ds;
-                    moreFreeSpace = capacity;
+                if (dsNode != null) {
+                    capacity = dsNode.getFree_mb() - reservedStorage;
+                    if (capacity > moreFreeSpace) {
+                        result = ds;
+                        moreFreeSpace = capacity;
+                    }
                 }
             }
         }

@@ -99,7 +99,7 @@ public class HostElement {
 
     @Override
     public String toString() {
-        return "HostElement{" + "id=" + id + ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", vms=" + vms + ", pcis=" + pcis + ", datastores=" + datastores + '}';
+        return "HostElement{" + "id=" + id /*+ ", name=" + name + ", state=" + state + ", clusterId=" + clusterId + ", disk_usage=" + disk_usage + ", mem_usage=" + mem_usage + ", cpu_usage=" + cpu_usage + ", max_disk=" + max_disk + ", max_mem=" + max_mem + ", max_cpu=" + max_cpu + ", free_disk=" + free_disk + ", free_mem=" + free_mem + ", free_cpu=" + free_cpu + ", used_disk=" + used_disk + ", used_mem=" + used_mem + ", used_cpu=" + used_cpu + ", runningVms=" + runningVms + ", reservedCpu=" + reservedCpu + ", reservedMemory=" + reservedMemory + ", vms=" + vms + ", pcis=" + pcis + ", datastores=" + datastores */+ '}';
     }
     
     public DatastoreNode getDatastoreNode(Integer id) {

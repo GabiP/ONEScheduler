@@ -9,12 +9,8 @@ import cz.muni.fi.scheduler.core.RankPair;
 import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 /**
  * Packing policy for selecting datastore.
@@ -42,10 +38,12 @@ public class StoragePacking implements IStoragePolicy {
                 }
             } else {
                 DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
-                capacity = dsNode.getFree_mb() - reservedStorage;
-                if (capacity < lessFreeSpace) {
-                    result = ds;
-                    lessFreeSpace = capacity;
+                if (dsNode != null) {
+                    capacity = dsNode.getFree_mb() - reservedStorage;
+                    if (capacity < lessFreeSpace) {
+                        result = ds;
+                        lessFreeSpace = capacity;
+                    }
                 }
             }
         }
