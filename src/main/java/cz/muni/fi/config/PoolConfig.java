@@ -27,6 +27,8 @@ import cz.muni.fi.xml.pools.VmXmlPool;
 import java.io.IOException;
 import org.opennebula.client.Client;
 import org.opennebula.client.ClientConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,6 +40,8 @@ import org.springframework.context.annotation.Configuration;
 public class PoolConfig {
     
     private PropertiesConfig properties;
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     public PoolConfig() throws IOException {
         properties = new PropertiesConfig("configuration.properties");
@@ -124,6 +128,7 @@ public class PoolConfig {
         try {
             return new Client(properties.getString("secret"), properties.getString("endpoint"));
         } catch (ClientConfigurationException ex) {
+            log.error("ONe Client failed to instatiate!");
             throw new LoadingFailedException(ex.getMessage(), ex.getCause());
         }
     }   

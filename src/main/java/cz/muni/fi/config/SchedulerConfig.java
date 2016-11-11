@@ -29,14 +29,15 @@ import org.springframework.context.annotation.Import;
  * @author Andras Urge
  */
 @Configuration
-@Import({PoolConfig.class, FilterConfig.class, FairshareConfig.class})
+@Import({PoolConfig.class, FilterConfig.class, FairshareConfig.class, SchedulingConfig.class})
 public class SchedulerConfig {
     
     private PropertiesConfig properties;    
     
     @Autowired PoolConfig poolConfig;
     @Autowired FilterConfig filterConfig;
-    @Autowired FairshareConfig fairshareConfig; 
+    @Autowired FairshareConfig fairshareConfig;
+    @Autowired SchedulingConfig schedulingConfig;
     
     private static final String HOST_LOAD_AWARE_POLICY = "LoadAware";
     private static final String HOST_PACKING_POLICY = "Packing";  
@@ -61,7 +62,10 @@ public class SchedulerConfig {
                              storagePolicy(), 
                              fairshareConfig.fairshareOrderer(), 
                              properties.getInt("numberofqueues"), 
-                             properties.getBoolean("preferHostFit"));
+                             properties.getBoolean("preferHostFit"),
+                             schedulingConfig.queueMapper(),
+                             schedulingConfig.vmSelector(),
+                             schedulingConfig.limitChecker());
     }
     
     @Bean

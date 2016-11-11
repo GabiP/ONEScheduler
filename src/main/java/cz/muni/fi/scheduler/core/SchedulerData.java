@@ -94,7 +94,7 @@ public class SchedulerData {
         if (cpuReservation.containsKey(host)) {
             return cpuReservation.get(host);
         }
-        return new Float("0.00");
+        return 0.00f;
     }
     
     public Integer getReservedRunningVms(HostElement host) {

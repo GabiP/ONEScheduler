@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.opennebula.client.Client;
+import org.opennebula.client.ClientConfigurationException;
+import org.opennebula.client.OneResponse;
+import org.opennebula.client.OneSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +40,7 @@ public class SetUp {
     
     protected static final Logger LOG = LoggerFactory.getLogger(SetUp.class);
     
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ClientConfigurationException {
         try {
             configuration = new PropertiesConfig("configuration.properties");
         } catch (IOException e) {
@@ -55,6 +59,14 @@ public class SetUp {
             LOG.info("Starting scheduling cycle.");     
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
+            
+            /*Client client = new Client(configuration.getString("secret"), configuration.getString("endpoint"));
+            OneResponse version = client.get_version();
+            System.out.println("Version: " + version.getMessage());
+            OneSystem oneSystem = new OneSystem(client);
+            OneResponse config = oneSystem.getConfiguration();
+            System.out.println("Oned conf: " + config.getMessage());*/
+            
             saveSchedulingTime();
             checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
             Scheduler scheduler = context.getBean(Scheduler.class);

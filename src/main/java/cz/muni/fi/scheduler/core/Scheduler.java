@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.core;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
@@ -7,6 +8,7 @@ import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
+import cz.muni.fi.scheduler.limits.LimitChecker;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
@@ -16,15 +18,20 @@ import java.util.List;
 import java.util.Map;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
+import cz.muni.fi.scheduler.queues.Queue;
+import cz.muni.fi.scheduler.queues.QueueMapper;
+import cz.muni.fi.scheduler.queues.QueuesExtensions;
+import cz.muni.fi.scheduler.select.VmSelector;
 import java.util.LinkedHashMap;
 import org.apache.commons.collections4.ListUtils;
+import org.opennebula.client.user.UserPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
  * Takes all pools in the system, the instance of AuthorizationManager and
- * infromation from configuration - Filters that will be used to filter hosts.
+ * information from configuration - Filters that will be used to filter hosts.
  * 
  * @author Gabriela Podolnikova
  */
@@ -67,7 +74,22 @@ public class Scheduler {
     /**
      * The fairshare policy to be used for sorting the virtual machines based on their user's priority.
      */
-    private FairShareOrderer fairshare;  
+    private FairShareOrderer fairshare;
+    
+    /**
+     * Mapping VMs into queues.
+     */
+    private QueueMapper queueMapper;
+    
+    /**
+     * Selects VM to be scheduled.
+     */
+    private VmSelector vmSelector;
+    
+    /**
+     * Checks resources limits for a user.
+     */
+    private LimitChecker limitChecker;
     
     /**
      * Queues with waiting VMs.
@@ -75,7 +97,7 @@ public class Scheduler {
      * We will use list of LinkedLists for multiple queues.
      * For concurrent queues we can use: ConcurrentLinkedQueue
      */
-    private List<List<VmElement>> queues;
+    private List<Queue> queues;
     
     private int numberOfQueues;
     
@@ -83,7 +105,11 @@ public class Scheduler {
     
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter, SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
+    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
+            IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
+            SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy,
+            IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues,
+            boolean preferHostFit, QueueMapper queueMapper, VmSelector vmSelector, LimitChecker limitChecker) {
         this.authorizationManager = authorizationManager;
         this.hostPool = hostPool;
         this.vmPool = vmPool;
@@ -95,6 +121,9 @@ public class Scheduler {
         this.fairshare = fairshare;
         this.numberOfQueues = numberOfQueues;
         this.preferHostFit = preferHostFit;
+        this.queueMapper = queueMapper;
+        this.vmSelector = vmSelector;
+        this.limitChecker = limitChecker;
         //initialize scheduler data entity
         schedulerData = new SchedulerData();
     }
@@ -115,20 +144,63 @@ public class Scheduler {
         //get list of vms ordered by fairshare
         List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
         // VM queues construction
-        queues = initializeQueues(numberOfQueues, orderedVms);
+        queues = queueMapper.mapQueues(orderedVms);
         //process queue by queue and create list of plans for each queues
         List<List<Match>> result = new LinkedList<>();
-        for (List<VmElement> queue: queues) {
+        /*for (List<VmElement> queue: queues) {
             List<Match> plan = processQueue(queue);
             result.add(plan);
-        }
+        }*/
+        List<Match> processed = processQueues(queues);
+        result.add(processed);
         return result;
     }
     
-    private List<List<VmElement>> initializeQueues(int numberOfQueues, List<VmElement> orderedVms) {
-        int numberOfVmsInQueue = (int) Math.ceil(orderedVms.size()/ new Float(numberOfQueues));
-        List<List<VmElement>> output = ListUtils.partition(orderedVms, numberOfVmsInQueue);
-        return output;
+    private List<Match> processQueues(List<Queue> queues) {
+        List<Match> plan = new ArrayList<>();
+        while (!queues.isEmpty()) {
+            VmElement vmSelected = vmSelector.selectVM(queues);
+            Match match = processVm(vmSelected);
+            if (match != null) {
+                limitChecker.checkLimit(vmSelected, match);
+                plan = match.addVm(plan, vmSelected);
+            }
+            //remove vmSelected from List<Queue>
+            //if Queue is empty: remove Queue from list
+            queues = QueuesExtensions.deleteVm(queues, vmSelected);
+        }
+        return plan;
+    }
+
+    private Match processVm(VmElement vm) {
+        Match match = null;
+        List<HostElement> authorizedHosts = authorizationManager.authorize(vm);
+        if (authorizedHosts.isEmpty()) {
+            LOG.info("Empty authorized hosts.");
+            return null;
+        }
+        //filter authorized hosts for vm 
+        List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
+        //sort hosts
+        List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, schedulerData);
+        //filter and sort datastores for hosts
+        Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
+        // deploy if sortedCandidates is not empty
+        if (!sortedCandidates.isEmpty()) {
+            //pick the host and datastore. We chose the best host, or the best datastore.
+            match = createMatch(sortedCandidates);
+            LOG.info("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
+            // update reservations
+            updateCachedData(match, vm);
+        }
+        return match;
+    }
+    
+    private void updateCachedData(Match match, VmElement vm) {
+        schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
+        schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
+        schedulerData.reserveHostRunningVm(match.getHost());
+        schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
     }
 
     /**
