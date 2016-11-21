@@ -58,9 +58,9 @@ public class FairshareConfig {
             case MAX_MIN:
                 return new MaxMinCalculator();
             case PROC_EQ:
-                return new ProcessorEquivalentCalculator(poolConfig.hostPool());
+                return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool());
             case MIN_PENALTY:  
-                return new MinimumPenaltyCalculator(poolConfig.hostPool(), filterConfig.fairshareHostFilter());
+                return new MinimumPenaltyCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
             default:    
                 throw new LoadingFailedException("Wrong fairshare configuration.");
         }   
