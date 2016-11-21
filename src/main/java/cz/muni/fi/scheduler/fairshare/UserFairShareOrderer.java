@@ -22,12 +22,12 @@ import java.util.Map;
  * 
  * @author Andras Urge
  */
-public class FairShareOrderer {
+public class UserFairShareOrderer implements IFairShareOrderer {
     
-    private AbstractPriorityCalculator priorityCalculator;
+    private UserPriorityCalculator calculator;
 
-    public FairShareOrderer(AbstractPriorityCalculator priorityCalculator) {
-        this.priorityCalculator = priorityCalculator;
+    public UserFairShareOrderer(UserPriorityCalculator priorityCalculator) {
+        this.calculator = priorityCalculator;
     }
     
     /**
@@ -37,8 +37,9 @@ public class FairShareOrderer {
      * @param vms The Virtual Machines to order
      * @return The ordered Virtual Machines
      */
+    @Override
     public List<VmElement> orderVms(List<VmElement> vms) {
-        Map<Integer, Float> userPriorities = priorityCalculator.getUserPriorities(VmListExtension.getUserIds(vms));
+        Map<Integer, Float> userPriorities = calculator.getUserPriorities(VmListExtension.getUserIds(vms));
         Map<VmElement, Float> vmPriorities = new HashMap<>();
         for (VmElement vm : vms) {
             Float vmPriority = userPriorities.get(vm.getUid());

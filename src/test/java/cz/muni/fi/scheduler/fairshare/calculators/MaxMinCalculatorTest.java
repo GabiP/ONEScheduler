@@ -30,7 +30,7 @@ public class MaxMinCalculatorTest {
         vmPool = mock(IVmPool.class);
         userRecordManager = mock(IUserFairshareRecordManager.class);
         vmRecordManager = mock(IVmFairshareRecordManager.class);
-        calculator = new MaxMinCalculator(vmPool, userRecordManager, vmRecordManager);
+        //calculator = new MaxMinCalculator(vmPool, userRecordManager, vmRecordManager);
     }
 
     @Test(expected = NullPointerException.class) 

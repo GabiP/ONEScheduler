@@ -7,8 +7,10 @@ package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
+import cz.muni.fi.scheduler.fairshare.UserFairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.MaxMinCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.MinimumPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.ProcessorEquivalentCalculator;
@@ -41,19 +43,24 @@ public class FairshareConfig {
     }
     
     @Bean 
-    public FairShareOrderer fairshareOrderer() throws LoadingFailedException {
-        return new FairShareOrderer(priorityCalculator());     
+    public IFairShareOrderer fairshareOrderer() throws LoadingFailedException {
+        return new UserFairShareOrderer(userPriorityCalculator());     
     }
     
     @Bean 
-    public AbstractPriorityCalculator priorityCalculator() throws LoadingFailedException {
+    public UserPriorityCalculator userPriorityCalculator() throws LoadingFailedException {
+        return new UserPriorityCalculator(poolConfig.vmPool(), vmPenaltyCalculator(), recConfig.userRecordManager(), recConfig.vmRecordManager());     
+    }
+    
+    @Bean 
+    public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {
         switch (properties.getString("fairshare")) {
             case MAX_MIN:
-                return new MaxMinCalculator(poolConfig.vmPool(), recConfig.userRecordManager(), recConfig.vmRecordManager());
+                return new MaxMinCalculator();
             case PROC_EQ:
-                return new ProcessorEquivalentCalculator(poolConfig.vmPool(), poolConfig.hostPool(), recConfig.userRecordManager(), recConfig.vmRecordManager());
+                return new ProcessorEquivalentCalculator(poolConfig.hostPool());
             case MIN_PENALTY:  
-                return new MinimumPenaltyCalculator(poolConfig.vmPool(), poolConfig.hostPool(), filterConfig.fairshareHostFilter(), recConfig.userRecordManager(), recConfig.vmRecordManager());
+                return new MinimumPenaltyCalculator(poolConfig.hostPool(), filterConfig.fairshareHostFilter());
             default:    
                 throw new LoadingFailedException("Wrong fairshare configuration.");
         }   

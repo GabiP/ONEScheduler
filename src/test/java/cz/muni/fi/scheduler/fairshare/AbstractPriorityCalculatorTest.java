@@ -27,6 +27,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 
 /**
  *
@@ -34,7 +41,7 @@ import static org.mockito.Mockito.when;
  */
 public class AbstractPriorityCalculatorTest {
         
-    private AbstractPriorityCalculator calculator;
+    private UserPriorityCalculator calculator;
     private IVmPool vmPool;     
     private IUserFairshareRecordManager userRecordManager;
     private IVmFairshareRecordManager vmRecordManager;
@@ -44,12 +51,12 @@ public class AbstractPriorityCalculatorTest {
         vmPool = mock(IVmPool.class);
         userRecordManager = mock(IUserFairshareRecordManager.class);
         vmRecordManager = mock(IVmFairshareRecordManager.class);
-        calculator = spy(new AbstractPriorityCalculator(vmPool, userRecordManager, vmRecordManager) {
+        /*calculator = spy(new UserPriorityCalculator(vmPool, userRecordManager, vmRecordManager) {
             @Override
             protected float getPenalty(VmElement vm) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
-        });
+        });*/
     }
     @Test
     public void testGetUserPriorities_EmptyInput_ReturnsEmpty() {        
@@ -66,8 +73,8 @@ public class AbstractPriorityCalculatorTest {
         when(vmPool.getVms(1, 6)).thenReturn(finishedVms);
         when(vmRecordManager.createVmFromRecord(eq(finishedVms.get(0)), any(VmFairshareRecord.class))).thenReturn(finishedVms.get(0));
         when(vmRecordManager.createVmFromRecord(eq(finishedVms.get(1)), any(VmFairshareRecord.class))).thenReturn(finishedVms.get(1));
-        doReturn(10f).when(calculator).getPenalty(finishedVms.get(0));
-        doReturn(20f).when(calculator).getPenalty(finishedVms.get(1));
+        //doReturn(10f).when(calculator).getPenalty(finishedVms.get(0));
+        //doReturn(20f).when(calculator).getPenalty(finishedVms.get(1));
         
         Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
         Map<Integer, Float> result = calculator.getUserPriorities(userIds);
@@ -82,8 +89,8 @@ public class AbstractPriorityCalculatorTest {
         
         when(vmPool.getVmsByUser(1)).thenReturn(freshVms);
         when(vmPool.getAllVmsByUser(1)).thenReturn(freshVms);
-        doReturn(10f).when(calculator).getPenalty(freshVms.get(0));
-        doReturn(20f).when(calculator).getPenalty(freshVms.get(1));
+        //doReturn(10f).when(calculator).getPenalty(freshVms.get(0));
+        //doReturn(20f).when(calculator).getPenalty(freshVms.get(1));
         
         Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
         Map<Integer, Float> result = calculator.getUserPriorities(userIds);
@@ -99,8 +106,8 @@ public class AbstractPriorityCalculatorTest {
         when(vmPool.getVmsByUser(1)).thenReturn(activeVms);
         when(vmRecordManager.createVmFromRecord(eq(activeVms.get(0)), any(VmFairshareRecord.class))).thenReturn(activeVms.get(0));
         when(vmRecordManager.createVmFromRecord(eq(activeVms.get(1)), any(VmFairshareRecord.class))).thenReturn(activeVms.get(1));
-        doReturn(10f).when(calculator).getPenalty(activeVms.get(0));
-        doReturn(20f).when(calculator).getPenalty(activeVms.get(1));
+        //doReturn(10f).when(calculator).getPenalty(activeVms.get(0));
+        //doReturn(20f).when(calculator).getPenalty(activeVms.get(1));
         
         Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
         Map<Integer, Float> result = calculator.getUserPriorities(userIds);
@@ -121,10 +128,10 @@ public class AbstractPriorityCalculatorTest {
         when(vmPool.getAllVmsByUser(1)).thenReturn(allVms);
         when(vmRecordManager.createVmFromRecord(eq(finishedVms.get(0)), any(VmFairshareRecord.class))).thenReturn(finishedVms.get(0));
         when(vmRecordManager.createVmFromRecord(eq(finishedVms.get(1)), any(VmFairshareRecord.class))).thenReturn(finishedVms.get(1));
-        doReturn(10f).when(calculator).getPenalty(finishedVms.get(0));
+        /*doReturn(10f).when(calculator).getPenalty(finishedVms.get(0));
         doReturn(20f).when(calculator).getPenalty(finishedVms.get(1));
         doReturn(30f).when(calculator).getPenalty(freshVms.get(0));
-        doReturn(40f).when(calculator).getPenalty(freshVms.get(1));
+        doReturn(40f).when(calculator).getPenalty(freshVms.get(1));*/
         
         Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
         Map<Integer, Float> result = calculator.getUserPriorities(userIds);
@@ -146,7 +153,7 @@ public class AbstractPriorityCalculatorTest {
         when(vmRecordManager.getRecord(2)).thenReturn(vmRecord);        
         when(vmRecordManager.getRecords(1)).thenReturn(userVmRecords);        
         when(vmRecordManager.createVmFromRecord(finishedVms.get(1), vmRecord)).thenReturn(finishedVms.get(1));
-        doReturn(20f).when(calculator).getPenalty(finishedVms.get(1));
+        //doReturn(20f).when(calculator).getPenalty(finishedVms.get(1));
         
         Set<Integer> userIds = new HashSet<>(Arrays.asList(1));
         Map<Integer, Float> result = calculator.getUserPriorities(userIds);

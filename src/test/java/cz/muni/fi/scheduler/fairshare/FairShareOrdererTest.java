@@ -19,6 +19,15 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -26,13 +35,13 @@ import static org.mockito.Mockito.when;
  */
 public class FairShareOrdererTest {
        
-    private FairShareOrderer orderer;
-    private AbstractPriorityCalculator calculator;
+    private UserFairShareOrderer orderer;
+    private UserPriorityCalculator calculator;
         
     @Before
     public void setUp() {
-        calculator = mock(AbstractPriorityCalculator.class);
-        orderer = new FairShareOrderer(calculator);
+        calculator = mock(UserPriorityCalculator.class);
+        orderer = new UserFairShareOrderer(calculator);
     }
     
     @Test

@@ -6,10 +6,6 @@
 package cz.muni.fi.scheduler.fairshare.calculators;
 
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 
@@ -19,22 +15,21 @@ import cz.muni.fi.scheduler.resources.VmElement;
  * 
  * @author Andras Urge
  */
-public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
+public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     
     private IHostPool hostPool;    
     
     private Float availableCpu;    
     private Integer availableMemory;
 
-    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
-        super(vmPool, userRecordManager, vmRecordManager);
+    public ProcessorEquivalentCalculator(IHostPool hostPool) {        
         this.hostPool = hostPool;
         availableCpu = getAvailableCpu();
         availableMemory = getAvailableMemory();
     }
     
     @Override
-    protected float getPenalty(VmElement vm) {
+    public float getPenalty(VmElement vm) {
         return Math.max(vm.getCpu()/availableCpu, ((float)vm.getMemory())/availableMemory) * availableCpu;
     }
 

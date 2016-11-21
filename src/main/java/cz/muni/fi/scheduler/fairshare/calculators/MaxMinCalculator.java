@@ -5,10 +5,6 @@
  */
 package cz.muni.fi.scheduler.fairshare.calculators;
 
-import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
 
 /**
@@ -17,14 +13,10 @@ import cz.muni.fi.scheduler.resources.VmElement;
  * 
  * @author Andras Urge
  */
-public class MaxMinCalculator extends AbstractPriorityCalculator {
-    
-    public MaxMinCalculator(IVmPool vmPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
-        super(vmPool, userRecordManager, vmRecordManager);
-    }    
-    
+public class MaxMinCalculator implements IVmPenaltyCalculator {
+        
     @Override
-    protected float getPenalty(VmElement vm) {
+    public float getPenalty(VmElement vm) {
         return vm.getCpu();
     }    
 }

@@ -4,7 +4,8 @@ import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.FairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.UserFairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
@@ -67,7 +68,7 @@ public class Scheduler {
     /**
      * The fairshare policy to be used for sorting the virtual machines based on their user's priority.
      */
-    private FairShareOrderer fairshare;  
+    private IFairShareOrderer fairshare;  
     
     /**
      * Queues with waiting VMs.
@@ -83,7 +84,7 @@ public class Scheduler {
     
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
-    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter, SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, FairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
+    public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool, IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter, SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy, IStoragePolicy storagePolicy, IFairShareOrderer fairshare, int numberOfQueues, boolean preferHostFit) {
         this.authorizationManager = authorizationManager;
         this.hostPool = hostPool;
         this.vmPool = vmPool;
