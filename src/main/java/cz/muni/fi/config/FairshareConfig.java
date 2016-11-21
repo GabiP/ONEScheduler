@@ -11,9 +11,11 @@ import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
 import cz.muni.fi.scheduler.fairshare.UserFairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
-import cz.muni.fi.scheduler.fairshare.calculators.MaxMinCalculator;
+import cz.muni.fi.scheduler.fairshare.calculators.CpuTimeCalculator;
+import cz.muni.fi.scheduler.fairshare.calculators.MaxBasedMpCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.MinimumPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.ProcessorEquivalentCalculator;
+import cz.muni.fi.scheduler.fairshare.calculators.RootBasedMpCalculator;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +36,10 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
-    private static final String MAX_MIN = "MaxMin";
-    private static final String PROC_EQ = "ProcessorEquivalent";
-    private static final String MIN_PENALTY = "MinimumPenalty";
+    private static final String CPU_TIME = "CpuTime";
+    private static final String PROC_EQ = "PE";
+    private static final String MAX_MP = "MaxBasedMP";
+    private static final String ROOT_MP = "RootBasedMP";
     
     public FairshareConfig() throws IOException {
         properties = new PropertiesConfig("configuration.properties");
@@ -55,12 +58,14 @@ public class FairshareConfig {
     @Bean 
     public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {
         switch (properties.getString("fairshare")) {
-            case MAX_MIN:
-                return new MaxMinCalculator();
+            case CPU_TIME:
+                return new CpuTimeCalculator();
             case PROC_EQ:
                 return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool());
-            case MIN_PENALTY:  
-                return new MinimumPenaltyCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
+            case MAX_MP:  
+                return new MaxBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
+            case ROOT_MP:  
+                return new RootBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
             default:    
                 throw new LoadingFailedException("Wrong fairshare configuration.");
         }   

@@ -13,7 +13,7 @@ import cz.muni.fi.scheduler.resources.VmElement;
  * 
  * @author Andras Urge
  */
-public class MaxMinCalculator implements IVmPenaltyCalculator {
+public class CpuTimeCalculator implements IVmPenaltyCalculator {
         
     @Override
     public float getPenalty(VmElement vm) {

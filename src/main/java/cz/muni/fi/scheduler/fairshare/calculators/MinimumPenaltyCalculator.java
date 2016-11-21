@@ -20,14 +20,14 @@ import java.util.List;
  * 
  * @author Andras Urge
  */
-public class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
+public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     
     private HostFilter hostFilter;
     private IHostPool hostPool;
     private IDatastorePool dsPool;
     
-    private List<HostElement> hosts;
-    private float sharedDsStorage;
+    protected List<HostElement> hosts;
+    protected float sharedDsStorage;
 
     public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, HostFilter hostFilter) {
         this.hostFilter = hostFilter;
@@ -49,16 +49,6 @@ public class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
             }
         } 
         return minPenalty;  
-    }
-    
-    private float getHostPenalty(VmElement vm, HostElement host) {
-        // TODO: host.getMax_disk() may not be really the size of the datastores belonging to this host
-        float hostDsStorage = host.getMax_disk() + sharedDsStorage/hosts.size();
-        float maxResource = Math.max(Math.max(
-                                vm.getCpu()/host.getMax_cpu(), 
-                                ((float)vm.getMemory())/host.getMax_mem()),
-                                ((float)vm.getDiskSizes())/hostDsStorage);
-        return maxResource * host.getMax_cpu();
     }    
     
     private float getSharedDsStorage() {
@@ -69,5 +59,7 @@ public class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
             }
         }
         return storage;
-    }
+    }    
+    
+    protected abstract float getHostPenalty(VmElement vm, HostElement host);
 }
