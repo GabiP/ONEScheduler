@@ -8,6 +8,8 @@ import org.opennebula.client.acl.Acl;
 import org.opennebula.client.acl.AclPool;
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's AclPool.
@@ -17,6 +19,8 @@ import java.util.List;
  */
 public class AclElementPool implements IAclPool{
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
     private final AclPool aclpool;
 
     public AclElementPool(Client oneClient) {
@@ -34,8 +38,7 @@ public class AclElementPool implements IAclPool{
         List<Acl> acls = new ArrayList<>();
         OneResponse aclpr = aclpool.info();
         if (aclpr.isError()) {
-            //TODO: log it
-            System.out.println(aclpr.getErrorMessage());
+            log.error(aclpr.getErrorMessage());
         }
         Iterator<Acl> itr = aclpool.iterator();
         while (itr.hasNext()) {

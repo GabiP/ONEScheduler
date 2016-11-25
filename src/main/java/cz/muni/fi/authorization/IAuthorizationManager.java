@@ -5,6 +5,7 @@
  */
 package cz.muni.fi.authorization;
 
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
@@ -15,5 +16,7 @@ import java.util.List;
  * @author Gabriela Podolnikova
  */
 public interface IAuthorizationManager {
-    public List<HostElement> authorize(VmElement vm);
+    public void authorize(VmElement vm);
+    public List<HostElement> getAuthorizedHosts();
+    public List<DatastoreElement> getAuthorizedDs();
 }

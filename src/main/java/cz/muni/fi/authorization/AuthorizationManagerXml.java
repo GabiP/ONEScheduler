@@ -5,7 +5,9 @@
  */
 package cz.muni.fi.authorization;
 
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
@@ -21,18 +23,24 @@ import java.util.List;
 public class AuthorizationManagerXml implements IAuthorizationManager {
     
     private List<HostElement> hosts = new ArrayList<>();
+    private List<DatastoreElement> datastores = new ArrayList<>();
 
-    public AuthorizationManagerXml(IHostPool hostPool) {
+    public AuthorizationManagerXml(IHostPool hostPool, IDatastorePool dsPool) {
         hosts = hostPool.getActiveHosts();
+        datastores = dsPool.getSystemDs();
     }
     
     @Override
-    public List<HostElement> authorize(VmElement vm) {
-        List<HostElement> result = new ArrayList<>();
-        for (HostElement host: hosts) {
-            result.add(host);
-        }
-        return result;
+    public void authorize(VmElement vm) {
     }
-    
+
+    @Override
+    public List<HostElement> getAuthorizedHosts() {
+        return hosts;
+    }
+
+    @Override
+    public List<DatastoreElement> getAuthorizedDs() {
+        return datastores;
+    }       
 }
