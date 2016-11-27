@@ -22,7 +22,7 @@ public class UserXml {
     @JacksonXmlProperty(localName = "DATASTORE_QUOTA")
     private List<DatastoreQuotaXml> datastoreQuotasXml;
     
-    @JacksonXmlProperty(localName = "GROUPS")
+    @JacksonXmlProperty(localName = "VM_QUOTA")
     private VmQuotaXml vmQuotaXml;
 
     public Integer getId() {

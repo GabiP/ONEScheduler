@@ -159,11 +159,13 @@ public class Scheduler {
     private List<Match> processQueues(List<Queue> queues) {
         List<Match> plan = new ArrayList<>();
         while (!queues.isEmpty()) {
-            VmElement vmSelected = vmSelector.selectVM(queues);
+            VmElement vmSelected = vmSelector.selectVm(queues);
             Match match = processVm(vmSelected);
             if (match != null) {
-                limitChecker.checkLimit(vmSelected, match);
-                plan = match.addVm(plan, vmSelected);
+                if (limitChecker.checkLimit(vmSelected, match)) {
+                    plan = match.addVm(plan, vmSelected);
+                    limitChecker.getDataInstance().increaseData(vmSelected);
+                }
             }
             //remove vmSelected from List<Queue>
             //if Queue is empty: remove Queue from list

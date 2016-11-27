@@ -10,8 +10,10 @@ import cz.muni.fi.scheduler.select.RoundRobin;
 import cz.muni.fi.scheduler.select.VmSelector;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  *  Configures scheduler's behaviour.
@@ -19,7 +21,10 @@ import org.springframework.context.annotation.Configuration;
  * @author Gabriela Podolnikova
  */
 @Configuration
+@Import({PoolConfig.class})
 public class SchedulingConfig {
+    
+    @Autowired PoolConfig poolConfig;
     
     private PropertiesConfig properties;
     
@@ -60,7 +65,7 @@ public class SchedulingConfig {
     public LimitChecker limitChecker() throws LoadingFailedException {
         switch (properties.getString("limitChecker")) {
             case QUOTAS_CHECK:
-                return new QuotasCheck();
+                return new QuotasCheck(poolConfig.userPool());
             default:
                 throw new LoadingFailedException("Wrong queue mapper configuration.");
         }

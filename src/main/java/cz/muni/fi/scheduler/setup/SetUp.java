@@ -17,6 +17,7 @@ import org.opennebula.client.Client;
 import org.opennebula.client.ClientConfigurationException;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.OneSystem;
+import org.opennebula.client.host.HostPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -61,6 +62,9 @@ public class SetUp {
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
             
             /*Client client = new Client(configuration.getString("secret"), configuration.getString("endpoint"));
+            System.out.println(client);
+            HostPool pool = new HostPool(client);
+            System.out.println(pool.info().getMessage());
             OneResponse version = client.get_version();
             System.out.println("Version: " + version.getMessage());
             OneSystem oneSystem = new OneSystem(client);

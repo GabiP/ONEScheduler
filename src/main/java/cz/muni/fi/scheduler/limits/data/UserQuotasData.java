@@ -1,10 +1,8 @@
-package cz.muni.fi.scheduler.core;
+package cz.muni.fi.scheduler.limits.data;
 
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
-import cz.muni.fi.scheduler.resources.nodes.VmQuota;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +10,7 @@ import java.util.Map;
  *
  * @author Gabriela Podolnikova
  */
-public class UserQuotasData {
+public class UserQuotasData implements LimitCheckerData {
     
     private Map<UserElement, Integer> datastoreSizeQuotas;
     
@@ -24,12 +22,30 @@ public class UserQuotasData {
     
     private Map<UserElement, Integer> vmsQuota;
     
-    public UserQuotasData() {
+    IUserPool userPool;
+    
+    public UserQuotasData(IUserPool userPool) {
+        this.userPool = userPool;
+        initData();
+    }
+    
+    @Override
+    public void initData() {
         datastoreSizeQuotas = new HashMap<>();
         cpuQuota = new HashMap<>();
         memoryQuota = new HashMap<>();
         diskQuota = new HashMap<>();
         vmsQuota = new HashMap<>();
+    }
+    
+    @Override
+    public void increaseData(VmElement vm) {
+        UserElement user = userPool.getUser(vm.getUid());
+        datastoreSizeQuotas = addDatastoreSizeQuota(user, vm);
+        cpuQuota = addCpuQuota(user, vm);
+        memoryQuota = addMemoryQuota(user, vm);
+        diskQuota = addDiskQuota(user, vm);
+        vmsQuota = addVmQuota(user);
     }
       
     public Map<UserElement, Integer> addDatastoreSizeQuota(UserElement user, VmElement vm) {

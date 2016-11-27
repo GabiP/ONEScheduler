@@ -43,7 +43,7 @@ public class FilterHostByMemoryTest {
         host.setMax_mem(512);
         host.setMem_usage(128);
         
-        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(128));
+        when(schedulerData.getReservedMemory(host)).thenReturn(128);
 
         assertTrue(filter.test(vm, host, schedulerData));
     }
@@ -54,7 +54,7 @@ public class FilterHostByMemoryTest {
         host.setMax_mem(128);
         host.setMem_usage(64);
         
-        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedMemory(host)).thenReturn(64);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }
@@ -66,7 +66,7 @@ public class FilterHostByMemoryTest {
         host.setMax_mem(128);
         host.setMem_usage(128);
         
-        when(schedulerData.getReservedMemory(host)).thenReturn(new Integer(0));
+        when(schedulerData.getReservedMemory(host)).thenReturn(0);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }

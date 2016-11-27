@@ -1,57 +1,69 @@
 package cz.muni.fi.scheduler.limits;
 
+import cz.muni.fi.scheduler.limits.data.UserQuotasData;
 import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
+import cz.muni.fi.scheduler.limits.data.LimitCheckerData;
 import cz.muni.fi.scheduler.resources.UserElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
 import cz.muni.fi.scheduler.resources.nodes.VmQuota;
 import java.util.List;
-import javax.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
 public class QuotasCheck implements LimitChecker {
+
+    UserQuotasData userQuotasData;
     
-    @Inject
     IUserPool userPool;
     
-    //inject User quotas data - first create bean
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
+    public QuotasCheck(IUserPool userPool) {
+        this.userPool = userPool;
+        userQuotasData = new UserQuotasData(userPool);
+    }
 
     @Override
     public boolean checkLimit(VmElement vm, Match match) {
         UserElement user = userPool.getUser(vm.getUid());
         List<DatastoreQuota> dsQuotas = user.getDatastoreQuota();
         VmQuota vmQuota = user.getVmQuota();
-        boolean dsQuotasCheck = checkDsQuotas(dsQuotas, vm, match);
-        boolean vmQuotaCheck = checkVmQuota(vmQuota, vm);
-        if (dsQuotasCheck && vmQuotaCheck) {
-            return true;
-        }
-        return false;
+        boolean dsQuotasCheck = checkDsQuotas(dsQuotas, vm, match, user);
+        boolean vmQuotaCheck = checkVmQuota(vmQuota, vm, user);
+        log.info("DsQuotaCheck result: " + dsQuotasCheck + " vmQuotaCheck result: " + vmQuotaCheck);
+        return dsQuotasCheck && vmQuotaCheck;
+    }
+    
+    @Override
+    public LimitCheckerData getDataInstance() {
+        return userQuotasData;
     }
 
-    private boolean checkDsQuotas(List<DatastoreQuota> quotas, VmElement vm, Match match) {
+    private boolean checkDsQuotas(List<DatastoreQuota> quotas, VmElement vm, Match match, UserElement user) {
         for (DatastoreQuota q: quotas) {
             if (q.getId().equals(match.getDatastore().getId())) {
-                return checkDsQuota(q, vm);
+                return checkDsQuota(q, vm, user);
             }
         }
         return true;
     }
     
-    private boolean checkDsQuota(DatastoreQuota q, VmElement vm) {
-        Integer freeSize = q.getSize() - q.getSizeUsed();
+    private boolean checkDsQuota(DatastoreQuota q, VmElement vm, UserElement user) {
+        Integer freeSize = (q.getSize() - q.getSizeUsed()) + userQuotasData.getDsSizeQuota(user);
         return freeSize >= vm.getDiskSizes();
     }
     
-    private boolean checkVmQuota(VmQuota q, VmElement vm) {
-        Float freeCpu = q.getCpu() - q.getCpuUsed();
-        Integer freeMemory = q.getMemory() - q.getMemoryUsed();
-        Integer freeDisk = q.getSystemDiskSize() - q.getSystemDiskSizeUsed();
-        Integer freeVms = q.getVms() - q.getVmsUsed();
+    private boolean checkVmQuota(VmQuota q, VmElement vm, UserElement user) {
+        Float freeCpu = (q.getCpu() - q.getCpuUsed()) + userQuotasData.getCpuQuota(user);
+        Integer freeMemory = (q.getMemory() - q.getMemoryUsed()) + userQuotasData.getMemoryQuota(user);
+        Integer freeDisk = (q.getSystemDiskSize() - q.getSystemDiskSizeUsed()) + userQuotasData.getDiskQuota(user);
+        Integer freeVms = (q.getVms() - q.getVmsUsed()) + userQuotasData.getVmsQuota(user);
         return (checkUserCpu(freeCpu, vm) && checkUserMemory(freeMemory, vm) && checkUserDisk(freeDisk, vm) && checkUserVms(freeVms));
     }
     

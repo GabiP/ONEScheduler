@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface VmSelector {
 
-    VmElement selectVM(List<Queue> queues);
+    VmElement selectVm(List<Queue> queues);
 }

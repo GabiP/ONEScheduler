@@ -11,8 +11,9 @@ import java.util.List;
 public class RoundRobin implements VmSelector {
 
     @Override
-    public VmElement selectVM(List<Queue> queues) {
+    public VmElement selectVm(List<Queue> queues) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 
 }
