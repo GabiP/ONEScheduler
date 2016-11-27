@@ -10,10 +10,10 @@ import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
 import cz.muni.fi.scheduler.fairshare.UserFairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
+import cz.muni.fi.scheduler.fairshare.UserGroupFairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.CpuTimeCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.MaxBasedMpCalculator;
-import cz.muni.fi.scheduler.fairshare.calculators.MinimumPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.ProcessorEquivalentCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.RootBasedMpCalculator;
 import java.io.IOException;
@@ -36,18 +36,28 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
+    private static final String USER_BASED = "userBased";
+    private static final String USER_GROUP_BASED = "userGroupBased";    
+    
     private static final String CPU_TIME = "CpuTime";
     private static final String PROC_EQ = "PE";
     private static final String MAX_MP = "MaxBasedMP";
     private static final String ROOT_MP = "RootBasedMP";
     
     public FairshareConfig() throws IOException {
-        properties = new PropertiesConfig("configuration.properties");
+        properties = new PropertiesConfig("fairshare.properties");
     }
     
     @Bean 
     public IFairShareOrderer fairshareOrderer() throws LoadingFailedException {
-        return new UserFairShareOrderer(userPriorityCalculator());     
+        switch (properties.getString("type")) {
+            case USER_BASED:
+                return new UserFairShareOrderer(userPriorityCalculator());  
+            case USER_GROUP_BASED:
+                return new UserGroupFairShareOrderer(userPriorityCalculator(), poolConfig.userPool());  
+            default:    
+                throw new LoadingFailedException("Wrong fairshare type configuration.");
+        }
     }
     
     @Bean 
@@ -57,7 +67,7 @@ public class FairshareConfig {
     
     @Bean 
     public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {
-        switch (properties.getString("fairshare")) {
+        switch (properties.getString("penaltyFunction")) {
             case CPU_TIME:
                 return new CpuTimeCalculator();
             case PROC_EQ:
@@ -67,7 +77,7 @@ public class FairshareConfig {
             case ROOT_MP:  
                 return new RootBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
             default:    
-                throw new LoadingFailedException("Wrong fairshare configuration.");
+                throw new LoadingFailedException("Wrong fairshare penalty function configuration.");
         }   
     }
 }

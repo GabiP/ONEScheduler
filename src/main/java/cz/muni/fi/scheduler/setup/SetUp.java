@@ -30,6 +30,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class SetUp {
     
     private static PropertiesConfig configuration;
+    private static PropertiesConfig fairshareConfig;
     
     private static int cycleinterval;
     private static boolean useXml;
@@ -39,6 +40,7 @@ public class SetUp {
     public static void main(String[] args) throws InterruptedException {
         try {
             configuration = new PropertiesConfig("configuration.properties");
+            fairshareConfig = new PropertiesConfig("fairshare.properties");
         } catch (IOException e) {
             LOG.error("Could not load configuration file!" + e);
             return;
@@ -84,10 +86,10 @@ public class SetUp {
     private static void checkDecayTime(IUserFairshareRecordManager userRecordManager) {
         long schedulingTime = TimeManager.getInstance().getSchedulingTimeStamp().getTime();
         long lastDecayTime = userRecordManager.getLastDecayTime();
-        long decayMillisInterval = TimeUnit.DAYS.toMillis(configuration.getInt("decayDayInterval"));
+        long decayMillisInterval = TimeUnit.DAYS.toMillis(fairshareConfig.getInt("decayDayInterval"));
         
         if (schedulingTime - lastDecayTime > decayMillisInterval) {
-            int decayValue = configuration.getInt("decayValue");
+            int decayValue = fairshareConfig.getInt("decayValue");
             userRecordManager.applyDecay(decayValue);
         }
     }
