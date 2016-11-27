@@ -1,7 +1,9 @@
 package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.scheduler.resources.VmElement;
+import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  *
@@ -11,17 +13,25 @@ public class Queue {
     
     private String name;
     private Integer priority;
-    private List<VmElement> vms;
+    private ConcurrentLinkedQueue<VmElement> vmQueue = new ConcurrentLinkedQueue<>();
 
     public Queue(String name, Integer priority, List<VmElement> vms) {
         this.name = name;
         this.priority = priority;
-        this.vms = vms;
+        vmQueue.addAll(vms);
     }
-
+    
+    public VmElement dequeue() {
+        return vmQueue.poll();
+    }
+    
+    public boolean isEmpty() {
+        return vmQueue.isEmpty();
+    }
+    
     @Override
     public String toString() {
-        return "Queue{" + "name=" + name + ", priority=" + priority + ", vms=" + vms + '}';
+        return "Queue{" + "name=" + name + ", priority=" + priority + ", vms=" + vmQueue + '}';
     }
 
     public String getName() {
@@ -40,12 +50,12 @@ public class Queue {
         this.priority = priority;
     }
 
-    public List<VmElement> getVms() {
-        return vms;
+    public ConcurrentLinkedQueue<VmElement> getVmQueue() {
+        return vmQueue;
     }
 
-    public void setVms(List<VmElement> vms) {
-        this.vms = vms;
+    public void setVmQueue(ConcurrentLinkedQueue<VmElement> vmQueue) {
+        this.vmQueue = vmQueue;
     }
     
     

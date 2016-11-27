@@ -26,6 +26,10 @@ public class DatastoreQuota extends AbstractNode {
         size = Integer.parseInt(user.xpath(xpathExpr + "/SIZE"));
         sizeUsed = Integer.parseInt(user.xpath(xpathExpr + "/SIZE_USED"));
     }
+    
+    public boolean isEmpty() {
+        return (images == null && size == null);
+    }
       
     public Integer getId() {
         return id;

@@ -2,6 +2,7 @@ package cz.muni.fi.scheduler.select;
 
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.resources.VmElement;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -11,4 +12,6 @@ import java.util.List;
 public interface VmSelector {
 
     VmElement selectVm(List<Queue> queues);
+    
+    boolean queuesEmpty(List<Queue> queues);
 }

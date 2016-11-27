@@ -5,12 +5,10 @@
  */
 package cz.muni.fi.scheduler.fairshare.calculators;
 
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.filters.hosts.HostFilter;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
@@ -22,22 +20,25 @@ import java.util.List;
  * 
  * @author Andras Urge
  */
-// TODO : think of possible names
-public class MinimumPenaltyCalculator extends AbstractPriorityCalculator {
+public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     
     private HostFilter hostFilter;
     private IHostPool hostPool;
-    private List<HostElement> hosts;
+    private IDatastorePool dsPool;
+    
+    protected List<HostElement> hosts;
+    protected float sharedDsStorage;
 
-    public MinimumPenaltyCalculator(IVmPool vmPool, IHostPool hostPool, HostFilter hostFilter, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
-        super(vmPool, userRecordManager, vmRecordManager);
+    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, HostFilter hostFilter) {
         this.hostFilter = hostFilter;
-        this.hostPool = hostPool;       
-        this.hosts = hostPool.getHosts(); 
+        this.hostPool = hostPool;     
+        this.dsPool = dsPool;           
+        hosts = hostPool.getHosts();  
+        sharedDsStorage = getSharedDsStorage();
     }    
     
     @Override  
-    protected float getPenalty(VmElement vm) {
+    public float getPenalty(VmElement vm) {
         List<HostElement> filteredHosts = hostFilter.getFilteredHosts(hosts, vm);
         HostElement firstHost = filteredHosts.get(0);
         float minPenalty = getHostPenalty(vm, firstHost);
@@ -48,9 +49,17 @@ public class MinimumPenaltyCalculator extends AbstractPriorityCalculator {
             }
         } 
         return minPenalty;  
-    }
-    
-    private float getHostPenalty(VmElement vm, HostElement host) {
-        return Math.max(vm.getCpu()/host.getMax_cpu(), ((float)vm.getMemory())/host.getMax_mem()) * host.getMax_cpu();
     }    
+    
+    private float getSharedDsStorage() {
+        int storage = 0;
+        for (DatastoreElement ds : dsPool.getSystemDs()) {
+            if (ds.isShared() && ds.isMonitored()) {                
+                storage += ds.getTotal_mb();
+            }
+        }
+        return storage;
+    }    
+    
+    protected abstract float getHostPenalty(VmElement vm, HostElement host);
 }

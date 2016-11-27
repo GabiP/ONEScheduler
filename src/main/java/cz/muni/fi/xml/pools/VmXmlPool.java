@@ -94,5 +94,16 @@ public class VmXmlPool implements IVmPool {
         
         return result;
     }
+
+    @Override
+    public List<VmElement> getReschedVms() {
+         List<VmElement> result = new ArrayList<>();
+        for (VmElement vm : vms) {
+             if (vm.isResched()) {
+                result.add(vm);
+            }
+        }
+        return result;
+    }
     
 }

@@ -5,11 +5,9 @@
  */
 package cz.muni.fi.scheduler.fairshare.calculators;
 
+import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.AbstractPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
-import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 
@@ -19,23 +17,29 @@ import cz.muni.fi.scheduler.resources.VmElement;
  * 
  * @author Andras Urge
  */
-public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
+public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     
-    private IHostPool hostPool;    
+    private IHostPool hostPool;  
+    private IDatastorePool dsPool;  
     
     private Float availableCpu;    
     private Integer availableMemory;
+    private Integer availableStorageCapacity;
 
-    public ProcessorEquivalentCalculator(IVmPool vmPool, IHostPool hostPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
-        super(vmPool, userRecordManager, vmRecordManager);
+    public ProcessorEquivalentCalculator(IHostPool hostPool, IDatastorePool dsPool) {        
         this.hostPool = hostPool;
         availableCpu = getAvailableCpu();
         availableMemory = getAvailableMemory();
+        availableStorageCapacity = getAvailableStorageCapacity();
     }
     
     @Override
-    protected float getPenalty(VmElement vm) {
-        return Math.max(vm.getCpu()/availableCpu, ((float)vm.getMemory())/availableMemory) * availableCpu;
+    public float getPenalty(VmElement vm) {
+        float maxResource = Math.max(Math.max(
+                                vm.getCpu()/availableCpu, 
+                                ((float)vm.getMemory())/availableMemory),
+                                ((float)vm.getDiskSizes())/availableStorageCapacity);
+        return maxResource * availableCpu;
     }
 
     /**
@@ -44,7 +48,6 @@ public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
      * @return Total amount of CPU in the system
      */
     private float getAvailableCpu() {
-        // TODO: maybe get from DB
         float cpu = 0;
         for (HostElement host : hostPool.getHosts()) {
             cpu += host.getMax_cpu();
@@ -58,11 +61,17 @@ public class ProcessorEquivalentCalculator extends AbstractPriorityCalculator {
      * @return Total amount of RAM in the system
      */
     private int getAvailableMemory() {
-        // TODO: maybe get from DB
         int memory = 0;
         for (HostElement host : hostPool.getHosts()) {
             memory += host.getMax_mem();
         }
         return memory;
     }  
-}
+    
+    private Integer getAvailableStorageCapacity() {
+        int storage = 0;
+        for (DatastoreElement ds : dsPool.getSystemDs()) {
+            storage += ds.getTotal_mb();
+        }
+        return storage;
+    }}

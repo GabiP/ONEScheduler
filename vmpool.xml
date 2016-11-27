@@ -4,10 +4,10 @@
         <UID>0</UID>
         <GID>0</GID>
         <NAME>vm01</NAME>
-        <STATE>1</STATE>
+        <STATE>3</STATE>
         <LCM_STATE></LCM_STATE>
-        <RESCHED>0</RESCHED>
-        <DEPLOY_ID></DEPLOY_ID>
+        <RESCHED>1</RESCHED>
+        <DEPLOY_ID>0</DEPLOY_ID>
         <CPU>0.1</CPU>
         <MEMORY>64</MEMORY>
         <DISKS>       
@@ -170,7 +170,7 @@
     </VM>
     <VM>
         <ID>10</ID>
-        <UID>2</UID>
+        <UID>1</UID>
         <GID>0</GID>
         <NAME>vm02</NAME>
         <STATE>1</STATE>

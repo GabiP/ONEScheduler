@@ -1,6 +1,7 @@
 package cz.muni.fi.result;
 
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.core.Match;
+import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.List;
 
 /**
@@ -9,5 +10,7 @@ import java.util.List;
  */
 public interface IResultManager {
     
-     public boolean writeResults(List<HostElement> hostPool);
+     public List<VmElement> deployPlan(List<Match> plan);
+     
+     public List<VmElement> migrate(List<Match> migrations);
 }

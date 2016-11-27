@@ -5,6 +5,7 @@ import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.Pool;
@@ -79,6 +80,20 @@ public class VmElementPool implements IVmPool{
             VirtualMachine element = itr.next();
             VmElement vm = VmMapper.map(element);
             vms.add(vm);
+        }
+        return vms;
+    }
+
+    @Override
+    public List<VmElement> getReschedVms() {
+        List<VmElement> vms = new ArrayList<>();
+        Iterator<VirtualMachine> itr = vmp.iterator();
+        while (itr.hasNext()) {
+            VirtualMachine element = itr.next();
+            VmElement vm = VmMapper.map(element);
+            if (vm.isResched()) {
+                vms.add(vm);
+            }
         }
         return vms;
     }

@@ -35,6 +35,10 @@ public class VmQuota extends AbstractNode {
         vms = Integer.parseInt(user.xpath(xpathExpr + "/VMS"));
         vmsUsed = Integer.parseInt(user.xpath(xpathExpr + "/VMS_USED"));
     }
+    
+    public boolean isEmpty() {
+        return (cpu == null && memory == null && systemDiskSize == null && vms == null);
+    }
 
     public Float getCpu() {
         return cpu;

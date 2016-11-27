@@ -7,6 +7,7 @@ package cz.muni.fi.scheduler.fairshare;
 
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
+import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecord;
@@ -26,14 +27,16 @@ import java.util.Set;
  * 
  * @author Andras Urge
  */
-public abstract class AbstractPriorityCalculator {
+public class UserPriorityCalculator {
         
     private IVmPool vmPool; 
+    private IVmPenaltyCalculator penaltyCalculator;
     private IUserFairshareRecordManager userRecordManager;
     private IVmFairshareRecordManager vmRecordManager;
 
-    public AbstractPriorityCalculator(IVmPool vmPool, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
+    public UserPriorityCalculator(IVmPool vmPool, IVmPenaltyCalculator penaltyCalculator, IUserFairshareRecordManager userRecordManager, IVmFairshareRecordManager vmRecordManager) {
         this.vmPool = vmPool;
+        this.penaltyCalculator = penaltyCalculator;
         this.userRecordManager = userRecordManager;
         this.vmRecordManager = vmRecordManager;
     }
@@ -63,7 +66,7 @@ public abstract class AbstractPriorityCalculator {
         for (VmElement vm : vms) {                
             if (vm.getRunTime() == 0 && vm.getState() != 6) {
                 // assign a starting priority if the vm didnt run yet                
-                currentPriority += getStartingPriority(vm);
+                currentPriority += getStartingVmPriority(vm);
             } 
             else {
                 currentPriority += getVmPriority(vm);     
@@ -101,10 +104,10 @@ public abstract class AbstractPriorityCalculator {
         return newlyDoneVms;
     }
     
-    private float getStartingPriority(VmElement vm) {   
+    private float getStartingVmPriority(VmElement vm) {   
         List<VmElement> allVms = vmPool.getAllVmsByUser(vm.getUid());
         float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(allVms));
-        float startingPriority =  maxVmRuntime * getPenalty(vm);
+        float startingPriority =  maxVmRuntime * penaltyCalculator.getPenalty(vm);
         
         VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, 0);        
         vmRecordManager.storeRecord(newRecord);
@@ -135,7 +138,7 @@ public abstract class AbstractPriorityCalculator {
         if (vm.getState() == 3) {
             HistoryNode lastHistory = vm.getHistories().get(vm.getHistories().size()-1);
             int historyRunTime = vm.getHistoryRuntime(lastHistory);            
-            priority += historyRunTime * getPenalty(vm);
+            priority += historyRunTime * penaltyCalculator.getPenalty(vm);
         }
         return priority;
     }    
@@ -152,20 +155,9 @@ public abstract class AbstractPriorityCalculator {
         for (HistoryNode history : vm.getClosedHistories()) {
             if (history.getSequence() > vmRecord.getLastClosedHistory()) {                
                 int historyRunTime = vm.getHistoryRuntime(history);            
-                priority += historyRunTime * getPenalty(vmFromRecord);
+                priority += historyRunTime * penaltyCalculator.getPenalty(vmFromRecord);
             }       
         }
         return priority;
-    }
-    
-    /**
-     * Returns a penalty calculated for the given virtual machine. The 
-     * implementation  of this method is defining the strategy of the 
-     * fair-share ordering.
-     * 
-     * @param vm
-     * @return Penalty for the virtual machine
-     */
-    protected abstract float getPenalty(VmElement vm);    
-   
+    }   
 }

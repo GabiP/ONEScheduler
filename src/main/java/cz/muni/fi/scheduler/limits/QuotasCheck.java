@@ -34,8 +34,18 @@ public class QuotasCheck implements LimitChecker {
         UserElement user = userPool.getUser(vm.getUid());
         List<DatastoreQuota> dsQuotas = user.getDatastoreQuota();
         VmQuota vmQuota = user.getVmQuota();
-        boolean dsQuotasCheck = checkDsQuotas(dsQuotas, vm, match, user);
-        boolean vmQuotaCheck = checkVmQuota(vmQuota, vm, user);
+        boolean dsQuotasCheck;
+        if (dsQuotas.size() == 0) {
+            dsQuotasCheck = true;
+        } else {
+            dsQuotasCheck = checkDsQuotas(dsQuotas, vm, match, user);
+        }
+        boolean vmQuotaCheck;
+        if (vmQuota.isEmpty()) {
+            vmQuotaCheck = true;
+        } else {
+            vmQuotaCheck = checkVmQuota(vmQuota, vm, user);
+        }
         log.info("DsQuotaCheck result: " + dsQuotasCheck + " vmQuotaCheck result: " + vmQuotaCheck);
         return dsQuotasCheck && vmQuotaCheck;
     }

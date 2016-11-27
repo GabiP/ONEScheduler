@@ -53,12 +53,7 @@ public class DatastoreElement {
     private Integer total_mb;
     private Integer free_mb;
     private Integer used_mb;    
-    
-    public void addUsedMb(Integer mb) {
-        used_mb += mb;
-        free_mb -= mb;
-    }
-    
+        
     public Boolean isShared() {
         return ("YES".equals(this.shared));
     }
