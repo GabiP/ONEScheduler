@@ -62,9 +62,16 @@ public class SetUp {
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
             
             /*Client client = new Client(configuration.getString("secret"), configuration.getString("endpoint"));
+<<<<<<< HEAD
             System.out.println(client);
             HostPool pool = new HostPool(client);
             System.out.println(pool.info().getMessage());
+=======
+            HostPool pool = new HostPool((client));
+            pool.info();
+            System.out.println("HostPool: " + pool.toString());
+            System.out.println("Host: " + pool.getById(0));
+>>>>>>> 1f9ebebe10f2175054e1b2c2d459d23ea666db3e
             OneResponse version = client.get_version();
             System.out.println("Version: " + version.getMessage());
             OneSystem oneSystem = new OneSystem(client);

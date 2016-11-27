@@ -1,6 +1,5 @@
 package cz.muni.fi.scheduler.core;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
@@ -23,8 +22,6 @@ import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.queues.QueuesExtensions;
 import cz.muni.fi.scheduler.select.VmSelector;
 import java.util.LinkedHashMap;
-import org.apache.commons.collections4.ListUtils;
-import org.opennebula.client.user.UserPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,9 +171,21 @@ public class Scheduler {
         return plan;
     }
 
+    /**
+     * This method process the chosen vm.
+     * And does this:
+     * - retrieves the authorized hosts
+     * - filter hosts by specified filters in the configuration file
+     * --> it creates a subset of hosts that are suitable for the virtual machine.
+     * - filter and sorts datastores for the hosts
+     * Calls scheduling policy to select the host and the ds
+     * If there is match for this VM, it returns it.
+     * @param queue the queue to be processed
+     * @return the macth for the vm
+     */
     private Match processVm(VmElement vm) {
         Match match = null;
-        List<HostElement> authorizedHosts = authorizationManager.authorize(vm);
+        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts();
         if (authorizedHosts.isEmpty()) {
             LOG.info("Empty authorized hosts.");
             return null;
@@ -203,50 +212,6 @@ public class Scheduler {
         schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
         schedulerData.reserveHostRunningVm(match.getHost());
         schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
-    }
-
-    /**
-     * This method takes the queue with pending virtual machines and process it.
-     * For each vm:
-     * - retrieves the authorized hosts
-     * - filter hosts by specified filters in the configuration file
-     * --> it creates a subset of hosts that are suitable for the virtual machine.
-     * Calls scheduling policy to select the host.
-     * If there is match, puts the values to a plan anf changes the capacities.
-     * @param queue the queue to be processed
-     * @return the map with the plan for one queue
-     */
-    private List<Match> processQueue(List<VmElement> queue) {
-        List<Match> plan = new ArrayList<>();
-        List<HostElement> authorizedHosts;
-        for(VmElement vm: queue) {
-            //check the authorization for this VM
-            authorizedHosts = authorizationManager.authorize(vm);
-            if (authorizedHosts.isEmpty()) {
-                LOG.info("Empty authorized hosts.");
-                continue;
-            }
-            //filter authorized hosts for vm 
-            List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
-            //sort hosts
-            List<HostElement> sortedHosts = placementPolicy.sortHosts(filteredHosts, schedulerData);
-            //filter and sort datastores for hosts
-            Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
-
-            // deploy if sortedCandidates is not empty
-            if (!sortedCandidates.isEmpty()) {
-                //pick the host and datastore. We chose the best host, or the best datastore.
-                Match match = createMatch(sortedCandidates);
-                plan = match.addVm(plan, vm);
-                LOG.info("Scheduling vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
-                // update reservations
-                schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
-                schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
-                schedulerData.reserveHostRunningVm(match.getHost());
-                schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
-            }
-        }
-        return plan;
     }
     
     /**

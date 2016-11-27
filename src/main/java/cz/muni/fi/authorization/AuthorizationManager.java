@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.authorization;
 
 import cz.muni.fi.scheduler.elementpools.IAclPool;
@@ -32,6 +27,9 @@ public class AuthorizationManager implements IAuthorizationManager {
     private final IDatastorePool datastorePool;
     private final IUserPool userPool;
     
+    private ArrayList<HostElement> authorizedHosts;
+    private ArrayList<DatastoreElement> authorizedDatastores;
+    
     public AuthorizationManager(IAclPool acls, IClusterPool clusters, IHostPool hosts, IDatastorePool datastores, IUserPool userPool) {
         this.aclPool = acls;
         this.clusterPool = clusters;
@@ -47,19 +45,15 @@ public class AuthorizationManager implements IAuthorizationManager {
      * @return an array with ids of authorized hosts
      */
     @Override
-    public List<HostElement> authorize(VmElement vm) {
+    public void authorize(VmElement vm) {
         Integer uid = vm.getUid();
         List<Integer> userGroups = userPool.getUser(uid).getGroups();
         //group id from virtual machine added to user's group ids - does that work?
         userGroups.add(vm.getGid());
-        ArrayList<String> groups = new ArrayList<>();
-        for (Integer gid: userGroups) {
-            String gidstring = "@" + gid;
-            groups.add(gidstring);
-        }
+        ArrayList<String> groups = prepareGroupsString(userGroups);
         List<Acl> acls = aclPool.getAcls();
-        ArrayList<Integer> authorizedHosts = new ArrayList<>();
-        ArrayList<Integer> authorizedDatastores = new ArrayList<>();
+        List<Integer> authorizedHostsIds = new ArrayList<>();
+        List<Integer> authorizedDatastoresIds = new ArrayList<>();
         String uidstring = "#" + uid;
         for (Acl acl: acls) {
             String rule = acl.toString();
@@ -68,15 +62,33 @@ public class AuthorizationManager implements IAuthorizationManager {
             if ((splittedRule[0].trim().equals(uidstring) || groups.contains(splittedRule[0].trim())) ||splittedRule[0].trim().equals("*")) {
                 // affected resources hosts with rights to manage
                 List<Integer> evaluatedHosts = evaluateHost(splittedRule[2], splittedRule[1]);
-                authorizedHosts.addAll(evaluatedHosts);
+                authorizedHostsIds.addAll(evaluatedHosts);
                 // Finding the datastores that the user is authorized to use
                 List<Integer> evaluatedDatastores = evaluateDatastore(splittedRule[2], splittedRule[1]);
-                authorizedDatastores.addAll(evaluatedDatastores);
+                authorizedDatastoresIds.addAll(evaluatedDatastores);
             }
         }
-        //match authorizedHosts and authorizedDatastores
-        List<HostElement> result = matchHostsAndDatastores(authorizedHosts, authorizedDatastores);
-        return result;
+        setAuthorizedHosts(authorizedHostsIds);
+        setAuthorizedDatastores(authorizedDatastoresIds);
+    }
+    
+    @Override
+    public List<HostElement> getAuthorizedHosts() {
+        return authorizedHosts;
+    }
+    
+    @Override
+    public List<DatastoreElement> getAuthorizedDs() {
+        return authorizedDatastores;
+    }
+    
+    private ArrayList<String> prepareGroupsString(List<Integer> userGroups) {
+        ArrayList<String> groups = new ArrayList<>();
+        for (Integer gid: userGroups) {
+            String gidstring = "@" + gid;
+            groups.add(gidstring);
+        }
+        return groups;
     }
     
     /**
@@ -134,51 +146,27 @@ public class AuthorizationManager implements IAuthorizationManager {
         return authorizedDatastores;
     }
     
-    public Integer getIdFromResources(String resources, String mark) {
+    private Integer getIdFromResources(String resources, String mark) {
         String s = resources.substring(resources.indexOf(mark) + 1);
         Integer id = Integer.valueOf(s);
         return id;
     }
     
-    /**
-     * Matches two lists. One containing the list of auhorized hosts and the other the authorized datastores.
-     * Matching needs to be done to obtain the list of hosts, that the user has rights to MANAGE,
-     * these hosts needs to have the SYSTEM datastore that the user has right to USE.
-     * 
-     * @param authorizedHosts the list of hosts to be matched
-     * @param authorizedDatastores the list af datastores to be macthed
-     * @return the list of host's ids that the user is authorized to use
-     */
-    public List<HostElement> matchHostsAndDatastores(List<Integer> authorizedHosts, List<Integer> authorizedDatastores) {
-        List<Integer> result = new ArrayList<>(authorizedHosts);
-        for (Integer hostId: authorizedHosts) {
-            boolean hasSystemDs = false;
+    private void setAuthorizedHosts(List<Integer> authorizedHostsIds) {
+        for (Integer hostId: authorizedHostsIds) {
             HostElement host = hostPool.getHost(hostId);
-            Integer hostClusterId = host.getClusterId();
-            ClusterElement cluster = clusterPool.getCluster(hostClusterId);
-            List<Integer> clusterDatastores = cluster.getDatastores();
-            for (Integer datastoreId: clusterDatastores) {
-                DatastoreElement ds = datastorePool.getDatastore(datastoreId);
-                // the ds on cluster is system and the user is authorized to use that ds
-                if (ds.getType() == 1 && authorizedDatastores.contains(ds.getId())) {
-                    hasSystemDs = true;
-                }               
-            }
-            if (hasSystemDs == false) {
-                result.remove(hostId);
+            if (host.isActive()) {
+                authorizedHosts.add(host);
             }
         }
-        return getOnlyActiveHosts(result);
     }
     
-    public List<HostElement> getOnlyActiveHosts(List<Integer> hosts) {
-         List<HostElement> result = new ArrayList<>();
-         for (Integer id: hosts) {
-             HostElement host = hostPool.getHost(id);
-             if ((host.getState() == 1 || host.getState() == 2) ) {
-                 result.add(host);
-             }
-         }
-         return result;
+    private void setAuthorizedDatastores(List<Integer> authorizedDatastoresIds) {
+        for (Integer dsId: authorizedDatastoresIds) {
+            DatastoreElement ds = datastorePool.getDatastore(dsId);
+            if (ds.isSystem()) {
+                authorizedDatastores.add(ds);
+            }
+        }
     }
 }

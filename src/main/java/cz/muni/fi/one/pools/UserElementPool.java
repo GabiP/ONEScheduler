@@ -10,6 +10,8 @@ import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.user.User;
 import org.opennebula.client.user.UserPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's UserPool containing all instances of users in the system.
@@ -19,6 +21,8 @@ import org.opennebula.client.user.UserPool;
  * @author Gabriela Podolnikova
  */
 public class UserElementPool implements IUserPool{
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     private UserPool up;
     
@@ -35,8 +39,7 @@ public class UserElementPool implements IUserPool{
         List<UserElement> users = new ArrayList<>();
         OneResponse upr = up.info();
         if (upr.isError()) {
-            //TODO: log it
-            System.out.println(upr.getErrorMessage());
+            log.error(upr.getErrorMessage());
         }
         Iterator<User> itr = up.iterator();
         while (itr.hasNext()) {

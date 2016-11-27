@@ -10,6 +10,8 @@ import org.opennebula.client.OneResponse;
 import org.opennebula.client.Pool;
 import org.opennebula.client.vm.VirtualMachine;
 import org.opennebula.client.vm.VirtualMachinePool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's VirtualMachinePool containing all instances of virtual machines in the system.
@@ -20,6 +22,8 @@ import org.opennebula.client.vm.VirtualMachinePool;
  */
 public class VmElementPool implements IVmPool{
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
     private VirtualMachinePool vmp;
 
     public VmElementPool(Client oneClient) {
@@ -68,8 +72,7 @@ public class VmElementPool implements IVmPool{
         ArrayList<VmElement> vms = new ArrayList<>();
         OneResponse vmpr = vmp.info(userId, Integer.MIN_VALUE, Integer.MAX_VALUE, state);
         if (vmpr.isError()) {
-            //TODO: log it
-            System.out.println(vmpr.getErrorMessage());
+            log.error(vmpr.getErrorMessage());
         }
         Iterator<VirtualMachine> itr = vmp.iterator();
         while (itr.hasNext()) {

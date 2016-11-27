@@ -64,7 +64,11 @@ public class HostElement {
     private List<PciNode> pcis;
         
     private List<DatastoreNode> datastores;
-        
+    
+    public boolean isActive() {
+        return (state == 1 || state == 2 );
+    }
+    
     public Integer getId() {
         return id;
     }

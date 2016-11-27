@@ -10,6 +10,8 @@ import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.datastore.Datastore;
 import org.opennebula.client.datastore.DatastorePool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's DatastorePool containing all instances of datastores in the system.
@@ -19,6 +21,8 @@ import org.opennebula.client.datastore.DatastorePool;
  * @author Gabriela Podolnikova
  */
 public class DatastoreElementPool implements IDatastorePool {
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     private final DatastorePool dp;
     
@@ -35,8 +39,7 @@ public class DatastoreElementPool implements IDatastorePool {
         List<DatastoreElement> datastores = new ArrayList<>();
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
-            //TODO: log it
-            System.out.println(dpr.getErrorMessage());
+            log.error(dpr.getErrorMessage());
         }
         Iterator<Datastore> itr = dp.iterator();
         while (itr.hasNext()) {
