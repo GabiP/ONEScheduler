@@ -2,8 +2,9 @@ package cz.muni.fi.scheduler.select;
 
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.util.Iterator;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -11,6 +12,8 @@ import java.util.List;
  */
 public class RoundRobin implements VmSelector {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
     private int currentQueueIndex = 0; 
     
     @Override
@@ -22,6 +25,7 @@ public class RoundRobin implements VmSelector {
             currentQueue = queues.get(currentQueueIndex);
         }
         VmElement vmToReturn = currentQueue.dequeue();
+        log.info("Dequeued queue: " + queues.get(currentQueueIndex) + " Vm removed: " + vmToReturn);
         currentQueueIndex++;
         checkLastIndex(queues.size());
         return vmToReturn;

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -17,34 +18,26 @@ public class FairshareMapper implements QueueMapper {
     
     protected final org.slf4j.Logger log = LoggerFactory.getLogger(getClass());
     
+    //nebudu znat number of queues, nejak spocitat z fairsharu
+    int numberOfQueues;
+    
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         List<Queue> output = new ArrayList<>();
-        int numberOfQueues = getNumberOfQueues();
         int numberOfVmsInQueue = (int) Math.ceil(vms.size()/ new Float(numberOfQueues));
-        log.info("Number of vms in queues: " + numberOfVmsInQueue);
-        int startSub = 0;
-        int endSub = numberOfVmsInQueue;
+        List<List<VmElement>> listOfVmsLists = ListUtils.partition(vms, numberOfVmsInQueue);
         for (int i = 0; i < numberOfQueues; i++) {
-            List<VmElement> vmsPartition  = vms.subList(startSub, endSub);
+            List<VmElement> vmsPartition  = listOfVmsLists.get(i);
             Queue q = new Queue("Queue" + i, i, vmsPartition);
             log.info("A new queue was created: " + q);
             output.add(q);
-            startSub = endSub;
-            endSub = endSub + numberOfVmsInQueue -1; 
         }
         return output;
     }
 
     @Override
     public int getNumberOfQueues() {
-        try {
-            PropertiesConfig properties = new PropertiesConfig("configuration.properties");
-            return properties.getInt("numberofqueues");
-        } catch (IOException ex) {
-            Logger.getLogger(FairshareMapper.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return 1;
+        return numberOfQueues;
     }
 
 }

@@ -143,7 +143,15 @@ public class Scheduler {
         List<Match> processed = processQueues(queues);
         return processed;
     }
-          
+    
+    /**
+     * Migrate is called before schedule.
+     * - Takes only those VMs with resched flag.
+     * - Finds suitable hosts.
+     * - Removes from suitable hosts those where the VM currently is.
+     * - Creates match.
+     * @return all matches
+     */
     public List<Match> migrate() {
         Migration migration = new Migration(hostPool);
         List<Match> migrations = new ArrayList<>();

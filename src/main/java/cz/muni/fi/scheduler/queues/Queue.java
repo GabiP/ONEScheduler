@@ -1,7 +1,6 @@
 package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -27,6 +26,10 @@ public class Queue {
     
     public boolean isEmpty() {
         return vmQueue.isEmpty();
+    }
+    
+    public void queue(VmElement vm) {
+        vmQueue.add(vm);
     }
     
     @Override

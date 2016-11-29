@@ -2,7 +2,6 @@ package cz.muni.fi.scheduler.select;
 
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.util.Iterator;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
