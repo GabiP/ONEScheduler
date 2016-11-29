@@ -73,9 +73,9 @@ public class FairshareConfig {
             case PROC_EQ:
                 return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool());
             case MAX_MP:  
-                return new MaxBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
+                return new MaxBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.clusterPool(), filterConfig.fairshareHostFilter());
             case ROOT_MP:  
-                return new RootBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), filterConfig.fairshareHostFilter());
+                return new RootBasedMpCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.clusterPool(), filterConfig.fairshareHostFilter());
             default:    
                 throw new LoadingFailedException("Wrong fairshare penalty function configuration.");
         }   
