@@ -45,4 +45,6 @@ public interface IVmPool {
      * @return array of virtual machines
      */
     public List<VmElement> getVms(int userId, int state);
+    
+    public List<VmElement> getReschedVms();
 }

@@ -1,5 +1,7 @@
 package cz.muni.fi.scheduler.resources;
 
+import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
+import cz.muni.fi.scheduler.resources.nodes.VmQuota;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,6 +18,10 @@ public class UserElement {
     private Integer gid;
     
     private List<Integer> groups;
+    
+    private List<DatastoreQuota> datastoreQuota;
+    
+    private VmQuota vmQuota;
         
     @Override
     public String toString() {
@@ -61,6 +67,22 @@ public class UserElement {
 
     public void setGroups(List<Integer> groups) {
         this.groups = groups;
+    }
+
+    public List<DatastoreQuota> getDatastoreQuota() {
+        return datastoreQuota;
+    }
+
+    public void setDatastoreQuota(List<DatastoreQuota> datastoreQuota) {
+        this.datastoreQuota = datastoreQuota;
+    }
+
+    public VmQuota getVmQuota() {
+        return vmQuota;
+    }
+
+    public void setVmQuota(VmQuota vmQuota) {
+        this.vmQuota = vmQuota;
     }
     
     @Override

@@ -12,6 +12,7 @@ import cz.muni.fi.scheduler.resources.VmElement;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mock;
 
@@ -19,6 +20,7 @@ import static org.mockito.Mockito.mock;
  *
  * @author Andras Urge
  */
+@Ignore
 public class MaxMinCalculatorTest {
     
     private CpuTimeCalculator calculator; 

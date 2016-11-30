@@ -10,6 +10,8 @@ import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
 import org.opennebula.client.host.HostPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's HostPool containing all instances of hosts in the system.
@@ -19,6 +21,8 @@ import org.opennebula.client.host.HostPool;
  * @author Gabriela Podolnikova
  */
 public class HostElementPool implements IHostPool{
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     private HostPool hp;
     
@@ -36,8 +40,7 @@ public class HostElementPool implements IHostPool{
         List<HostElement> hosts = new ArrayList<>();
         OneResponse hpr = hp.info();
         if (hpr.isError()) {
-            //TODO: log it
-            System.out.println(hpr.getErrorMessage());
+            log.error(hpr.getErrorMessage());
         }
         Iterator<Host> itr = hp.iterator();
         while (itr.hasNext()) {

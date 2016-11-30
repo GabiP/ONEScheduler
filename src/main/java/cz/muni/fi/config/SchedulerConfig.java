@@ -29,14 +29,16 @@ import org.springframework.context.annotation.Import;
  * @author Andras Urge
  */
 @Configuration
-@Import({PoolConfig.class, FilterConfig.class, FairshareConfig.class})
+@Import({PoolConfig.class, FilterConfig.class, FairshareConfig.class, SchedulingConfig.class, ResultConfig.class})
 public class SchedulerConfig {
     
     private PropertiesConfig properties;    
     
     @Autowired PoolConfig poolConfig;
     @Autowired FilterConfig filterConfig;
-    @Autowired FairshareConfig fairshareConfig; 
+    @Autowired FairshareConfig fairshareConfig;
+    @Autowired SchedulingConfig schedulingConfig;
+    @Autowired ResultConfig resultConfig;
     
     private static final String HOST_LOAD_AWARE_POLICY = "LoadAware";
     private static final String HOST_PACKING_POLICY = "Packing";  
@@ -61,7 +63,10 @@ public class SchedulerConfig {
                              storagePolicy(), 
                              fairshareConfig.fairshareOrderer(), 
                              properties.getInt("numberofqueues"), 
-                             properties.getBoolean("preferHostFit"));
+                             properties.getBoolean("preferHostFit"),
+                             schedulingConfig.queueMapper(),
+                             schedulingConfig.vmSelector(),
+                             schedulingConfig.limitChecker());
     }
     
     @Bean
@@ -93,7 +98,7 @@ public class SchedulerConfig {
     @Bean 
     public IAuthorizationManager authorizationManager() throws LoadingFailedException {
         if (properties.getBoolean("useXml")) {
-            return new AuthorizationManagerXml(poolConfig.hostPool());
+            return new AuthorizationManagerXml(poolConfig.hostPool(), poolConfig.datastorePool());
         } else {
             return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());
         }        

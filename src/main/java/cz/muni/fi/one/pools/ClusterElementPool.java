@@ -10,6 +10,8 @@ import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.cluster.Cluster;
 import org.opennebula.client.cluster.ClusterPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents OpenNebula's ClusterPool containing all instances of clusters in the system.
@@ -19,6 +21,8 @@ import org.opennebula.client.cluster.ClusterPool;
  * @author Gabriela Podolnikova
  */
 public class ClusterElementPool implements IClusterPool {
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     private final ClusterPool cp;
     
@@ -35,8 +39,7 @@ public class ClusterElementPool implements IClusterPool {
         List<ClusterElement> clusters = new ArrayList<>();
         OneResponse cpr = cp.info();
         if (cpr.isError()) {
-            //TODO: log it
-            System.out.println(cpr.getErrorMessage());
+            log.error(cpr.getErrorMessage());
         }
         Iterator<Cluster> itr = cp.iterator();
         while (itr.hasNext()) {

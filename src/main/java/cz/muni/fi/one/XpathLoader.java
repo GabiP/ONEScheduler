@@ -59,6 +59,12 @@ public class XpathLoader {
         }
         return list;
     }
+    
+    public static <T extends AbstractNode> T getNode(PoolElement element, Class<T> clazz, String xpathExpr) throws IllegalAccessException, InstantiationException {
+        T node = clazz.newInstance();
+        node.load(element, xpathExpr);
+        return node;
+    }
      
     private static boolean exists(PoolElement element, String xpathExpr) {
         String node = element.xpath(xpathExpr);

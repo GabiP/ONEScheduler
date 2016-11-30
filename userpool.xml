@@ -5,13 +5,34 @@
         <GROUPS>
             <ID>0</ID>
         </GROUPS>
+        <DATASTORE_QUOTA>
+            <DATASTORE>
+                <ID>0</ID>
+                <IMAGES></IMAGES>
+                <IMAGES_USED></IMAGES_USED>
+                <SIZE>1024</SIZE>
+                <SIZE_USED>128</SIZE_USED>
+            </DATASTORE>
+        </DATASTORE_QUOTA>
+        <VM_QUOTA>
+                <CPU>2</CPU>
+                <CPU_USED>0.1</CPU_USED>
+                <MEMORY>1024</MEMORY>
+                <MEMORY_USED>512</MEMORY_USED>
+                <SYSTEM_DISK_SIZE>1024</SYSTEM_DISK_SIZE>
+                <SYSTEM_DISK_SIZE_USED>0</SYSTEM_DISK_SIZE_USED>
+                <VMS>15</VMS>
+                <VMS_USED>2</VMS_USED>
+        </VM_QUOTA>
     </USER>
     <USER>
-        <ID>2</ID>
+        <ID>1</ID>
         <GID>1</GID>
         <GROUPS>
           <ID>1</ID>
           <ID>100</ID>
         </GROUPS>
+        <DATASTORE_QUOTA/>
+        <VM_QUOTA/>
     </USER>
 </USERPOOL>
