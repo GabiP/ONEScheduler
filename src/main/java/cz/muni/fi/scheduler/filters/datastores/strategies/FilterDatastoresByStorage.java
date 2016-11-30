@@ -29,10 +29,11 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
             return false;
         }
         //get the reserved storage for the datastore we are checking
-        Integer reservedStorage = schedulerData.getReservedStorage(ds);
+        
         int sizeValue = vm.getDiskSizes();
         boolean matched = false;
         if (ds.isShared()) {
+            Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (!ds.isMonitored()) {
                 LOG.info("Datastore is not monitored. Cannot be matched.");
                 return false;
@@ -45,6 +46,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
                 matched = testOnDs(sizeValue, reservedStorage, ds.getFree_mb());
             }
         } else {
+            Integer reservedStorage = schedulerData.getReservedStorage(host, ds);
             //test ds capacity on host datastores
             LOG.info("Datastore is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
             matched = testOnDsNode(sizeValue, reservedStorage, host, ds);

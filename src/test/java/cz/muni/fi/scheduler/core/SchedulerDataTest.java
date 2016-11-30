@@ -1,6 +1,10 @@
 package cz.muni.fi.scheduler.core;
 
+import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,5 +58,28 @@ public class SchedulerDataTest {
         assertEquals(Integer.valueOf(1), result.get(host1));
         assertEquals(Integer.valueOf(3), result.get(host2));
         assertEquals(Integer.valueOf(3), result.get(host3));
+    }
+    
+    @Test
+    public void reserveDatastoreNodeStorageTest() {
+        HostElement host = new HostElement();
+        DatastoreNode dsNode = new DatastoreNode();
+        DatastoreElement ds = new DatastoreElement();
+        VmElement vm = new VmElement();
+        
+        List<DiskNode> disks = new ArrayList<>();
+        DiskNode disk1 = new DiskNode();
+        disk1.setSize(100);
+        disks.add(disk1);
+        
+        host.setId(0);
+        ds.setId(0);
+        ds.setShared("NO");
+        dsNode.setId_ds(0);
+        dsNode.setFree_mb(500);
+        vm.setDisks(disks);
+        
+        Map<HostElement, Map<Integer, Integer>> reservedDsNodeStorage = schedulerData.reserveDatastoreNodeStorage(host, ds, vm);
+        System.out.println(reservedDsNodeStorage.get(host));
     }
 }
