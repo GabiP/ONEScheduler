@@ -5,13 +5,18 @@
  */
 package cz.muni.fi.scheduler.fairshare.calculators;
 
+import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.filters.hosts.HostFilter;
+import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
@@ -25,16 +30,20 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     private HostFilter hostFilter;
     private IHostPool hostPool;
     private IDatastorePool dsPool;
+    private IClusterPool clusterPool;
     
     protected List<HostElement> hosts;
-    protected float sharedDsStorage;
+    protected Map<Integer, Integer> clusterHostNumber;
+    protected Map<Integer, Float> clusterStorage;
 
-    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, HostFilter hostFilter) {
+    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter) {
         this.hostFilter = hostFilter;
         this.hostPool = hostPool;     
         this.dsPool = dsPool;           
+        this.clusterPool = clusterPool;           
         hosts = hostPool.getHosts();  
-        sharedDsStorage = getSharedDsStorage();
+        clusterHostNumber = getClusterHostNumber();
+        clusterStorage = getClusterStorage();
     }    
     
     @Override  
@@ -51,15 +60,43 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         return minPenalty;  
     }    
     
-    private float getSharedDsStorage() {
-        int storage = 0;
+    private Map<Integer, Integer> getClusterHostNumber() {
+        Map<Integer, Integer> hostNumber = new HashMap<>();
+        for (ClusterElement cluster : clusterPool.getClusters()) {
+            hostNumber.put(cluster.getId(), cluster.getHosts().size());            
+        }
+        return hostNumber;
+    } 
+    
+    private Map<Integer, Float> getClusterStorage() {
+        Map<Integer, Float> dsStorage = new HashMap<>();
         for (DatastoreElement ds : dsPool.getSystemDs()) {
-            if (ds.isShared() && ds.isMonitored()) {                
-                storage += ds.getTotal_mb();
+            if (ds.isShared() && ds.isMonitored()) {  
+                int dsHosts = 0;
+                for (int cluster : ds.getClusters()) {
+                    dsHosts += clusterHostNumber.get(cluster);
+                }    
+                for (int cluster : ds.getClusters()) {
+                    float dsClusterShare = ((float)ds.getTotal_mb() / dsHosts) * clusterHostNumber.get(cluster);
+                    if (dsStorage.containsKey(cluster)) {
+                        dsStorage.put(cluster, dsStorage.get(cluster) + dsClusterShare);
+                    } else {
+                        dsStorage.put(cluster, dsClusterShare );
+                    }                    
+                }
             }
         }
-        return storage;
+        return dsStorage;
     }    
+    
+    protected float getHostStorageShare(HostElement host) {
+        float hostLocalStorage = 0;
+        for (DatastoreNode ds : host.getDatastores()) {
+            hostLocalStorage += ds.getTotal_mb();
+        }
+        float hostClusterStorageShare = clusterStorage.get(host.getClusterId()) / clusterHostNumber.get(host.getClusterId());
+        return hostLocalStorage + hostClusterStorageShare;
+    }
     
     protected abstract float getHostPenalty(VmElement vm, HostElement host);
 }
