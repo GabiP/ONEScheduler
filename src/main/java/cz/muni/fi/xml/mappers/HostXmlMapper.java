@@ -57,8 +57,10 @@ public class HostXmlMapper {
     
     public static List<PciNode> mapPcis(List<PciNodeXml> pcis) {
         List<PciNode> result = new ArrayList<>();
-        for (PciNodeXml xml : pcis) {
-            result.add(map(xml));
+        if (pcis != null) {
+            for (PciNodeXml xml : pcis) {
+                result.add(map(xml));
+            }
         }
         return result;
     }
