@@ -4,6 +4,8 @@ import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.scheduler.limits.LimitChecker;
 import cz.muni.fi.scheduler.limits.QuotasCheck;
 import cz.muni.fi.scheduler.queues.FairshareMapper;
+import cz.muni.fi.scheduler.queues.FixedNumofQueuesMapper;
+import cz.muni.fi.scheduler.queues.QueueByUser;
 import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.select.QueueByQueue;
 import cz.muni.fi.scheduler.select.RoundRobin;
@@ -29,6 +31,8 @@ public class SchedulingConfig {
     private PropertiesConfig properties;
     
     private static final String FAIRSHARE_MAPPER = "FairshareMapper";
+    private static final String FIXED_NUM_OF_QUEUES = "FixedNumofQueuesMapper";
+    private static final String QUEUE_BY_USER = "QueueByUser";
     
     private static final String QUEUE_BY_QUEUE = "QueueByQueue";   
     private static final String ROUND_ROBIN = "RoundRobin";
@@ -44,6 +48,10 @@ public class SchedulingConfig {
         switch (properties.getString("queueMapper")) {
             case FAIRSHARE_MAPPER:
                 return new FairshareMapper();
+            case FIXED_NUM_OF_QUEUES:
+                return new FixedNumofQueuesMapper(properties.getInt("numberofqueues"));
+            case QUEUE_BY_USER:
+                return new QueueByUser(poolConfig.userPool());
             default:
                 throw new LoadingFailedException("Wrong queue mapper configuration.");
         }

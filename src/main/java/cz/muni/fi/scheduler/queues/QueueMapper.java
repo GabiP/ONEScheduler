@@ -10,6 +10,4 @@ import java.util.List;
 public interface QueueMapper {
 
     List<Queue> mapQueues(List<VmElement> vms);
-    
-    int getNumberOfQueues();
 }

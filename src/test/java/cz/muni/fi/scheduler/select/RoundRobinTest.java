@@ -23,7 +23,7 @@ public class RoundRobinTest {
     @Before
     public void init() {
         roundRobin = new RoundRobin();
-        //queues = QueueFactory.prepareQueues(3, 5);
+        queues = QueueFactory.prepareQueues(3, 5);
     }
     
     @Test

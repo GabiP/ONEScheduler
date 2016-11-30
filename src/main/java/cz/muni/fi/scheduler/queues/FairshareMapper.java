@@ -1,12 +1,8 @@
 package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.setup.PropertiesConfig;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +30,4 @@ public class FairshareMapper implements QueueMapper {
         }
         return output;
     }
-
-    @Override
-    public int getNumberOfQueues() {
-        return numberOfQueues;
-    }
-
 }

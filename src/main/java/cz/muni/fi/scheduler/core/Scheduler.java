@@ -98,7 +98,7 @@ public class Scheduler {
     
     private boolean preferHostFit;
     
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
             IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
@@ -133,7 +133,7 @@ public class Scheduler {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(1);
         if (pendingVms.isEmpty()) {
-            LOG.info("No pendings");
+            log.info("No pendings");
             return null;
         }
         //get list of vms ordered by fairshare
@@ -161,7 +161,7 @@ public class Scheduler {
             suitableHosts = migration.removeCurrentHost(vm, suitableHosts);
             Match match = processVm(vm, suitableHosts);
             if (match != null) {
-                LOG.info("Migrating vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
+                log.info("Migrating vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
                 migrations.add(match);
             }
         }
@@ -177,7 +177,7 @@ public class Scheduler {
             if (match != null) {
                 if (limitChecker.checkLimit(vmSelected, match)) {
                     plan = match.addVm(plan, vmSelected);
-                    LOG.info("Scheduling vm: " + vmSelected.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
+                    log.info("Scheduling vm: " + vmSelected.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
                     limitChecker.getDataInstance().increaseData(vmSelected);
                 }
             }
@@ -189,7 +189,7 @@ public class Scheduler {
         authorizationManager.authorize(vm);
         List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts();
         if (authorizedHosts.isEmpty()) {
-            LOG.info("Empty authorized hosts.");
+            log.info("Empty authorized hosts.");
             return authorizedHosts;
         }
         //filter authorized hosts for vm 
@@ -212,7 +212,7 @@ public class Scheduler {
     private Match processVm(VmElement vm, List<HostElement> hosts) {
         Match match = null;
         if (hosts.isEmpty()) {
-            LOG.info("No suitable hosts.");
+            log.info("No suitable hosts.");
             return match;
         }
         //sort hosts
@@ -277,7 +277,7 @@ public class Scheduler {
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
-        LOG.info("Created match host: " + chosenHost.getId() + " and datastore " + chosenDs.getId());
+        log.info("Created match host: " + chosenHost.getId() + " and datastore " + chosenDs.getId());
         return new Match(chosenHost, chosenDs);
     }
     

@@ -56,10 +56,4 @@ public class FixedNumofQueuesMapper implements QueueMapper {
             log.info("Created queue:" + q);
         }
     }
-
-    @Override
-    public int getNumberOfQueues() {
-        return numberOfQueues;
-    }
-
 }
