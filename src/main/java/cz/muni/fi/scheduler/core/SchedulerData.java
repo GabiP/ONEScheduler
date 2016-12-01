@@ -38,13 +38,21 @@ public class SchedulerData {
     /**
      * This map is used for storing the reserved space on datastores.
      */
-    private Map<DatastoreElement, Integer> reservedStorage;
+    private Map<DatastoreElement, Integer> reservedDsStorage;
+    
+    /**
+     * This map is used for computing the free spaces in datastore nodes found on hosts.
+     * Every time we match a host with a virtual machine the free space on hosts datastores needs to be decreased.
+     * We are storing the free space.
+     */
+    private Map<HostElement, Map<Integer, Integer>> reservedDsNodeStorage;
 
     public SchedulerData() {
         cpuReservation = new HashMap<>();
         memoryReservation = new HashMap<>();
         runningVms = new HashMap<>();
-        reservedStorage = new HashMap<>();
+        reservedDsStorage = new HashMap<>();
+        reservedDsNodeStorage = new HashMap<>();
     }
     
     public Map<HostElement, Float> reserveHostCpuCapacity(HostElement host, VmElement vm) {
@@ -75,13 +83,28 @@ public class SchedulerData {
     }
     
     public Map<DatastoreElement, Integer> reserveDatastoreStorage(DatastoreElement ds, VmElement vm) {
-        if (reservedStorage.containsKey(ds)) {
-            reservedStorage.replace(ds, reservedStorage.get(ds), reservedStorage.get(ds) + vm.getDiskSizes());
+        if (reservedDsStorage.containsKey(ds)) {
+            reservedDsStorage.replace(ds, reservedDsStorage.get(ds), reservedDsStorage.get(ds) + vm.getDiskSizes());
         } else {
-            reservedStorage.put(ds, vm.getDiskSizes());
+            reservedDsStorage.put(ds, vm.getDiskSizes());
         }
-        return reservedStorage;
+        return reservedDsStorage;
     }
+    
+    public Map<HostElement, Map<Integer, Integer>> reserveDatastoreNodeStorage(HostElement host, DatastoreElement ds, VmElement vm) {
+        if (reservedDsNodeStorage.containsKey(host)) {
+            Map<Integer, Integer> hostsNodesReservations = reservedDsNodeStorage.get(host);
+            if (hostsNodesReservations.containsKey(ds.getId())) {
+                hostsNodesReservations.replace(ds.getId(), hostsNodesReservations.get(ds.getId()), hostsNodesReservations.get(ds.getId()) + vm.getDiskSizes());
+            } else {
+                hostsNodesReservations.put(ds.getId(), vm.getDiskSizes());
+            }
+        } else {
+            reservedDsNodeStorage.put(host, new HashMap<>());
+            reservedDsNodeStorage.get(host).put(ds.getId(), vm.getDiskSizes());
+        }
+        return reservedDsNodeStorage;
+    } 
 
     public Integer getReservedMemory(HostElement host) {
         if (memoryReservation.containsKey(host)) {
@@ -105,8 +128,18 @@ public class SchedulerData {
     }
     
     public Integer getReservedStorage(DatastoreElement ds) {
-        if (reservedStorage.containsKey(ds)) {
-            return reservedStorage.get(ds);
+        if (reservedDsStorage.containsKey(ds)) {
+            return reservedDsStorage.get(ds);
+        }
+        return 0;
+    }
+    
+    public Integer getReservedStorage(HostElement host, DatastoreElement ds) {
+        if (reservedDsNodeStorage.containsKey(host)) {
+            Map<Integer, Integer> hostsNodesReservations = reservedDsNodeStorage.get(host);
+            if (hostsNodesReservations.containsKey(ds.getId())) {
+                return hostsNodesReservations.get(ds.getId());
+            }
         }
         return 0;
     }
