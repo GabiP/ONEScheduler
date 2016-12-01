@@ -3,6 +3,7 @@ package cz.muni.fi.result;
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.core.Match;
+import cz.muni.fi.scheduler.resources.ClusterElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.io.File;
@@ -34,12 +35,34 @@ public class XmlResultManager implements IResultManager {
          this.datastorePoolPath = datastorePoolPath;
     }
     
-    public boolean writeResults(List<HostElement> hostPool) {
+    public boolean writeHostPool(List<HostElement> hostPool) {
         XmlMapper xmlMapper = new XmlMapper();
         try {
             xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(hostPoolPath), hostPool);
         } catch (IOException ex) {
-            log.error("HostPool failed to wrtie correctly: " + ex);
+            log.error("HostPool failed to write correctly: " + ex);
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean writeClusterPool(List<ClusterElement> clusterPool) {
+        XmlMapper xmlMapper = new XmlMapper();
+        try {
+            xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(clusterPoolPath), clusterPool);
+        } catch (IOException ex) {
+            log.error("HostPool failed to write correctly: " + ex);
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean writePools(List<ClusterElement> clusterPool) {
+        XmlMapper xmlMapper = new XmlMapper();
+        try {
+            xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(clusterPoolPath), clusterPool);
+        } catch (IOException ex) {
+            log.error("HostPool failed to write correctly: " + ex);
             return false;
         }
         return true;

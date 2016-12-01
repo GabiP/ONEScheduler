@@ -15,7 +15,7 @@ public class QueueFactory {
         List<Queue> queues = new ArrayList<>();
         int indexStart = 0;
         for (int i = 0; i < numOfQueues; i++) {
-            Queue q = new Queue("Q" + i, (float)i, prepareVms(indexStart, numOfVms));
+            Queue q = new Queue("Q" + i, i, prepareVms(indexStart, numOfVms));
             queues.add(q);
             indexStart = indexStart + numOfVms;
          }

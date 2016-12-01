@@ -9,6 +9,7 @@ import cz.muni.fi.authorization.AuthorizationManager;
 import cz.muni.fi.authorization.AuthorizationManagerXml;
 import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.exceptions.LoadingFailedException;
+import cz.muni.fi.one.oned.OnedConf;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
@@ -19,6 +20,8 @@ import cz.muni.fi.scheduler.policies.hosts.LoadAware;
 import cz.muni.fi.scheduler.policies.hosts.Packing;
 import cz.muni.fi.scheduler.policies.hosts.Striping;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +49,8 @@ public class SchedulerConfig {
     
     private static final String DS_PACKING_POLICY = "StoragePacking";  
     private static final String DS_STRIPING_POLICY = "StorageStriping";
+    
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public SchedulerConfig() throws IOException {
         properties = new PropertiesConfig("configuration.properties");
@@ -101,5 +106,11 @@ public class SchedulerConfig {
         } else {
             return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());
         }        
+    }
+    
+    @Bean 
+    public OnedConf onedConf() throws LoadingFailedException { 
+        log.info("Getting oned config");
+        return new OnedConf(poolConfig.client());               
     }
 }
