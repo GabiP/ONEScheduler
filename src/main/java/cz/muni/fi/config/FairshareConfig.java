@@ -8,9 +8,6 @@ package cz.muni.fi.config;
 import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
-import cz.muni.fi.scheduler.fairshare.UserFairShareOrderer;
-import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
-import cz.muni.fi.scheduler.fairshare.UserGroupFairShareOrderer;
 import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.CpuTimeCalculator;
 import cz.muni.fi.scheduler.fairshare.calculators.MaxBasedMpCalculator;
@@ -36,9 +33,6 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
-    private static final String USER_BASED = "userBased";
-    private static final String USER_GROUP_BASED = "userGroupBased";    
-    
     private static final String CPU_TIME = "CpuTime";
     private static final String PROC_EQ = "PE";
     private static final String MAX_MP = "MaxBasedMP";
@@ -46,18 +40,6 @@ public class FairshareConfig {
     
     public FairshareConfig() throws IOException {
         properties = new PropertiesConfig("fairshare.properties");
-    }
-    
-    @Bean 
-    public IFairShareOrderer fairshareOrderer() throws LoadingFailedException {
-        switch (properties.getString("type")) {
-            case USER_BASED:
-                return new UserFairShareOrderer(userPriorityCalculator());  
-            case USER_GROUP_BASED:
-                return new UserGroupFairShareOrderer(userPriorityCalculator(), poolConfig.userPool());  
-            default:    
-                throw new LoadingFailedException("Wrong fairshare type configuration.");
-        }
     }
     
     @Bean 

@@ -4,7 +4,6 @@ import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.IFairShareOrderer;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
 import cz.muni.fi.scheduler.limits.LimitChecker;
@@ -65,12 +64,7 @@ public class Scheduler {
      * The policy to be used for choosing the best ranked datastore available for a virtual machine and a host.
      */
     private IStoragePolicy storagePolicy;
-    
-    /**
-     * The fairshare policy to be used for sorting the virtual machines based on their user's priority.
-     */
-    private IFairShareOrderer fairshare;  
-    
+        
     /**
      * Mapping VMs into queues.
      */
@@ -103,7 +97,7 @@ public class Scheduler {
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
             IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
             SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy,
-            IStoragePolicy storagePolicy, IFairShareOrderer fairshare, int numberOfQueues,
+            IStoragePolicy storagePolicy, int numberOfQueues,
             boolean preferHostFit, QueueMapper queueMapper, VmSelector vmSelector, LimitChecker limitChecker) {
         this.authorizationManager = authorizationManager;
         this.hostPool = hostPool;
@@ -113,7 +107,6 @@ public class Scheduler {
         this.datastoreFilter = datastoreFilter;
         this.placementPolicy = placementPolicy;
         this.storagePolicy = storagePolicy;
-        this.fairshare = fairshare;
         this.numberOfQueues = numberOfQueues;
         this.preferHostFit = preferHostFit;
         this.queueMapper = queueMapper;
@@ -136,10 +129,8 @@ public class Scheduler {
             log.info("No pendings");
             return null;
         }
-        //get list of vms ordered by fairshare
-        List<VmElement> orderedVms = fairshare.orderVms(pendingVms);
         // VM queues construction
-        queues = queueMapper.mapQueues(orderedVms);
+        queues = queueMapper.mapQueues(pendingVms);
         List<Match> processed = processQueues(queues);
         return processed;
     }

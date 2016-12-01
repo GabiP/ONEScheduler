@@ -61,7 +61,6 @@ public class SchedulerConfig {
                              filterConfig.schedulingDsFilter(), 
                              placementPolicy(), 
                              storagePolicy(), 
-                             fairshareConfig.fairshareOrderer(), 
                              properties.getInt("numberofqueues"), 
                              properties.getBoolean("preferHostFit"),
                              schedulingConfig.queueMapper(),
