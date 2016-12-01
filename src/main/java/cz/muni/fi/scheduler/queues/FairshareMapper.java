@@ -24,7 +24,7 @@ public class FairshareMapper implements QueueMapper {
         List<List<VmElement>> listOfVmsLists = ListUtils.partition(vms, numberOfVmsInQueue);
         for (int i = 0; i < numberOfQueues; i++) {
             List<VmElement> vmsPartition  = listOfVmsLists.get(i);
-            Queue q = new Queue("Queue" + i, i, vmsPartition);
+            Queue q = new Queue("Queue" + i, (float)i, vmsPartition);
             log.info("A new queue was created: " + q);
             output.add(q);
         }

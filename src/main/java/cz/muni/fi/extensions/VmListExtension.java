@@ -7,8 +7,10 @@ package cz.muni.fi.extensions;
 
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -45,5 +47,16 @@ public class VmListExtension {
             vmRuntimes.add(vm.getRunTime());
         }
         return vmRuntimes;
+    }
+    
+    public static Map<Integer, List<VmElement>> getUserVms(List<VmElement> vms) {
+        Map<Integer, List<VmElement>> userVms = new HashMap<>();
+        for (VmElement vm : vms) {
+            if (!userVms.containsKey(vm.getUid())) {
+                userVms.put(vm.getUid(), new ArrayList<>());
+            } 
+            userVms.get(vm.getUid()).add(vm);
+        }
+        return userVms;
     }
 }

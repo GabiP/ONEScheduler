@@ -48,13 +48,13 @@ public class RoundRobinTest {
     @Test
     public void selectVmTestEmptyQueues() {
         queues2 = new ArrayList<>();
-        Queue q1 = new Queue("Q1", 1, QueueFactory.prepareVms(0, 5));
+        Queue q1 = new Queue("Q1", 1f, QueueFactory.prepareVms(0, 5));
         queues2.add(q1);
-        Queue q2 = new Queue("Q2", 2, QueueFactory.prepareVms(5, 0));
+        Queue q2 = new Queue("Q2", 2f, QueueFactory.prepareVms(5, 0));
         queues2.add(q2);
-        Queue q3 = new Queue("Q3", 3, QueueFactory.prepareVms(5, 1));
+        Queue q3 = new Queue("Q3", 3f, QueueFactory.prepareVms(5, 1));
         queues2.add(q3);
-        Queue q4 = new Queue("Q4", 4, QueueFactory.prepareVms(7, 2));
+        Queue q4 = new Queue("Q4", 4f, QueueFactory.prepareVms(7, 2));
         queues2.add(q4);
         VmElement selectedVm = roundRobin.selectVm(queues2);
         Integer expectedId = 0;

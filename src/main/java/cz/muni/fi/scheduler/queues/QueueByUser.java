@@ -50,7 +50,7 @@ public class QueueByUser implements QueueMapper {
     private List<Queue> createQueueForUsers(List<UserElement> users) {
         List<Queue> queues = new ArrayList<>();
         for (UserElement user: users) {
-            Integer userPriority = 1;
+            Float userPriority = 1f;
             Queue q = new Queue("User" + user.getId(), userPriority, new ArrayList<>());
             log.info("A new queue was created: " + q);
             queues.add(q);
