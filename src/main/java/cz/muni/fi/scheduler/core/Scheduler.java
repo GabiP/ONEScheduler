@@ -233,7 +233,11 @@ public class Scheduler {
         schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
         schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
         schedulerData.reserveHostRunningVm(match.getHost());
-        schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
+        if (match.getDatastore().isShared()) {
+            schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
+        } else {
+            schedulerData.reserveDatastoreNodeStorage(match.getHost(), match.getDatastore(), vm);
+        }
     }
     
     /**
