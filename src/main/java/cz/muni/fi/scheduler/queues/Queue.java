@@ -11,10 +11,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class Queue {
     
     private String name;
-    private Integer priority;
+    private Float priority;
     private ConcurrentLinkedQueue<VmElement> vmQueue = new ConcurrentLinkedQueue<>();
 
-    public Queue(String name, Integer priority, List<VmElement> vms) {
+    public Queue(String name, Float priority, List<VmElement> vms) {
         this.name = name;
         this.priority = priority;
         vmQueue.addAll(vms);
@@ -45,11 +45,11 @@ public class Queue {
         this.name = name;
     }
 
-    public Integer getPriority() {
+    public Float getPriority() {
         return priority;
     }
 
-    public void setPriority(Integer priority) {
+    public void setPriority(Float priority) {
         this.priority = priority;
     }
 

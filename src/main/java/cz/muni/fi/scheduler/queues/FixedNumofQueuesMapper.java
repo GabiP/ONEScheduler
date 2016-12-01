@@ -45,7 +45,7 @@ public class FixedNumofQueuesMapper implements QueueMapper {
         List<Queue> output = new ArrayList<>();
         for (int i = 0; i< numberOfQueues; i++) {
             List<VmElement> emptyVms  = new ArrayList<>();
-            Queue q = new Queue("Queue" + i, i, emptyVms);
+            Queue q = new Queue("Queue" + i, (float)i, emptyVms);
             output.add(q);
         }
         return output;
