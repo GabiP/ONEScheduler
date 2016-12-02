@@ -66,6 +66,11 @@ public class PropertiesConfig {
         return extractInt(value);
     }
 
+    public float getFloat(String key) {
+        String value = props.getProperty(key);
+        return Float.parseFloat(value);
+    }
+    
     private static int extractInt(String value) {
         int i;
         i = Integer.parseInt(value);

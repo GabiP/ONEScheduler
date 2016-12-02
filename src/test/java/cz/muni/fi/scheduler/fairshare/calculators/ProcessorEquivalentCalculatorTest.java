@@ -9,6 +9,7 @@ import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
+import cz.muni.fi.scheduler.fairshare.penaltycalculators.ProcessorEquivalentCalculator;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;

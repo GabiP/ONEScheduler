@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.setup;
 
+import cz.muni.fi.config.FairshareConfig;
 import cz.muni.fi.scheduler.core.TimeManager;
 import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;

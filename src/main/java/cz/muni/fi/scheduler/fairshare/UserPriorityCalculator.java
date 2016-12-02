@@ -7,7 +7,7 @@ package cz.muni.fi.scheduler.fairshare;
 
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.fairshare.calculators.IVmPenaltyCalculator;
+import cz.muni.fi.scheduler.fairshare.penaltycalculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IVmFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecord;
