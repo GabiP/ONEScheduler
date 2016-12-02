@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
@@ -60,7 +54,9 @@ public class FilterDatastoresByStorageTest {
         dsLocal1.setId(1);
         dsLocal2.setId(2);
         
-        dsShared.setShared("YES");
+        dsShared.setTmMadName("shared");
+        dsLocal1.setTmMadName("ssh");
+        dsLocal2.setTmMadName("ssh");
         
         //setting state to monitored
         dsShared.setState(0);

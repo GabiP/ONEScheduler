@@ -2,10 +2,7 @@ package cz.muni.fi.xml.resources;
 
 import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;
 import cz.muni.fi.xml.resources.nodes.PciNodeXml;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
 import java.util.List;
 
 /**

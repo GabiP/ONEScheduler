@@ -20,5 +20,7 @@ public interface IDatastorePool {
     
     public List<DatastoreElement> getSystemDs();
     
+    public List<DatastoreElement> getImageDs();
+    
     public List<Integer> getDatastoresIds();
 }

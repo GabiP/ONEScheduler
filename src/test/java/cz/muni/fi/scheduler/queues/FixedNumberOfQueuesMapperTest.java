@@ -7,6 +7,8 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -19,17 +21,17 @@ public class FixedNumberOfQueuesMapperTest {
     
     List<VmElement> vms;
     
-    FixedNumofQueuesMapper fixedNumofQueuesMapper;
+    FixedNumOfQueuesMapper fixedNumofQueuesMapper;
     
     @Before
     public void init() {
-        fixedNumofQueuesMapper = new FixedNumofQueuesMapper(NUMBER_OF_QUEUES);
+        fixedNumofQueuesMapper = new FixedNumOfQueuesMapper(NUMBER_OF_QUEUES);
         vms = QueueFactory.prepareVms(0, NUMBER_OF_VMS);
     }
     
     @Test
     public void mapQueuesTest() {
-        fixedNumofQueuesMapper = new FixedNumofQueuesMapper(NUMBER_OF_QUEUES);
+        fixedNumofQueuesMapper = new FixedNumOfQueuesMapper(NUMBER_OF_QUEUES);
         vms = QueueFactory.prepareVms(0, NUMBER_OF_VMS);
         
         List<Queue> queues = fixedNumofQueuesMapper.mapQueues(vms);

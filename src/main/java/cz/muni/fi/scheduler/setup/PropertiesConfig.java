@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.setup;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +16,10 @@ public class PropertiesConfig {
     
     private final Properties props = new Properties();
     
+    private static final String CONFIG_DIRECTORY = "config";
+    
     public PropertiesConfig(String path) throws IOException {
-        InputStream is = new FileInputStream(path);
+        InputStream is = new FileInputStream(CONFIG_DIRECTORY + File.separator + path);
         props.load(is);
         is.close();
     }

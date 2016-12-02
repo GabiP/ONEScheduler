@@ -1,6 +1,7 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
+import cz.muni.fi.one.oned.TmMadConfiguration;
 import cz.muni.fi.one.pools.AclElementPool;
 import cz.muni.fi.one.pools.ClusterElementPool;
 import cz.muni.fi.one.pools.DatastoreElementPool;
@@ -123,8 +124,8 @@ public class PoolConfig {
         try {
             return new Client(properties.getString("secret"), properties.getString("endpoint"));
         } catch (ClientConfigurationException ex) {
-            log.error("ONe Client failed to instatiate!");
+            log.error("ONe Client failed to instatiate! " + ex);
             throw new LoadingFailedException(ex.getMessage(), ex.getCause());
         }
-    }   
+    }
 }

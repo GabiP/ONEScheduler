@@ -70,5 +70,16 @@ public class DatastoreXmlPool implements IDatastorePool {
         }
         return dsIds;
     }
+
+    @Override
+    public List<DatastoreElement> getImageDs() {
+        List<DatastoreElement> systemDs = new ArrayList<>();
+        for (DatastoreElement ds: getDatastores()) {
+            if (ds.getType() == 0) {
+                systemDs.add(ds);
+            }
+        }
+        return systemDs;
+    }
     
 }

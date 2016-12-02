@@ -9,7 +9,6 @@ import cz.muni.fi.authorization.AuthorizationManager;
 import cz.muni.fi.authorization.AuthorizationManagerXml;
 import cz.muni.fi.authorization.IAuthorizationManager;
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.one.oned.OnedConf;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
@@ -106,11 +105,5 @@ public class SchedulerConfig {
         } else {
             return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());
         }        
-    }
-    
-    @Bean 
-    public OnedConf onedConf() throws LoadingFailedException { 
-        log.info("Getting oned config");
-        return new OnedConf(poolConfig.client());               
     }
 }

@@ -9,7 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class maps users to queues without the fairshare calculation.
+ * Each user has the same priority.
+ * 
  * @author Gabriela Podolnikova
  */
 public class QueueByUser implements QueueMapper {
@@ -46,11 +48,10 @@ public class QueueByUser implements QueueMapper {
         return users;
     }
     
-    // Calculate user priority, sort theem by that, so the queues are sorted by the priority.
     private List<Queue> createQueueForUsers(List<UserElement> users) {
         List<Queue> queues = new ArrayList<>();
         for (UserElement user: users) {
-            Float userPriority = 1f;
+            Float userPriority = 1.00f;
             Queue q = new Queue("User" + user.getId(), userPriority, new ArrayList<>());
             log.info("A new queue was created: " + q);
             queues.add(q);

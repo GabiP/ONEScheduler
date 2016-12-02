@@ -1,7 +1,10 @@
 package cz.muni.fi.scheduler.resources;
 
+import cz.muni.fi.one.oned.TmMadConfiguration;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class represents a Datastore.
@@ -28,13 +31,7 @@ public class DatastoreElement {
     //0 - for monitoring
     private Integer state;
     
-    /**
-     * We check if shared equals "YES":
-     * Not equal: the total/used/free_mb atributes are provided.
-     * Equal: OpenNebula does not know the capacity of this datastore.
-     *        The capacity information can be found only in HostElement -> DatastoreNode
-     */
-    private String shared;
+    private String tmMadName;
     
     private Integer owner_u;
     private Integer owner_m;
@@ -53,9 +50,15 @@ public class DatastoreElement {
     private Integer total_mb;
     private Integer free_mb;
     private Integer used_mb;    
-        
+    
     public Boolean isShared() {
-        return ("YES".equals(this.shared));
+        String shared = TmMadConfiguration.getSharedInfo(tmMadName);
+        return "YES".equals(shared);
+    }
+    
+    public Boolean hasCloneTargetSelf() {
+        String cloneTarget = TmMadConfiguration.getSharedInfo(tmMadName);
+        return "SELF".equals(cloneTarget);
     }
     
     public Boolean isMonitored() {
@@ -372,16 +375,16 @@ public class DatastoreElement {
     }
 
     /**
-     * @return the shared
+     * @return the tmMadName
      */
-    public String getShared() {
-        return shared;
+    public String getTmMadName() {
+        return tmMadName;
     }
 
     /**
-     * @param shared the shared to set
+     * @param tmMadName the tmMadName to set
      */
-    public void setShared(String shared) {
-        this.shared = shared;
+    public void setTmMadName(String tmMadName) {
+        this.tmMadName = tmMadName;
     }
 }

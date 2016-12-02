@@ -29,8 +29,8 @@ public class DatastoreXml {
     @JacksonXmlProperty(localName = "STATE")
     private Integer state;
     
-    @JacksonXmlProperty(localName = "SHARED")
-    private String shared;
+    @JacksonXmlProperty(localName = "TM_MAD")
+    private String tmMadName;
     
     //in node permissions
     @JacksonXmlProperty(localName = "")
@@ -236,16 +236,16 @@ public class DatastoreXml {
     }
 
     /**
-     * @return the shared
+     * @return the tmMadName
      */
-    public String getShared() {
-        return shared;
+    public String getTmMadName() {
+        return tmMadName;
     }
 
     /**
-     * @param shared the shared to set
+     * @param tmMadName the tmMadName to set
      */
-    public void setShared(String shared) {
-        this.shared = shared;
+    public void setTmMadName(String tmMadName) {
+        this.tmMadName = tmMadName;
     }
 }

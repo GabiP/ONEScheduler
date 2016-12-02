@@ -1,20 +1,18 @@
 package cz.muni.fi.result;
 
-import com.fasterxml.jackson.databind.PropertyName;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.core.Match;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class stores the results from scheduling to the original xml files.
+ * This class is meant to store the results after each scheduling cycle.
+ * The paths to the XML files is provided.
+ * 
+ * The plan should be parsed and the XML files should be updated.
+ * This is the place were the simulation mode should be implemented.
+ * 
  * @author Gabriela Podolnikova
  */
 public class XmlResultManager implements IResultManager {
@@ -34,47 +32,16 @@ public class XmlResultManager implements IResultManager {
          this.vmPoolPath = vmPoolPath;
          this.datastorePoolPath = datastorePoolPath;
     }
-    
-    public boolean writeHostPool(List<HostElement> hostPool) {
-        XmlMapper xmlMapper = new XmlMapper();
-        try {
-            xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(hostPoolPath), hostPool);
-        } catch (IOException ex) {
-            log.error("HostPool failed to write correctly: " + ex);
-            return false;
-        }
-        return true;
-    }
-    
-    public boolean writeClusterPool(List<ClusterElement> clusterPool) {
-        XmlMapper xmlMapper = new XmlMapper();
-        try {
-            xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(clusterPoolPath), clusterPool);
-        } catch (IOException ex) {
-            log.error("HostPool failed to write correctly: " + ex);
-            return false;
-        }
-        return true;
-    }
-    
-    public boolean writePools(List<ClusterElement> clusterPool) {
-        XmlMapper xmlMapper = new XmlMapper();
-        try {
-            xmlMapper.writer().withRootName(PropertyName.construct("HOSTPOOL")).writeValue(new File(clusterPoolPath), clusterPool);
-        } catch (IOException ex) {
-            log.error("HostPool failed to write correctly: " + ex);
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public List<VmElement> deployPlan(List<Match> plan) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log.info("Simulator not available.");
+        return new ArrayList<>();
     }
 
     @Override
     public List<VmElement> migrate(List<Match> migrations) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log.info("Simulator not available.");
+        return new ArrayList<>();
     }
 }

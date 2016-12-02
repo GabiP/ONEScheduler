@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
+import org.mockito.Mock;
+import static org.mockito.Mockito.when;
 
 /**
  *
@@ -31,6 +33,9 @@ public class SchedulerDataTest {
     HostElement host1 = new HostElement();
     HostElement host2 = new HostElement();
     HostElement host3 = new HostElement();
+    
+    @Mock
+    DatastoreElement ds;
 
     @Before
     public void init() {
@@ -64,7 +69,6 @@ public class SchedulerDataTest {
     public void reserveDatastoreNodeStorageTest() {
         HostElement host = new HostElement();
         DatastoreNode dsNode = new DatastoreNode();
-        DatastoreElement ds = new DatastoreElement();
         VmElement vm = new VmElement();
         
         List<DiskNode> disks = new ArrayList<>();
@@ -73,8 +77,8 @@ public class SchedulerDataTest {
         disks.add(disk1);
         
         host.setId(0);
-        ds.setId(0);
-        ds.setShared("NO");
+        
+        when(ds.getId()).thenReturn(0);
         dsNode.setId_ds(0);
         dsNode.setFree_mb(500);
         vm.setDisks(disks);

@@ -13,7 +13,7 @@
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
-        <SHARED>YES</SHARED>
+        <TM_MAD>ssh</TM_MAD>
     </DATASTORE>
     <DATASTORE>
         <ID>1</ID>
@@ -28,7 +28,7 @@
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
-        <SHARED>YES</SHARED>
+        <TM_MAD>ssh</TM_MAD>
     </DATASTORE>
     <DATASTORE>
         <ID>2</ID>
@@ -43,6 +43,6 @@
         <TOTAL_MB>10079</TOTAL_MB>
         <FREE_MB>7461</FREE_MB>
         <USED_MB>2107</USED_MB>
-        <SHARED>YES</SHARED>
+        <TM_MAD>ssh</TM_MAD>
     </DATASTORE>
 </DATASTOREPOOL>

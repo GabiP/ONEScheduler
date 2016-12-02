@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.policies.datastores;
 
 import cz.muni.fi.scheduler.core.RankPair;
@@ -52,6 +46,9 @@ public class StorageStripingTest {
         ds1 = new DatastoreElement();
         ds2 = new DatastoreElement();
         ds3 = new DatastoreElement();
+        ds1.setTmMadName("ssh");
+        ds2.setTmMadName("shared");
+        ds3.setTmMadName("shared");
         dsNode1 = new DatastoreNode();
         host = new HostElement();
         policy = new StorageStriping();
@@ -64,8 +61,6 @@ public class StorageStripingTest {
     
     @Test
     public void testSelect() {               
-        ds2.setShared("YES");
-        ds3.setShared("YES");
         dsNode1.setFree_mb(100);
         ds2.setFree_mb(300);
         ds3.setFree_mb(100);
@@ -82,13 +77,12 @@ public class StorageStripingTest {
         when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
 
-        assertEquals(rankPair.getDs(), ds2);
+        assertEquals(ds2, rankPair.getDs());
     }
     
     @Test
-    public void testSelectWhenLessHasNotSharedDs() {               
-        ds2.setShared("NO");
-        ds3.setShared("TES");
+    public void testSelectWhenLessHasNotSharedDs() {    
+        ds2.setTmMadName("ssh");
         dsNode1.setFree_mb(100);
         ds2.setFree_mb(300);
         ds3.setFree_mb(100);
@@ -107,6 +101,6 @@ public class StorageStripingTest {
         
         //more free space has ds2, but it is not visible for host, so cannot make pair
         //so the more free space has ds1
-        assertEquals(rankPair.getDs(), ds1);
+        assertEquals(ds1, rankPair.getDs());
     }
 }

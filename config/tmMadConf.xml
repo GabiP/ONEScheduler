@@ -1,0 +1,63 @@
+<TM_MAD_CONFIGURATION>
+    <TM_MAD_CONF>
+        <NAME>dummy</NAME>
+        <CLONE_TARGET>SYSTEM</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>lvm</NAME>
+        <CLONE_TARGET>SELF</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>shared</NAME>
+        <CLONE_TARGET>SYSTEM</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>fs_lvm</NAME>
+        <CLONE_TARGET>SYSTEM</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>qcow2</NAME>
+        <CLONE_TARGET>SYSTEM</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>ssh</NAME>
+        <CLONE_TARGET>SYSTEM</CLONE_TARGET>
+        <SHARED>NO</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>ceph</NAME>
+        <CLONE_TARGET>SELF</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>iscsi_libvirt</NAME>
+        <CLONE_TARGET>SELF</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>dev</NAME>
+        <CLONE_TARGET>NONE</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+
+    <TM_MAD_CONF>
+        <NAME>vcenter</NAME>
+        <CLONE_TARGET>NONE</CLONE_TARGET>
+        <SHARED>YES</SHARED>
+    </TM_MAD_CONF>
+</TM_MAD_CONFIGURATION>
+
+

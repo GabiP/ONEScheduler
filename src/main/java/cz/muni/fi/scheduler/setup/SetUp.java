@@ -5,11 +5,13 @@ import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.config.RecordManagerConfig;
 import cz.muni.fi.config.SchedulerConfig;
-import cz.muni.fi.one.oned.OnedConf;
+import cz.muni.fi.one.oned.TmMadList;
+import cz.muni.fi.result.IResultManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -36,14 +38,17 @@ public class SetUp {
     private static int cycleinterval;
     private static boolean useXml;
     
-    protected static final Logger LOG = LoggerFactory.getLogger(SetUp.class);
+    public static final String DEFAULT_FILE_NAME = "configuration.properties";
+    public static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
+    
+    protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
     
     public static void main(String[] args) throws InterruptedException, ClientConfigurationException {
         try {
-            configuration = new PropertiesConfig("configuration.properties");
-            fairshareConfig = new PropertiesConfig("fairshare.properties");
+            configuration = new PropertiesConfig(DEFAULT_FILE_NAME);
+            fairshareConfig = new PropertiesConfig(DEFAULT_FILE_NAME_FAIRSHARE);
         } catch (IOException e) {
-            LOG.error("Could not load configuration file!" + e);
+            log.error("Could not load configuration file!" + e);
             return;
         }
         
@@ -55,34 +60,31 @@ public class SetUp {
         } 
                 
         while (true) {
-            LOG.info("Starting scheduling cycle.");     
+            log.info("Starting scheduling cycle.");     
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
-          
-            OnedConf oneConf = context.getBean(OnedConf.class);
-            oneConf.getTmMad();
             
             saveSchedulingTime();
             checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
             Scheduler scheduler = context.getBean(Scheduler.class);
-            //IResultManager resultManager = context.getBean(IResultManager.class);
+            IResultManager resultManager = context.getBean(IResultManager.class);
             
             //Plan migrations
             List<Match> migrations = scheduler.migrate();
             printPlan(migrations);
             //migrate
-            //List<VmElement> failedMigrations = resultManager.migrate(migrations);
-            //printFailedVms(failedMigrations);
+            List<VmElement> failedMigrations = resultManager.migrate(migrations);
+            printFailedVms(failedMigrations);
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();
             printPlan(plan);
             
             //deploy
-            //List<VmElement> failedVms = resultManager.deployPlan(plan);
-            //printFailedVms(failedVms);
+            List<VmElement> failedVms = resultManager.deployPlan(plan);
+            printFailedVms(failedVms);
             
-            LOG.info("Another cycle will start in " + cycleinterval + "seconds.");
+            log.info("Another cycle will start in " + cycleinterval + "seconds.");
             TimeUnit.SECONDS.sleep(cycleinterval);
         }
     }
@@ -115,7 +117,7 @@ public class SetUp {
     
     private static void printPlan(List<Match> plan) {
         if (plan == null) {
-            LOG.info("No schedule.");
+            log.info("No schedule.");
             return;
         }
         System.out.println("Schedule:");

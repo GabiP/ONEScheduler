@@ -58,9 +58,10 @@ public class StoragePackingTest {
     }
     
     @Test
-    public void testSelect() {               
-        ds2.setShared("YES");
-        ds3.setShared("YES");
+    public void testSelect() {
+        ds1.setTmMadName("ssh");
+        ds2.setTmMadName("shared");
+        ds3.setTmMadName("shared");
         dsNode1.setFree_mb(100);
         ds2.setFree_mb(300);
         ds3.setFree_mb(100);
@@ -77,13 +78,14 @@ public class StoragePackingTest {
         when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
 
-        assertEquals(rankPair.getDs(), ds3);
+        assertEquals(ds3, rankPair.getDs());
     }
     
     @Test
-    public void testSelectWhenLessHasNotSharedDs() {               
-        ds2.setShared("YES");
-        ds3.setShared("NO");
+    public void testSelectWhenLessHasNotSharedDs() {
+        ds1.setTmMadName("ssh");
+        ds2.setTmMadName("shared");
+        ds3.setTmMadName("ssh");
         dsNode1.setFree_mb(100);
         ds2.setFree_mb(300);
         ds3.setFree_mb(100);
@@ -102,7 +104,7 @@ public class StoragePackingTest {
         
         //less free space has ds3, but it is not visible for host, so cannot make pair
         //so the less free space has ds1
-        assertEquals(rankPair.getDs(), ds1);
+        assertEquals(ds1, rankPair.getDs());
     }
     
 }
