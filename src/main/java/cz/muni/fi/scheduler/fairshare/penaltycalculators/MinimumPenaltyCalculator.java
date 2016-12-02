@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.fairshare.calculators;
+package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
@@ -14,6 +14,7 @@ import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,17 +31,20 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     private HostFilter hostFilter;
     private IHostPool hostPool;
     private IDatastorePool dsPool;
-    private IClusterPool clusterPool;
+    private IClusterPool clusterPool;    
+    
+    protected PropertiesConfig fairshareConfig;
     
     protected List<HostElement> hosts;
     protected Map<Integer, Integer> clusterHostNumber;
     protected Map<Integer, Float> clusterStorage;
 
-    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter) {
+    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, PropertiesConfig fairshareConfig) {
         this.hostFilter = hostFilter;
         this.hostPool = hostPool;     
         this.dsPool = dsPool;           
-        this.clusterPool = clusterPool;           
+        this.clusterPool = clusterPool;  
+        this.fairshareConfig = fairshareConfig;
         hosts = hostPool.getHosts();  
         clusterHostNumber = getClusterHostNumber();
         clusterStorage = getClusterStorage();

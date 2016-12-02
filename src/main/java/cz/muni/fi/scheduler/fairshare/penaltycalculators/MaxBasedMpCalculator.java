@@ -3,14 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.fairshare.calculators;
+package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 
+import cz.muni.fi.config.FairshareConfig;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.filters.hosts.HostFilter;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
@@ -21,17 +23,17 @@ import cz.muni.fi.scheduler.resources.VmElement;
  */
 public class MaxBasedMpCalculator extends MinimumPenaltyCalculator { 
 
-    public MaxBasedMpCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter) {
-        super(hostPool, dsPool, clusterPool, hostFilter);
+    public MaxBasedMpCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, PropertiesConfig fairshareConfig) {
+        super(hostPool, dsPool, clusterPool, hostFilter, fairshareConfig);
     }        
     
     @Override
     protected float getHostPenalty(VmElement vm, HostElement host) {
         
         float maxResource = Math.max(Math.max(
-                                vm.getCpu()/host.getMax_cpu(), 
-                                ((float)vm.getMemory())/host.getMax_mem()),
-                                ((float)vm.getDiskSizes())/getHostStorageShare(host));
+                                (vm.getCpu()/host.getMax_cpu()) * fairshareConfig.getFloat("cpuWeight"), 
+                                ((float)vm.getMemory()/host.getMax_mem()) * fairshareConfig.getFloat("ramWeight")),
+                                ((float)vm.getDiskSizes()/getHostStorageShare(host)) * fairshareConfig.getFloat("hddWeight"));
         return maxResource * host.getMax_cpu();
     }  
 }

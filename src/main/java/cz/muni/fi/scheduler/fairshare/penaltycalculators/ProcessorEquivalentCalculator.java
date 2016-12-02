@@ -3,13 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.fairshare.calculators;
+package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.DatastoreElement;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.setup.PropertiesConfig;
 
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
@@ -19,6 +20,8 @@ import cz.muni.fi.scheduler.resources.VmElement;
  */
 public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     
+    protected PropertiesConfig fairshareConfig;
+    
     private IHostPool hostPool;  
     private IDatastorePool dsPool;  
     
@@ -26,8 +29,10 @@ public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     private Integer availableMemory;
     private Integer availableStorageCapacity;
 
-    public ProcessorEquivalentCalculator(IHostPool hostPool, IDatastorePool dsPool) {        
+    public ProcessorEquivalentCalculator(IHostPool hostPool, IDatastorePool dsPool, PropertiesConfig fairshareConfig) {        
         this.hostPool = hostPool;
+        this.dsPool = dsPool;
+        this.fairshareConfig = fairshareConfig;
         availableCpu = getAvailableCpu();
         availableMemory = getAvailableMemory();
         availableStorageCapacity = getAvailableStorageCapacity();
@@ -36,9 +41,9 @@ public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     @Override
     public float getPenalty(VmElement vm) {
         float maxResource = Math.max(Math.max(
-                                vm.getCpu()/availableCpu, 
-                                ((float)vm.getMemory())/availableMemory),
-                                ((float)vm.getDiskSizes())/availableStorageCapacity);
+                                (vm.getCpu()/availableCpu) * fairshareConfig.getFloat("cpuWeight"), 
+                                ((float)vm.getMemory()/availableMemory) * fairshareConfig.getFloat("ramWeight")),
+                                ((float)vm.getDiskSizes()/availableStorageCapacity) * fairshareConfig.getFloat("hddWeight"));
         return maxResource * availableCpu;
     }
 

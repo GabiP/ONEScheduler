@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.setup;
 
+import cz.muni.fi.config.FairshareConfig;
 import cz.muni.fi.scheduler.core.TimeManager;
 import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;
@@ -41,7 +42,7 @@ public class SetUp {
     public static void main(String[] args) throws InterruptedException, ClientConfigurationException {
         try {
             configuration = new PropertiesConfig("configuration.properties");
-            fairshareConfig = new PropertiesConfig("fairshare.properties");
+            fairshareConfig = new PropertiesConfig(FairshareConfig.getConfigPath());
         } catch (IOException e) {
             LOG.error("Could not load configuration file!" + e);
             return;
