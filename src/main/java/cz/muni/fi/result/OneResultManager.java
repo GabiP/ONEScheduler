@@ -25,6 +25,15 @@ public class OneResultManager implements IResultManager {
         this.oneVmPool = oneVmPool;
     }
     
+    /**
+     * Deploys the pending VMs.
+     * Deploy parameters:
+     *  hostId - The host id (hid) of the target host where the VM will be instantiated.
+     *  enforce - If it is set to true, the host capacity will be checked, and the deployment will fail if the host is overcommited. Defaults to false
+     *  dsId - The System Datastore where to deploy the VM. To use the default, set it to -1
+     * @param plan the list of matched Host-Ds-VMs
+     * @return VMs that were not deployed due to some error (logged).
+     */
     @Override
     public List<VmElement> deployPlan(List<Match> plan) {
         List<VmElement> failedVms = new ArrayList<>();
@@ -44,6 +53,16 @@ public class OneResultManager implements IResultManager {
         return failedVms;
     }
 
+    /**
+     * Migrating List of virtual machines with ersched flag.
+     * Migrate parameters:
+     *  hostId - The target host id (hid) where we want to migrate the vm.
+     *  live - If true we are indicating that we want live migration, otherwise false.
+     *  enforce - If it is set to true, the host capacity will be checked, and the deployment will fail if the host is overcommited. Defaults to false
+     *  ds_id - The System Datastore where to migrate the VM. To use the current one, set it to -1
+     * @param migrations the list of matched Host-Ds-VMs
+     * @return VMs that were not migrations due to some error (logged).
+     */
     @Override
     public List<VmElement> migrate(List<Match> migrations) {
         List<VmElement> failedVms = new ArrayList<>();

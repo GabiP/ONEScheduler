@@ -6,7 +6,7 @@ import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.config.RecordManagerConfig;
 import cz.muni.fi.config.SchedulerConfig;
-import cz.muni.fi.result.IResultManager;
+import cz.muni.fi.one.oned.OnedConf;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
@@ -60,6 +60,9 @@ public class SetUp {
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
           
+            OnedConf oneConf = context.getBean(OnedConf.class);
+            oneConf.getTmMad();
+            
             saveSchedulingTime();
             checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
             Scheduler scheduler = context.getBean(Scheduler.class);

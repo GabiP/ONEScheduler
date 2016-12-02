@@ -43,8 +43,8 @@ public class HostMapper {
         result.setUsed_mem(XpathLoader.getInt(host, "/HOST/HOST_SHARE/USED_MEM")/1024);
         result.setUsed_cpu(XpathLoader.getInt(host, "/HOST/HOST_SHARE/USED_CPU")/100);
         result.setRunningVms(XpathLoader.getInt(host, "/HOST/HOST_SHARE/RUNNING_VMS"));
-        result.setReservedCpu(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_CPU")/100);
-        result.setReservedMemory(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_MEM")/1024);
+        result.setReservedCpu(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_CPU"));
+        result.setReservedMemory(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_MEM"));
         result.setVms(XpathLoader.getIntList(host, "/HOST/VMS/ID"));
         
         try { 

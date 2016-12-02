@@ -1,3 +1,0 @@
-#User priorities
-#Fri Nov 25 14:02:29 CET 2016
-lastDecay=1480078949613
