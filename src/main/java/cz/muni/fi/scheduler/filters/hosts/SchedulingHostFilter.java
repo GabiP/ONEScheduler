@@ -9,7 +9,6 @@ package cz.muni.fi.scheduler.filters.hosts;
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
 import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.resources.HostElement;
 import cz.muni.fi.scheduler.resources.VmElement;
 import java.util.ArrayList;
@@ -36,8 +35,9 @@ public class SchedulingHostFilter {
     /**
      * Filters hosts that are authorized for the specified vm.
      * Calls the filters for each host.
-     * @param authorizedHosts the hosts to be tested.
+     * @param hosts Hosts to be filtered
      * @param vm the virtual machine to be tested
+     * @param schedulerData cached data
      * @return the list of filtered hosts
      */
     public List<HostElement> getFilteredHosts(List<HostElement> hosts, VmElement vm, SchedulerData schedulerData) {
@@ -53,9 +53,9 @@ public class SchedulingHostFilter {
     
     /**
      * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
-     * @param filters filters to be used
      * @param h the host to be tested
      * @param vm the virtual machine to be tested
+     * @param schedulerData ached data
      * @return true if the host and vm match, false othewise
      */
     public boolean isSuitableHost(HostElement h, VmElement vm, SchedulerData schedulerData) {

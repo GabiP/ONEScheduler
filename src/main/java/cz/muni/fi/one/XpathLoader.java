@@ -70,4 +70,18 @@ public class XpathLoader {
         String node = element.xpath(xpathExpr);
         return !node.equals("");
     }
+    
+    public static Integer getIntOrZero(PoolElement element, String xpathExpr) {
+        if (exists(element, xpathExpr)) {
+            return Integer.parseInt(element.xpath(xpathExpr));            
+        }
+        return 0;
+    }  
+    
+    public static Float getFloatOrZero(PoolElement element, String xpathExpr) {
+        if (exists(element, xpathExpr)) {
+            return Float.parseFloat(element.xpath(xpathExpr));          
+        }
+        return 0.00f;
+    }
 }

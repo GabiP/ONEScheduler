@@ -1,10 +1,8 @@
 package cz.muni.fi.scheduler.resources;
 
 import cz.muni.fi.one.oned.TmMadConfiguration;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * This class represents a Datastore.
@@ -57,7 +55,12 @@ public class DatastoreElement {
     }
     
     public Boolean hasCloneTargetSelf() {
-        String cloneTarget = TmMadConfiguration.getSharedInfo(tmMadName);
+        String cloneTarget = TmMadConfiguration.getCloneTargetInfo(tmMadName);
+        return "SELF".equals(cloneTarget);
+    }
+    
+    public Boolean hasLnTargetSelf() {
+        String cloneTarget = TmMadConfiguration.getLnTargetInfo(tmMadName);
         return "SELF".equals(cloneTarget);
     }
     
@@ -67,6 +70,10 @@ public class DatastoreElement {
     
     public Boolean isSystem() {
         return (Objects.equals(1, this.type));
+    }
+    
+    public Boolean isImage() {
+        return (Objects.equals(0, this.type));
     }
     
     /**

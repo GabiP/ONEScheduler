@@ -13,9 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import static org.junit.Assert.assertEquals;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -74,6 +74,8 @@ public class SchedulerDataTest {
         List<DiskNode> disks = new ArrayList<>();
         DiskNode disk1 = new DiskNode();
         disk1.setSize(100);
+        disk1.setClone("YES");
+        disk1.setTmMadName("ssh");
         disks.add(disk1);
         
         host.setId(0);
@@ -83,7 +85,7 @@ public class SchedulerDataTest {
         dsNode.setFree_mb(500);
         vm.setDisks(disks);
         
-        Map<HostElement, Map<Integer, Integer>> reservedDsNodeStorage = schedulerData.reserveDatastoreNodeStorage(host, ds, vm);
+        Map<HostElement, Map<Integer, Integer>> reservedDsNodeStorage = schedulerData.reserveDatastoreNodeStorage(host, ds, vm.getCopyToSystemDiskSize());
         System.out.println(reservedDsNodeStorage.get(host));
     }
 }

@@ -1,18 +1,15 @@
 package cz.muni.fi.scheduler.setup;
 
-import cz.muni.fi.config.FairshareConfig;
 import cz.muni.fi.scheduler.core.TimeManager;
 import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.config.RecordManagerConfig;
 import cz.muni.fi.config.SchedulerConfig;
-import cz.muni.fi.one.oned.TmMadList;
 import cz.muni.fi.result.IResultManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.resources.VmElement;
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;

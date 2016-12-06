@@ -15,6 +15,12 @@ public class DiskNodeXml {
     
     @JacksonXmlProperty(localName = "SIZE")
     private int size;
+    
+    @JacksonXmlProperty(localName = "TM_MAD")
+    private String tmMadName;
+    
+    @JacksonXmlProperty(localName = "CLONE")
+    private String clone;
 
     public int getSize() {
         return size;
@@ -30,6 +36,22 @@ public class DiskNodeXml {
 
     public void setDatastore_id(Integer datastore_id) {
         this.datastore_id = datastore_id;
+    }
+
+    public String getTmMadName() {
+        return tmMadName;
+    }
+
+    public void setTmMadName(String tmMadName) {
+        this.tmMadName = tmMadName;
+    }
+
+    public String getClone() {
+        return clone;
+    }
+
+    public void setClone(String clone) {
+        this.clone = clone;
     }
 
     @Override

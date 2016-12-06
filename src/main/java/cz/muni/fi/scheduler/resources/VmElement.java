@@ -146,6 +146,38 @@ public class VmElement {
         return sizeValue;
     }
     
+    public int getFileDiskSizes() {
+        int sizeValue = 0;
+        for (DiskNode disk : disks) {
+            //If disk doesn not have datastore id,
+            //it means that it is a volatile disk
+            if (disk.getDatastore_id() == null) {
+                 sizeValue += disk.getSize();
+            }
+        }
+        return sizeValue;
+    }
+    
+    public int getCopyToSystemDiskSize() {
+        int sizeValue = 0;
+        for (DiskNode disk : disks) {
+            if (disk.copyToSystem()) {
+                 sizeValue += disk.getSize();
+            }
+        }
+        return sizeValue;
+    }
+    
+    public List<DiskNode> getDisksWithSelfTarget() {
+        List<DiskNode> result = new ArrayList<>();
+        for(DiskNode disk: disks) {
+            if (disk.copyToImage()) {
+                result.add(disk);
+            }
+        } 
+        return result;
+    }
+    
     public Boolean isResched() {
         return (Objects.equals(1, this.resched));
     }   
@@ -266,7 +298,7 @@ public class VmElement {
     public String toString() {
         return "VM{" +
                 "id='" + getVmId() + '\'' +
-                /*", name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 ", state=" + state +
                 ", lcm_state='" + lcm_state + '\'' +
                 ", cpu=" + getCpu() + '\'' +
@@ -278,7 +310,7 @@ public class VmElement {
                 ", pcis=" + pcis + '\'' +
                 ", disks=" + disks + '\'' +
                 ", histories=" + histories + '\'' +
-                ", nics=" + nics + '\'' +*/
+                ", nics=" + nics + '\'' +
                 '}';
     }
 

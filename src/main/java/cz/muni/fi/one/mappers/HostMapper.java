@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
@@ -43,8 +38,8 @@ public class HostMapper {
         result.setUsed_mem(XpathLoader.getInt(host, "/HOST/HOST_SHARE/USED_MEM")/1024);
         result.setUsed_cpu(XpathLoader.getInt(host, "/HOST/HOST_SHARE/USED_CPU")/100);
         result.setRunningVms(XpathLoader.getInt(host, "/HOST/HOST_SHARE/RUNNING_VMS"));
-        result.setReservedCpu(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_CPU"));
-        result.setReservedMemory(XpathLoader.getInt(host, "/HOST/TEMPLATE/RESERVED_MEM"));
+        result.setReservedCpu(XpathLoader.getFloatOrZero(host, "/HOST/TEMPLATE/RESERVED_CPU")/100);
+        result.setReservedMemory(XpathLoader.getIntOrZero(host, "/HOST/TEMPLATE/RESERVED_MEM")/1024);
         result.setVms(XpathLoader.getIntList(host, "/HOST/VMS/ID"));
         
         try { 

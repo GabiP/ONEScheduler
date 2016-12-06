@@ -62,7 +62,7 @@ public class HostXml {
     private Integer runningVms;
     
     @JacksonXmlProperty(localName = "RESERVED_CPU")
-    private Integer reservedCpu;
+    private Float reservedCpu;
     
     @JacksonXmlProperty(localName = "RESERVED_MEMORY")
     private Integer reservedMemory;
@@ -309,14 +309,14 @@ public class HostXml {
     /**
      * @return the reservedCpu
      */
-    public Integer getReservedCpu() {
+    public Float getReservedCpu() {
         return reservedCpu;
     }
 
     /**
      * @param reservedCpu the reservedCpu to set
      */
-    public void setReservedCpu(Integer reservedCpu) {
+    public void setReservedCpu(Float reservedCpu) {
         this.reservedCpu = reservedCpu;
     }
 

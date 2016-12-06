@@ -82,26 +82,26 @@ public class SchedulerData {
         return runningVms;
     }
     
-    public Map<DatastoreElement, Integer> reserveDatastoreStorage(DatastoreElement ds, VmElement vm) {
+    public Map<DatastoreElement, Integer> reserveDatastoreStorage(DatastoreElement ds, int size) {
         if (reservedDsStorage.containsKey(ds)) {
-            reservedDsStorage.replace(ds, reservedDsStorage.get(ds), reservedDsStorage.get(ds) + vm.getDiskSizes());
+            reservedDsStorage.replace(ds, reservedDsStorage.get(ds), reservedDsStorage.get(ds) + size);
         } else {
-            reservedDsStorage.put(ds, vm.getDiskSizes());
+            reservedDsStorage.put(ds, size);
         }
         return reservedDsStorage;
     }
     
-    public Map<HostElement, Map<Integer, Integer>> reserveDatastoreNodeStorage(HostElement host, DatastoreElement ds, VmElement vm) {
+    public Map<HostElement, Map<Integer, Integer>> reserveDatastoreNodeStorage(HostElement host, DatastoreElement ds, int size) {
         if (reservedDsNodeStorage.containsKey(host)) {
             Map<Integer, Integer> hostsNodesReservations = reservedDsNodeStorage.get(host);
             if (hostsNodesReservations.containsKey(ds.getId())) {
-                hostsNodesReservations.replace(ds.getId(), hostsNodesReservations.get(ds.getId()), hostsNodesReservations.get(ds.getId()) + vm.getDiskSizes());
+                hostsNodesReservations.replace(ds.getId(), hostsNodesReservations.get(ds.getId()), hostsNodesReservations.get(ds.getId()) + size);
             } else {
-                hostsNodesReservations.put(ds.getId(), vm.getDiskSizes());
+                hostsNodesReservations.put(ds.getId(), size);
             }
         } else {
             reservedDsNodeStorage.put(host, new HashMap<>());
-            reservedDsNodeStorage.get(host).put(ds.getId(), vm.getDiskSizes());
+            reservedDsNodeStorage.get(host).put(ds.getId(), size);
         }
         return reservedDsNodeStorage;
     } 

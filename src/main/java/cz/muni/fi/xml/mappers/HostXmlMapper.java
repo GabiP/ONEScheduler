@@ -47,8 +47,16 @@ public class HostXmlMapper {
         h.setUsed_mem(host.getUsed_mem()/1024);
         h.setUsed_cpu(host.getUsed_cpu()/100);
         h.setRunningVms(host.getRunningVms());
-        h.setReservedCpu(host.getReservedCpu());
-        h.setReservedMemory(host.getReservedMemory());
+        if (host.getReservedCpu() == null) {
+            h.setReservedCpu(0.00f);
+        } else {
+            h.setReservedCpu(host.getReservedCpu());
+        }
+        if (host.getReservedMemory() == null) {
+            h.setReservedMemory(0);
+        } else {
+            h.setReservedMemory(host.getReservedMemory());
+        }
         h.setVms(host.getVms());
         h.setPcis(mapPcis(host.getPcis()));
         h.setDatastores(mapDatastores(host.getDatastores()));

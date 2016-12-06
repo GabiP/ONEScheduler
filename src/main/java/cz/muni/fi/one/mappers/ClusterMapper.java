@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
@@ -26,6 +21,8 @@ public class ClusterMapper {
         result.setName(cluster.xpath("/CLUSTER/NAME"));
         result.setHosts(XpathLoader.getIntList(cluster, "/CLUSTER/HOSTS/ID"));
         result.setDatastores(XpathLoader.getIntList(cluster, "/CLUSTER/DATASTORES/ID"));
+        result.setReservedCpu(XpathLoader.getFloatOrZero(cluster, "/CLUSTER/TEMPLATE/RESERVED_CPU")/100);
+        result.setReservedMemory(XpathLoader.getIntOrZero(cluster, "/CLUSTER/TEMPLATE/RESERVED_MEM")/1024);
         
         return result;
     }

@@ -14,13 +14,13 @@ public class TmMadList {
 
     @JacksonXmlProperty(localName = "TM_MAD_CONF")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<TmMadConf> tmMadList;
+    private List<TmMad> tmMadList;
 
-    public List<TmMadConf> getTmMadList() {
+    public List<TmMad> getTmMadList() {
         return tmMadList;
     }
 
-    public void setHosts(List<TmMadConf> tmMadList) {
+    public void setHosts(List<TmMad> tmMadList) {
         this.tmMadList = tmMadList;
     }
     

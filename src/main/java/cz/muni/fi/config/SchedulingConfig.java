@@ -2,8 +2,10 @@ package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.scheduler.limits.LimitChecker;
+import cz.muni.fi.scheduler.limits.NoLimits;
 import cz.muni.fi.scheduler.limits.QuotasCheck;
 import cz.muni.fi.scheduler.queues.FixedNumOfQueuesMapper;
+import cz.muni.fi.scheduler.queues.OneFifoQueue;
 import cz.muni.fi.scheduler.queues.QueueByUser;
 import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.queues.UserFairshareMapper;
@@ -36,11 +38,13 @@ public class SchedulingConfig {
     private static final String QUEUE_BY_USER = "QueueByUser";
     private static final String USER_FAIRSHARE = "UserFairshare";
     private static final String USER_GROUP_FAIRSHARE = "UserGroupFairshare";
+    private static final String ONE_QUEUE = "OneQueue";
     
     private static final String QUEUE_BY_QUEUE = "QueueByQueue";   
     private static final String ROUND_ROBIN = "RoundRobin";
     
     private static final String QUOTAS_CHECK = "QuotasCheck";
+    private static final String NO_LIMITS = "NoLimits";
     
     public SchedulingConfig() throws IOException {
         properties = new PropertiesConfig("configuration.properties");
@@ -57,6 +61,8 @@ public class SchedulingConfig {
                 return new UserFairshareMapper(fairshareConfig.userPriorityCalculator());
             case USER_GROUP_FAIRSHARE:
                 return new UserGroupFairshareMapper(fairshareConfig.userPriorityCalculator(), poolConfig.userPool());
+            case ONE_QUEUE:
+                return new OneFifoQueue();
             default:
                 throw new LoadingFailedException("Wrong queue mapper configuration.");
         }
@@ -79,6 +85,8 @@ public class SchedulingConfig {
         switch (properties.getString("limitChecker")) {
             case QUOTAS_CHECK:
                 return new QuotasCheck(poolConfig.userPool());
+            case NO_LIMITS:
+                return new NoLimits();
             default:
                 throw new LoadingFailedException("Wrong queue mapper configuration.");
         }

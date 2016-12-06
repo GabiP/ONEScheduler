@@ -36,6 +36,7 @@ public class OneResultManager implements IResultManager {
      */
     @Override
     public List<VmElement> deployPlan(List<Match> plan) {
+        oneVmPool.info();
         List<VmElement> failedVms = new ArrayList<>();
         for (Match match: plan) {
             Integer hostId = match.getHost().getId();
@@ -65,6 +66,7 @@ public class OneResultManager implements IResultManager {
      */
     @Override
     public List<VmElement> migrate(List<Match> migrations) {
+        oneVmPool.info();
         List<VmElement> failedVms = new ArrayList<>();
         for (Match match: migrations) {
             Integer hostId = match.getHost().getId();

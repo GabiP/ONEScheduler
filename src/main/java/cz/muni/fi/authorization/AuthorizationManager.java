@@ -153,6 +153,7 @@ public class AuthorizationManager implements IAuthorizationManager {
     }
     
     private void setAuthorizedHosts(List<Integer> authorizedHostsIds) {
+        authorizedHosts = new ArrayList<>();
         for (Integer hostId: authorizedHostsIds) {
             HostElement host = hostPool.getHost(hostId);
             if (host.isActive()) {
@@ -162,6 +163,7 @@ public class AuthorizationManager implements IAuthorizationManager {
     }
     
     private void setAuthorizedDatastores(List<Integer> authorizedDatastoresIds) {
+        authorizedDatastores = new ArrayList<>();
         for (Integer dsId: authorizedDatastoresIds) {
             DatastoreElement ds = datastorePool.getDatastore(dsId);
             if (ds.isSystem()) {

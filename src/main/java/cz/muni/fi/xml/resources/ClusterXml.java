@@ -21,6 +21,12 @@ public class ClusterXml {
     
     @JacksonXmlProperty(localName = "DATASTORES")
     private List<Integer> datastores;
+    
+    @JacksonXmlProperty(localName = "RESERVED_CPU")
+    private Float reservedCpu;
+    
+    @JacksonXmlProperty(localName = "RESERVED_MEM")
+    private Integer reservedMemory;
 
     public Integer getId() {
         return id;
@@ -52,6 +58,22 @@ public class ClusterXml {
 
     public void setDatastores(List<Integer> datastores) {
         this.datastores = datastores;
+    }
+
+    public Float getReservedCpu() {
+        return reservedCpu;
+    }
+
+    public void setReservedCpu(Float reservedCpu) {
+        this.reservedCpu = reservedCpu;
+    }
+
+    public Integer getReservedMemory() {
+        return reservedMemory;
+    }
+
+    public void setReservedMemory(Integer reservedMemory) {
+        this.reservedMemory = reservedMemory;
     }
 
     @Override

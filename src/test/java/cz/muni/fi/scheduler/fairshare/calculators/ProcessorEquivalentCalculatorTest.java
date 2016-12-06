@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 /**
  *

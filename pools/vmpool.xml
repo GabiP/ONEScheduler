@@ -14,10 +14,14 @@
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>300</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
         </DISKS>
         <HISTORY_RECORDS>
@@ -60,6 +64,8 @@
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
         </DISKS>
         <HISTORY_RECORDS>
@@ -99,6 +105,8 @@
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
         </DISKS>
         <HISTORY_RECORDS>
@@ -138,6 +146,8 @@
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
         </DISKS>
         <HISTORY_RECORDS>
@@ -183,6 +193,8 @@
             <DISK>
                 <DATASTORE_ID>1</DATASTORE_ID>
                 <SIZE>200</SIZE>
+                <CLONE>YES</CLONE>
+                <TM_MAD>ssh</TM_MAD>
             </DISK>
         </DISKS>
         <HISTORY_RECORDS>

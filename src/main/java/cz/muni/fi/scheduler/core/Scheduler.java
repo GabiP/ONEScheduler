@@ -17,7 +17,9 @@ import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.queues.QueueMapper;
+import cz.muni.fi.scheduler.resources.nodes.DiskNode;
 import cz.muni.fi.scheduler.select.VmSelector;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +94,9 @@ public class Scheduler {
     
     private boolean preferHostFit;
     
+    private static final Integer PENDING_STATE = 1;
+    private static final Integer HOLD_STATE = 2;
+    
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
@@ -124,7 +129,7 @@ public class Scheduler {
      */
     public List<Match> schedule() {
         //get pendings, state = 1 is pending
-        List<VmElement> pendingVms = vmPool.getVmsByState(1);
+        List<VmElement> pendingVms = vmPool.getVmsByState(HOLD_STATE);
         if (pendingVms.isEmpty()) {
             log.info("No pendings");
             return null;
@@ -163,6 +168,10 @@ public class Scheduler {
         List<Match> plan = new ArrayList<>();
         while (!vmSelector.queuesEmpty(queues)) {
             VmElement vmSelected = vmSelector.selectVm(queues);
+            System.out.println("Vm selected: " + vmSelected);
+            if (!hasImageDsStorageAvailable(vmSelected)) {
+                continue;
+            }
             List<HostElement> suitableHosts = prepareHostsForVm(vmSelected);
             Match match = processVm(vmSelected, suitableHosts);
             if (match != null) {
@@ -174,6 +183,35 @@ public class Scheduler {
             }
         }
         return plan;
+    }
+    
+    private boolean hasImageDsStorageAvailable(VmElement vm) {
+        Map<DatastoreElement, Integer> diskUsage = getDiskUsageWithCloneTargetSelf(vm);
+        for (DatastoreElement ds : diskUsage.keySet()) {
+            Integer freeMb = ds.getFree_mb();
+            if (freeMb < (diskUsage.get(ds) + schedulerData.getReservedStorage(ds))) {
+                return false;
+            }
+        }
+        //update reservedStorage for Image DS
+        for (DatastoreElement ds : diskUsage.keySet()) {
+            schedulerData.reserveDatastoreStorage(ds, diskUsage.get(ds));
+        }       
+        return true;
+    }
+    
+    private  Map<DatastoreElement, Integer> getDiskUsageWithCloneTargetSelf(VmElement vm) {
+        List<DiskNode> disks = vm.getDisksWithSelfTarget();
+        Map<DatastoreElement, Integer> diskUsage = new HashMap<>();
+        for (DiskNode disk: disks) {
+            DatastoreElement ds = dsPool.getDatastore(disk.getDatastore_id());
+            if (diskUsage.containsKey(ds)) {
+                diskUsage.put(ds, diskUsage.get(ds) + disk.getSize());
+            } else {
+                diskUsage.put(ds, disk.getSize());
+            }
+        }
+        return diskUsage;
     }
     
     private List<HostElement> prepareHostsForVm(VmElement vm) {
@@ -225,9 +263,9 @@ public class Scheduler {
         schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
         schedulerData.reserveHostRunningVm(match.getHost());
         if (match.getDatastore().isShared()) {
-            schedulerData.reserveDatastoreStorage(match.getDatastore(), vm);
+            schedulerData.reserveDatastoreStorage(match.getDatastore(), vm.getCopyToSystemDiskSize());
         } else {
-            schedulerData.reserveDatastoreNodeStorage(match.getHost(), match.getDatastore(), vm);
+            schedulerData.reserveDatastoreNodeStorage(match.getHost(), match.getDatastore(), vm.getCopyToSystemDiskSize());
         }
     }
     
@@ -244,7 +282,7 @@ public class Scheduler {
     private Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
         Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
-            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(dsPool.getSystemDs(), host, vm, schedulerData);
+            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
                 sortedCandidates.put(host, ds);

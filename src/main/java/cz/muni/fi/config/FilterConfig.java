@@ -20,15 +20,20 @@ import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrate
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 /**
  *
  * @author Andras Urge
  */
 @Configuration
+@Import({PoolConfig.class})
 public class FilterConfig {
+    
+    @Autowired PoolConfig poolConfig;
     
     private PropertiesConfig properties;
     
@@ -77,10 +82,10 @@ public class FilterConfig {
         for (int i=0; i<filterConfig.length; i++) {
             switch(filterConfig[i]) {
                 case HOST_CPU_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByCpu());
+                    schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool()));
                     break;
                 case HOST_MEMORY_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByMemory());
+                    schedulingFilterStrategies.add(new FilterHostByMemory(poolConfig.clusterPool()));
                     break;
                 case HOST_PCI_FILTER:
                     filterStrategies.add(new FilterHostByPci());

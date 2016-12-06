@@ -41,6 +41,7 @@ public class SchedulingDatastoreFilter {
      * @param datastores all system datastores in the system
      * @param host the host for matching the datastore
      * @param vm the vm to be tested
+     * @param schedulerData
      * @return the list of filtered datastores
      */
     public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, HostElement host, VmElement vm, SchedulerData schedulerData) {
@@ -59,6 +60,7 @@ public class SchedulingDatastoreFilter {
      * @param host the host to be tested
      * @param ds the datasotre to be tested
      * @param vm the virtual machine to be tested
+     * @param schedulerData
      * @return true if the host and vm match, false othewise
      */
     public boolean isSuitableDatastore(HostElement host, DatastoreElement ds, VmElement vm, SchedulerData schedulerData) {

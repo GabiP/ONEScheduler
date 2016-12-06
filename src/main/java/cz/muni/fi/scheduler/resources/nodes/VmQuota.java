@@ -1,5 +1,6 @@
 package cz.muni.fi.scheduler.resources.nodes;
 
+import cz.muni.fi.one.XpathLoader;
 import org.opennebula.client.PoolElement;
 
 /**
@@ -26,14 +27,14 @@ public class VmQuota extends AbstractNode {
 
     @Override
     public void load(PoolElement user, String xpathExpr) {
-        cpu = Float.parseFloat(user.xpath(xpathExpr + "/CPU"));
-        cpuUsed = Float.parseFloat(user.xpath(xpathExpr + "/CPU_USED"));
-        memory = Integer.parseInt(user.xpath(xpathExpr + "/MEMORY"));
-        memoryUsed = Integer.parseInt(user.xpath(xpathExpr + "/MEMORY_USED"));
-        systemDiskSize = Integer.parseInt(user.xpath(xpathExpr + "/SYSTEM_DISK_SIZE"));
-        systemDiskSizeUsed = Integer.parseInt(user.xpath(xpathExpr + "/SYSTEM_DISK_SIZE_USED"));
-        vms = Integer.parseInt(user.xpath(xpathExpr + "/VMS"));
-        vmsUsed = Integer.parseInt(user.xpath(xpathExpr + "/VMS_USED"));
+        cpu = XpathLoader.getFloat(user, xpathExpr + "/CPU");
+        cpuUsed = XpathLoader.getFloat(user, xpathExpr + "/CPU_USED");
+        memory = XpathLoader.getInt(user, xpathExpr + "/MEMORY");
+        memoryUsed = XpathLoader.getInt(user, xpathExpr + "/MEMORY_USED");
+        systemDiskSize = XpathLoader.getInt(user, xpathExpr + "/SYSTEM_DISK_SIZE");
+        systemDiskSizeUsed = XpathLoader.getInt(user, xpathExpr + "/SYSTEM_DISK_SIZE_USED");
+        vms = XpathLoader.getInt(user, xpathExpr + "/VMS");
+        vmsUsed = XpathLoader.getInt(user, xpathExpr + "/VMS_USED");
     }
     
     public boolean isEmpty() {

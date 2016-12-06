@@ -14,6 +14,9 @@ import static org.mockito.Mockito.when;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -73,9 +76,14 @@ public class FilterDatastoresByStorageTest {
         List<DiskNode> disks = new ArrayList<>();
         DiskNode disk1 = new DiskNode();
         disk1.setSize(200);
+        disk1.setClone("YES");
+        disk1.setTmMadName("ssh");
         disks.add(disk1);
+        
         DiskNode disk2 = new DiskNode();
         disk2.setSize(100);
+        disk2.setClone("YES");
+        disk2.setTmMadName("ssh");
         disks.add(disk2);
         vm.setDisks(disks);
         

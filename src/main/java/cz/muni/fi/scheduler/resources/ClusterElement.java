@@ -16,7 +16,11 @@ public class ClusterElement {
     
     private List<Integer> hosts;
     
-    private List<Integer> datastores;    
+    private List<Integer> datastores;
+    
+    private Float reservedCpu;
+    
+    private Integer reservedMemory;
         
     @Override
     public String toString() {
@@ -75,6 +79,22 @@ public class ClusterElement {
     public void setDatastores(List<Integer> datastores) {
         this.datastores = datastores;
     }
+
+    public Float getReservedCpu() {
+        return reservedCpu;
+    }
+
+    public void setReservedCpu(Float reservedCpu) {
+        this.reservedCpu = reservedCpu;
+    }
+
+    public Integer getReservedMemory() {
+        return reservedMemory;
+    }
+
+    public void setReservedMemory(Integer reservedMemory) {
+        this.reservedMemory = reservedMemory;
+    }   
     
     @Override
     public int hashCode() {

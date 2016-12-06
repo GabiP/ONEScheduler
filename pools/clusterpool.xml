@@ -8,6 +8,8 @@
         <DATASTORES>
             <ID>0</ID>
         </DATASTORES>
+        <RESERVED_CPU></RESERVED_CPU>
+        <RESERVED_MEM></RESERVED_MEM>
     </CLUSTER>
     <CLUSTER>
         <ID>100</ID>
@@ -20,5 +22,7 @@
             <ID>1</ID>
             <ID>2</ID>
         </DATASTORES>
+        <RESERVED_CPU></RESERVED_CPU>
+        <RESERVED_MEM></RESERVED_MEM>
     </CLUSTER>
 </CLUSTERPOOL>    

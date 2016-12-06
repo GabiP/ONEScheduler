@@ -30,15 +30,9 @@
     <DATASTORES>
         <DS>
             <ID>0</ID>
-            <FREE_MB>90</FREE_MB>
-            <TOTAL_MB>100</TOTAL_MB>
-            <USED_MB>10</USED_MB>
-        </DS>
-        <DS>
-            <ID>1</ID>
-            <FREE_MB>90</FREE_MB>
-            <TOTAL_MB>100</TOTAL_MB>
-            <USED_MB>10</USED_MB>
+            <FREE_MB>9890</FREE_MB>
+            <TOTAL_MB>10000</TOTAL_MB>
+            <USED_MB>110</USED_MB>
         </DS>
     </DATASTORES>
     <VMS/>

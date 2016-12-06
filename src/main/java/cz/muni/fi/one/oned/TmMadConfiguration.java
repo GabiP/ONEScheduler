@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TmMadConfiguration {
 
-    private static final List<TmMadConf> tmMadList;
+    private static final List<TmMad> tmMadList;
     
     static {
         try {
@@ -32,19 +32,19 @@ public class TmMadConfiguration {
 
     protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
     
-    private static List<TmMadConf> getTmMadConfig() throws IOException {
+    private static List<TmMad> getTmMadConfig() throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String tmMadMessage = new String(Files.readAllBytes(Paths.get(CONFIG_DIRECTORY + File.separator + TM_MAD_CONF_FILE_NAME)));
         TmMadList xmlList = xmlMapper.readValue(tmMadMessage, TmMadList.class);
         return xmlList.getTmMadList();
     }
     
-    public static List<TmMadConf> getTmMadConfiguration() {
+    public static List<TmMad> getTmMadConfiguration() {
         return Collections.unmodifiableList(tmMadList);
     }
     
     public static String getSharedInfo(String tmMadName) {
-        for (TmMadConf tmMad: tmMadList) {
+        for (TmMad tmMad: tmMadList) {
             String name = tmMad.getName();
             if (tmMadName.equals(name)) {
                 return tmMad.getShared();
@@ -55,10 +55,21 @@ public class TmMadConfiguration {
     }
     
     public static String getCloneTargetInfo(String tmMadName) {
-        for (TmMadConf tmMad: tmMadList) {
+        for (TmMad tmMad: tmMadList) {
             String name = tmMad.getName();
             if (tmMadName.equals(name)) {
                 return tmMad.getCloneTarget();
+            }
+        }
+        log.info("No such Transfer Manager Driver found with name: " + tmMadName);
+        return null;
+    }
+    
+    public static String getLnTargetInfo(String tmMadName) {
+        for (TmMad tmMad: tmMadList) {
+            String name = tmMad.getName();
+            if (tmMadName.equals(name)) {
+                return tmMad.getLnTarget();
             }
         }
         log.info("No such Transfer Manager Driver found with name: " + tmMadName);

@@ -55,7 +55,7 @@ public class HostElement {
       
     private Integer runningVms;
     
-    private Integer reservedCpu;
+    private Float reservedCpu;
     
     private Integer reservedMemory;
     
@@ -354,14 +354,14 @@ public class HostElement {
     /**
      * @return the reservedCpu
      */
-    public Integer getReservedCpu() {
+    public Float getReservedCpu() {
         return reservedCpu;
     }
 
     /**
      * @param reservedCpu the reservedCpu to set
      */
-    public void setReservedCpu(Integer reservedCpu) {
+    public void setReservedCpu(Float reservedCpu) {
         this.reservedCpu = reservedCpu;
     }
 

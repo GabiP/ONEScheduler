@@ -19,36 +19,36 @@ import org.slf4j.LoggerFactory;
  */
 public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStrategy {
 
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         //check if ds and host have the same clusterId
+        int sizeValue = vm.getCopyToSystemDiskSize();
+        boolean matched = false;
         if (!(ds.getClusters().contains(host.getClusterId()))) {
-            LOG.info("Filtering DS by storage. The DS and HOST ids don't match");
+            log.info("Filtering DS by storage. The DS and HOST ids don't match");
             return false;
         }
-        //get the reserved storage for the datastore we are checking
-        
-        int sizeValue = vm.getDiskSizes();
-        boolean matched = false;
         if (ds.isShared()) {
+            //get the reserved storage for the datastore we are checking
             Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (!ds.isMonitored()) {
-                LOG.info("Datastore is not monitored. Cannot be matched.");
+                log.info("Datastore is not monitored. Cannot be matched.");
                 return false;
             } else if (vm.isResched()) {
-                LOG.info("VM is rescheduled. We do not need to check the datastore.");
+                log.info("VM is rescheduled. We do not need to check the datastore.");
                 return true;
             } else {
                 //test capacity on ds directly
-                LOG.info("Datastore is shared and being checked.");
+                log.info("Datastore is shared and being checked.");
                 matched = testOnDs(sizeValue, reservedStorage, ds.getFree_mb());
             }
         } else {
+            //get the reserved storage for the datastore we are checking
             Integer reservedStorage = schedulerData.getReservedStorage(host, ds);
             //test ds capacity on host datastores
-            LOG.info("Datastore is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
+            log.info("Datastore is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
             matched = testOnDsNode(sizeValue, reservedStorage, host, ds);
         }
         return matched;
@@ -56,26 +56,21 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
     
     private boolean testOnDs(Integer sizeValue, Integer reservedStorage, Integer freeSpace) {
         Integer actualStorage = freeSpace - reservedStorage;
-        LOG.info("Filtering ds by free memory: " + actualStorage + " checking " + sizeValue);
+        log.info("Filtering ds by free memory: " + actualStorage + " checking " + sizeValue);
         return (actualStorage > sizeValue);
     }
 
     private boolean testOnDsNode(Integer sizeValue, Integer reservedStorage, HostElement host, DatastoreElement ds) {
         if (host.getDatastores()== null || host.getDatastores().isEmpty()) {
-            LOG.info("Datastores on hosts are empty or null. Returning false.");
+            log.info("Datastores on hosts are empty or null. Returning false.");
             return false;
         }
         DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
         if (dsNode != null) {
             return testOnDs(sizeValue, reservedStorage, dsNode.getFree_mb());
         } else {
-            LOG.info("Ds: " + ds.getId() + " is not a datastore node of the host: " + host.getId());
+            log.info("Ds: " + ds.getId() + " is not a datastore node of the host: " + host.getId());
             return false;
         }
-    }
-
-    private boolean testOnHost(Integer sizeValue, Integer reservedStorage, Integer freeSpace) {
-        Integer actualStorage = freeSpace - reservedStorage;
-        return (actualStorage > sizeValue);
     }
 }
