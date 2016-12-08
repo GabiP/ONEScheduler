@@ -1,8 +1,8 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import java.util.ArrayList;

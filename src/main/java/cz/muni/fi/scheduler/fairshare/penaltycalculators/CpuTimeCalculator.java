@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 
 /**
  * This class calculates the penalty of a Virtual Machine by the amount of 

@@ -6,11 +6,11 @@
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
-import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
-import cz.muni.fi.scheduler.resources.nodes.NicNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
+import cz.muni.fi.scheduler.elements.nodes.NicNode;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennebula.client.vm.VirtualMachine;

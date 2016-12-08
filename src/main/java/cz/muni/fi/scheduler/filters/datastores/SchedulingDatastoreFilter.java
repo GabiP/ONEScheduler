@@ -12,9 +12,9 @@ import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 

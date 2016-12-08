@@ -1,6 +1,6 @@
 package cz.muni.fi.scheduler.queues;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;

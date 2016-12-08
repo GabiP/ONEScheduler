@@ -5,9 +5,9 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;
 import cz.muni.fi.xml.resources.HostXml;
 import cz.muni.fi.xml.resources.nodes.PciNodeXml;

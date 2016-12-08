@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
 import cz.muni.fi.one.oned.TmMadConfiguration;
 import java.util.List;

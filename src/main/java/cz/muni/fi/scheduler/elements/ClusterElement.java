@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
 import java.util.List;
 import java.util.Objects;

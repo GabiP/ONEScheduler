@@ -1,14 +1,14 @@
-package cz.muni.fi.authorization;
+package cz.muni.fi.scheduler.authorization;
 
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.acl.Acl;

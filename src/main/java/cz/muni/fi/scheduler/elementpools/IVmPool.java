@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**

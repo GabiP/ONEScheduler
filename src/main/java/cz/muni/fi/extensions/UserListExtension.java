@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.extensions;
 
-import cz.muni.fi.scheduler.resources.UserElement;
+import cz.muni.fi.scheduler.elements.UserElement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;

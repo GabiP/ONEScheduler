@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources.nodes;
+package cz.muni.fi.scheduler.elements.nodes;
 
 import cz.muni.fi.one.XpathLoader;
 import cz.muni.fi.one.oned.TmMadConfiguration;

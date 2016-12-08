@@ -1,7 +1,7 @@
 package cz.muni.fi.result;
 
 import cz.muni.fi.scheduler.core.Match;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;

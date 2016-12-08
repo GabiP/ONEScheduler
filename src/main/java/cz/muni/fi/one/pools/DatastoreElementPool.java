@@ -2,7 +2,7 @@ package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.DatastoreMapper;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

@@ -1,15 +1,15 @@
 package cz.muni.fi.scheduler.core;
 
-import cz.muni.fi.authorization.IAuthorizationManager;
+import cz.muni.fi.scheduler.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
 import cz.muni.fi.scheduler.limits.LimitChecker;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.queues.QueueMapper;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import cz.muni.fi.scheduler.select.VmSelector;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -26,8 +26,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
- * Takes all pools in the system, the instance of AuthorizationManager and
- * information from configuration - Filters that will be used to filter hosts.
+ * Needs:
+ * - all the pools
+ * - authorization manager
+ * - all the hosts and datastore filters
+ * - policy for host and datastore sorting/selection
+ * - instance of: QueueMapper, vmSelector and limitChecker
+ * - creates an instance of SchedulerData 
  * 
  * @author Gabriela Podolnikova
  */
@@ -122,10 +127,10 @@ public class Scheduler {
     }
     
     /**
-     * This method starts the scheduling.
-     * Gets active hosts, initialize capacity maps, gets pending virtual machines and puts in the queues.
-     * Calls fairshare and calls the method to process queues.
-     * @return the map with the plan
+     * This method is called to start the scheduling. (in SetUp class)
+     * Gets pending VMs and creates queues
+     * Calls to process the queues.
+     * @return the list woth all the matches that were created.
      */
     public List<Match> schedule() {
         //get pendings, state = 1 is pending
@@ -164,6 +169,18 @@ public class Scheduler {
         return migrations;
     }
     
+    /**
+     * Iterates through all the queues with VMs
+     * How the VM is selected is dependent on the vmSelector implementation.
+     * For each VM:
+     *  - checks the image ds capacity
+     *  - prepare hosts (get those that are authorized and goes through the filters)
+     *  - process the VM --> get match
+     *  - checks limit (dependent on the limitChecker implementation)
+     *  - adds match to the plan
+     * @param queues the queues in the system to be processed
+     * @return the created plan
+     */
     private List<Match> processQueues(List<Queue> queues) {
         List<Match> plan = new ArrayList<>();
         while (!vmSelector.queuesEmpty(queues)) {
@@ -185,6 +202,15 @@ public class Scheduler {
         return plan;
     }
     
+    /**
+     * Checks the Image datastore.
+     * The image datastore needs to be checked only for those disks in VM that
+     * has the CLONE_TARGET/LN_TARGET (depends wheter the VM is persistent) equals
+     * to SELF.
+     * It  means that the image of the disk is cloned in the image datastore.
+     * @param vm the VM to be checked
+     * @return true if there is capacity for the image
+     */
     private boolean hasImageDsStorageAvailable(VmElement vm) {
         Map<DatastoreElement, Integer> diskUsage = getDiskUsageWithCloneTargetSelf(vm);
         for (DatastoreElement ds : diskUsage.keySet()) {
@@ -200,6 +226,11 @@ public class Scheduler {
         return true;
     }
     
+    /**
+     * Gets only the disk and its capacity of those disks with cloning target SELF.
+     * @param vm to get the disks
+     * @return the map with datastore location of the image and the capacity needed by the disk.
+     */
     private  Map<DatastoreElement, Integer> getDiskUsageWithCloneTargetSelf(VmElement vm) {
         List<DiskNode> disks = vm.getDisksWithSelfTarget();
         Map<DatastoreElement, Integer> diskUsage = new HashMap<>();
@@ -214,6 +245,13 @@ public class Scheduler {
         return diskUsage;
     }
     
+    /**
+     * For each VM prepares suitable hosts.
+     * Firt get the authorized hosts.
+     * Then filters them with selected filters.
+     * @param vm the VM with the requirements
+     * @return list of hosts that suits the requirements.
+     */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
         authorizationManager.authorize(vm);
         List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts();
@@ -229,12 +267,11 @@ public class Scheduler {
     /**
      * This method process the chosen vm.
      * And does this:
-     * - retrieves the authorized hosts
-     * - filter hosts by specified filters in the configuration file
-     * --> it creates a subset of hosts that are suitable for the virtual machine.
-     * - filter and sorts datastores for the hosts
-     * Calls scheduling policy to select the host and the ds
-     * If there is match for this VM, it returns it.
+     * - takes a subset of hosts that are suitable for the virtual machine on the input
+     * - sorts the hosts by placement policy 
+     * - filter and choose the best ranked ds for the VM.
+     * From the suitable hosts and datastores creates candidate pairs.
+     * If the candidates are no empty, then the match is created.
      * @param queue the queue to be processed
      * @return the macth for the vm
      */
@@ -247,17 +284,27 @@ public class Scheduler {
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
         //filter and sort datastores for hosts
-        Map<HostElement, RankPair> sortedCandidates = sortCandidates(sortedHosts, vm, storagePolicy);
-        // deploy if sortedCandidates is not empty
-        if (!sortedCandidates.isEmpty()) {
+        Map<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
+        // deploy if candidates is not empty
+        if (!candidates.isEmpty()) {
             //pick the host and datastore. We chose the best host, or the best datastore.
-            match = createMatch(sortedCandidates);
+            match = createMatch(candidates);
             // update reservations
             updateCachedData(match, vm);
         }
         return match;
     }
     
+    /**
+     * Needs to be called after each created match to
+     * update the schedulerData:
+     *  - host cpu
+     *  - host memory
+     *  - running vms
+     *  - datastore storage
+     * @param match
+     * @param vm 
+     */
     private void updateCachedData(Match match, VmElement vm) {
         schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
         schedulerData.reserveHostMemoryCapacity(match.getHost(), vm);
@@ -270,25 +317,30 @@ public class Scheduler {
     }
     
     /**
-     * This method creates a map containing hosts sorted by the placement policy. It means that the
-     * first host in this map suites the most current vm in the queue. Each host
-     * has datastores that the vm can be put on, and also the datastores are
-     * sorted by the storage policy. LinkedHashMap preserves order in which the
-     * objects are entered.
+     * This method creates a map of candidates.
+     * It goes through the sorted hosts and for each host it filters its datastore
+     * to suit the VM requirements.
+     * The map is build like this:
+     * The hosts are the keys in this map and are sorted by the placement policy.
+     * To the each host there is a value assigned:
+     *  - the value is represented by the RankPair.
+     *  - the RankPair contains the suitable datastore and a number that represent its rank.
+     *    The rank is calculated based upon the storage policy.
+     * LinkedHashMap preserves order in which the objects are entered.
      * @param sortedHosts list of hosts sorted by the placement policy
-     * @param vm the current virtual machine int he queue
-     * @return the map containing the hosts and datastores (candidates) suitable for vm and sorted by policies
+     * @param vm the current virtual machine in the queue
+     * @return the map containing the hosts and datastores (candidates).
      */
-    private Map<HostElement, RankPair> sortCandidates(List<HostElement> sortedHosts, VmElement vm, IStoragePolicy storagePolicy) {
-        Map<HostElement, RankPair> sortedCandidates = new LinkedHashMap<>();
+    private Map<HostElement, RankPair> getCandidates(List<HostElement> sortedHosts, VmElement vm) {
+        Map<HostElement, RankPair> candidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
             List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
-                sortedCandidates.put(host, ds);
+                candidates.put(host, ds);
             }
         }
-        return sortedCandidates;
+        return candidates;
     }
     
     /**

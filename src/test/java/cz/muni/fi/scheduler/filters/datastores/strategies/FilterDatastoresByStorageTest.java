@@ -1,11 +1,11 @@
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;

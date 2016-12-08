@@ -5,10 +5,10 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.UserElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
-import cz.muni.fi.scheduler.resources.nodes.VmQuota;
+import cz.muni.fi.scheduler.elements.UserElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreQuota;
+import cz.muni.fi.scheduler.elements.nodes.VmQuota;
 import static cz.muni.fi.xml.mappers.HostXmlMapper.map;
 import cz.muni.fi.xml.resources.UserXml;
 import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;

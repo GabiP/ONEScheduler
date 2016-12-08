@@ -2,7 +2,7 @@ package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.UserMapper;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
-import cz.muni.fi.scheduler.resources.UserElement;
+import cz.muni.fi.scheduler.elements.UserElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

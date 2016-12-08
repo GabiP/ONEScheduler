@@ -5,11 +5,11 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
-import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
-import cz.muni.fi.scheduler.resources.nodes.NicNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
+import cz.muni.fi.scheduler.elements.nodes.NicNode;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import cz.muni.fi.xml.resources.nodes.DiskNodeXml;
 import cz.muni.fi.xml.resources.nodes.HistoryNodeXml;
 import cz.muni.fi.xml.resources.nodes.NicNodeXml;

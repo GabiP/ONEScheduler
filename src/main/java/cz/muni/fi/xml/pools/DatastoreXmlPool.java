@@ -10,7 +10,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.xml.mappers.DatastoreXmlMapper;
 import cz.muni.fi.xml.resources.DatastoreXml;
 import cz.muni.fi.xml.resources.lists.DatastoreXmlList;

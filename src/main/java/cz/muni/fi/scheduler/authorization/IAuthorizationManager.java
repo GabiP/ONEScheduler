@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.authorization;
+package cz.muni.fi.scheduler.authorization;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**

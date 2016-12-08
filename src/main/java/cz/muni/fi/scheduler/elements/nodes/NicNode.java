@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources.nodes;
+package cz.muni.fi.scheduler.elements.nodes;
 
 import org.opennebula.client.PoolElement;
 

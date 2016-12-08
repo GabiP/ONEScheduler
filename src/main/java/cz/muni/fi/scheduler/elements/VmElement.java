@@ -1,10 +1,10 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
 import cz.muni.fi.scheduler.core.TimeManager;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
-import cz.muni.fi.scheduler.resources.nodes.NicNode;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
-import cz.muni.fi.scheduler.resources.nodes.HistoryNode;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.nodes.NicNode;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

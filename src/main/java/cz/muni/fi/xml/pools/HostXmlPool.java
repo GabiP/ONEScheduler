@@ -2,7 +2,7 @@ package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.xml.mappers.HostXmlMapper;
 import cz.muni.fi.xml.resources.lists.HostXmlList;
 import java.io.IOException;

@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.List;
 
 /**

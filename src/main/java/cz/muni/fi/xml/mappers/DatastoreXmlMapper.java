@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.xml.resources.DatastoreXml;
 import java.util.ArrayList;
 import java.util.List;

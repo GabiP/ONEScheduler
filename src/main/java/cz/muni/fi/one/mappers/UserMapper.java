@@ -6,9 +6,9 @@
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
-import cz.muni.fi.scheduler.resources.UserElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
-import cz.muni.fi.scheduler.resources.nodes.VmQuota;
+import cz.muni.fi.scheduler.elements.UserElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreQuota;
+import cz.muni.fi.scheduler.elements.nodes.VmQuota;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennebula.client.user.User;

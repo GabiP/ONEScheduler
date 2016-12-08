@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import java.util.List;
 
 /**

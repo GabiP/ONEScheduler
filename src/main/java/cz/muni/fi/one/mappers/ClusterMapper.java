@@ -1,7 +1,7 @@
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
-import cz.muni.fi.scheduler.resources.ClusterElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
 import org.opennebula.client.cluster.Cluster;
 
 /**

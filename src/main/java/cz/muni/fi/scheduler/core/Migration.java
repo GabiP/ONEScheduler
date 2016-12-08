@@ -1,8 +1,8 @@
 package cz.muni.fi.scheduler.core;
 
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**

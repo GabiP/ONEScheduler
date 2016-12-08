@@ -8,7 +8,7 @@ package cz.muni.fi.scheduler.queues;
 import cz.muni.fi.extensions.MapExtension;
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

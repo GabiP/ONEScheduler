@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.ClusterElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
 import cz.muni.fi.xml.resources.ClusterXml;
 import java.util.ArrayList;
 import java.util.List;

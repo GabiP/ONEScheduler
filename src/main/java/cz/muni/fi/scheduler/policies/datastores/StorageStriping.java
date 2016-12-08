@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.policies.datastores;
 
 import cz.muni.fi.scheduler.core.RankPair;
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import java.util.List;
 
 /**
@@ -28,8 +23,8 @@ public class StorageStriping implements IStoragePolicy {
         Integer capacity;
         DatastoreElement result = null;
         for (DatastoreElement ds : datastores) {
-            Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (ds.isShared()) {
+                Integer reservedStorage = schedulerData.getReservedStorage(ds);
                 capacity = ds.getFree_mb() - reservedStorage;
                 if (capacity > moreFreeSpace) {
                     result = ds;
@@ -37,6 +32,7 @@ public class StorageStriping implements IStoragePolicy {
                 }
             } else {
                 DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
+                Integer reservedStorage = schedulerData.getReservedStorage(host, ds);
                 if (dsNode != null) {
                     capacity = dsNode.getFree_mb() - reservedStorage;
                     if (capacity > moreFreeSpace) {

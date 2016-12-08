@@ -2,7 +2,7 @@ package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.HostMapper;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
