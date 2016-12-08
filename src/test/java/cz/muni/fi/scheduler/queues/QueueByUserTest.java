@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.when;
 import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -28,7 +30,7 @@ public class QueueByUserTest {
     @Mock
     IUserPool userPool;
     
-    QueueByUser queueByUser;
+    QueueByUserMapper queueByUser;
     
     UserElement user0 = new UserElement();
     UserElement user1 = new UserElement();
@@ -36,7 +38,7 @@ public class QueueByUserTest {
     
     @Before
     public void init() {
-        queueByUser = new QueueByUser(userPool);
+        queueByUser = new QueueByUserMapper(userPool);
         vms = QueueFactory.prepareVms(0, NUMBER_OF_VMS);
         user0.setId(0);
         user1.setId(1);

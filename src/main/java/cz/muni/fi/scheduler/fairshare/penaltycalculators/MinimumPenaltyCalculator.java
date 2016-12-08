@@ -67,7 +67,9 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     private Map<Integer, Integer> getClusterHostNumber() {
         Map<Integer, Integer> hostNumber = new HashMap<>();
         for (ClusterElement cluster : clusterPool.getClusters()) {
-            hostNumber.put(cluster.getId(), cluster.getHosts().size());            
+            if (cluster.getHosts() != null) {
+                hostNumber.put(cluster.getId(), cluster.getHosts().size());
+            }
         }
         return hostNumber;
     } 

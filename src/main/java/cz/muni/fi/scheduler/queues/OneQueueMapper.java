@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public class OneFifoQueue implements QueueMapper {
+public class OneQueueMapper implements QueueMapper {
 
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {

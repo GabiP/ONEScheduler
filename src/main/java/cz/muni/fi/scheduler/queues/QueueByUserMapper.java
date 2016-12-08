@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Gabriela Podolnikova
  */
-public class QueueByUser implements QueueMapper {
+public class QueueByUserMapper implements QueueMapper {
     
     private IUserPool userPool;
     
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
-    public QueueByUser(IUserPool userPool) {
+    public QueueByUserMapper(IUserPool userPool) {
         this.userPool = userPool;
     }
 

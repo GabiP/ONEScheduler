@@ -5,14 +5,14 @@ import cz.muni.fi.scheduler.limits.LimitChecker;
 import cz.muni.fi.scheduler.limits.NoLimits;
 import cz.muni.fi.scheduler.limits.QuotasCheck;
 import cz.muni.fi.scheduler.queues.FixedNumOfQueuesMapper;
-import cz.muni.fi.scheduler.queues.OneFifoQueue;
-import cz.muni.fi.scheduler.queues.QueueByUser;
+import cz.muni.fi.scheduler.queues.OneQueueMapper;
+import cz.muni.fi.scheduler.queues.QueueByUserMapper;
 import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.queues.UserFairshareMapper;
 import cz.muni.fi.scheduler.queues.UserGroupFairshareMapper;
-import cz.muni.fi.scheduler.select.QueueByQueue;
-import cz.muni.fi.scheduler.select.RoundRobin;
-import cz.muni.fi.scheduler.select.VmSelector;
+import cz.muni.fi.scheduler.selectors.QueueByQueue;
+import cz.muni.fi.scheduler.selectors.RoundRobin;
+import cz.muni.fi.scheduler.selectors.VmSelector;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class SchedulingConfig {
     
     private PropertiesConfig properties;
     
-    private static final String FIXED_NUM_OF_QUEUES = "FixedNumOfQueuesMapper";
+    private static final String FIXED_NUM_OF_QUEUES = "FixedNumOfQueues";
     private static final String QUEUE_BY_USER = "QueueByUser";
     private static final String USER_FAIRSHARE = "UserFairshare";
     private static final String USER_GROUP_FAIRSHARE = "UserGroupFairshare";
@@ -56,13 +56,13 @@ public class SchedulingConfig {
             case FIXED_NUM_OF_QUEUES:
                 return new FixedNumOfQueuesMapper(properties.getInt("numberofqueues"));
             case QUEUE_BY_USER:
-                return new QueueByUser(poolConfig.userPool());
+                return new QueueByUserMapper(poolConfig.userPool());
             case USER_FAIRSHARE:
                 return new UserFairshareMapper(fairshareConfig.userPriorityCalculator());
             case USER_GROUP_FAIRSHARE:
                 return new UserGroupFairshareMapper(fairshareConfig.userPriorityCalculator(), poolConfig.userPool());
             case ONE_QUEUE:
-                return new OneFifoQueue();
+                return new OneQueueMapper();
             default:
                 throw new LoadingFailedException("Wrong queue mapper configuration.");
         }

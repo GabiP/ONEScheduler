@@ -100,7 +100,7 @@ public class SchedulerConfig {
     
     @Bean 
     public IAuthorizationManager authorizationManager() throws LoadingFailedException {
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return new AuthorizationManagerXml(poolConfig.hostPool(), poolConfig.datastorePool());
         } else {
             return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());

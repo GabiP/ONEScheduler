@@ -14,7 +14,7 @@ import java.util.Objects;
  * A Virtual Machine within the OpenNebula system consists of:
  * - A capacity in terms memory and CPU
  * - A set of NICs attached to one or more virtual networks
- * - A set of disk images
+ * - A set of disk (with images or file)
  * - A state file (optional) or recovery file, that contains the memory image of a running VM plus some hypervisor specific information.
  * For further information on creating Virtual machines please refer to: http://docs.opennebula.org/4.14/user/virtual_resource_management/vm_guide.html
  * 

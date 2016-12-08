@@ -18,7 +18,7 @@ import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.elements.nodes.DiskNode;
-import cz.muni.fi.scheduler.select.VmSelector;
+import cz.muni.fi.scheduler.selectors.VmSelector;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
@@ -134,7 +134,7 @@ public class Scheduler {
      */
     public List<Match> schedule() {
         //get pendings, state = 1 is pending
-        List<VmElement> pendingVms = vmPool.getVmsByState(HOLD_STATE);
+        List<VmElement> pendingVms = vmPool.getVmsByState(PENDING_STATE);
         if (pendingVms.isEmpty()) {
             log.info("No pendings");
             return null;
@@ -284,7 +284,7 @@ public class Scheduler {
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
         //filter and sort datastores for hosts
-        Map<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
+        LinkedHashMap<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
         // deploy if candidates is not empty
         if (!candidates.isEmpty()) {
             //pick the host and datastore. We chose the best host, or the best datastore.
@@ -331,8 +331,8 @@ public class Scheduler {
      * @param vm the current virtual machine in the queue
      * @return the map containing the hosts and datastores (candidates).
      */
-    private Map<HostElement, RankPair> getCandidates(List<HostElement> sortedHosts, VmElement vm) {
-        Map<HostElement, RankPair> candidates = new LinkedHashMap<>();
+    private LinkedHashMap<HostElement, RankPair> getCandidates(List<HostElement> sortedHosts, VmElement vm) {
+        LinkedHashMap<HostElement, RankPair> candidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
             List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
@@ -350,7 +350,7 @@ public class Scheduler {
      * @param sortedCandidates contains hosts with datastores
      * @return chosen match for vm
      */
-    private Match createMatch(Map<HostElement, RankPair> sortedCandidates) {
+    private Match createMatch(LinkedHashMap<HostElement, RankPair> sortedCandidates) {
         HostElement chosenHost;
         DatastoreElement chosenDs;
         if (preferHostFit) {
@@ -358,7 +358,6 @@ public class Scheduler {
             chosenHost = entry.getKey();
             chosenDs = entry.getValue().getDs();
         } else {
-            //for each policy in threads pick the ds
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }

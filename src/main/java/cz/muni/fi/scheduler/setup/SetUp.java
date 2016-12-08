@@ -34,7 +34,7 @@ public class SetUp {
     private static PropertiesConfig fairshareConfig;
     
     private static int cycleinterval;
-    private static boolean useXml;
+    private static boolean testingMode;
     
     public static final String DEFAULT_FILE_NAME = "configuration.properties";
     public static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
@@ -51,9 +51,9 @@ public class SetUp {
         }
         
         cycleinterval = configuration.getInt("cycleinterval");
-        useXml = configuration.getBoolean("useXml");
+        testingMode = configuration.getBoolean("testingMode");
         
-        if (useXml) {
+        if (testingMode) {
             clearFairshareRecords();
         } 
                 
@@ -94,7 +94,7 @@ public class SetUp {
     }
 
     private static void saveSchedulingTime() {
-        if (useXml) {            
+        if (testingMode) {            
             // TODO: add date from Dalibor
             TimeManager.getInstance().setSchedulingTimeStamp(new Date());
         } else {

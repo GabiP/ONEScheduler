@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.select;
+package cz.muni.fi.scheduler.selectors;
 
 import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.elements.VmElement;
