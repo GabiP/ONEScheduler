@@ -49,7 +49,6 @@ public class VmMapper {
             result.setNics(XpathLoader.getNodeList(vm, NicNode.class, "/VM/TEMPLATE/NIC"));
             result.setPcis(XpathLoader.getNodeList(vm, PciNode.class, "/VM/TEMPLATE/PCI"));
         } catch (InstantiationException | IllegalAccessException ex) {
-            // TODO: react on failure if needed
             Logger.getLogger(VmMapper.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;

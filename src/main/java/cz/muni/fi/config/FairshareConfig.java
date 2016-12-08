@@ -87,11 +87,16 @@ public class FairshareConfig {
             resourceWeights.add(properties.getFloat(RAM_WEIGHT));
             resourceWeights.add(properties.getFloat(HDD_WEIGHT));
             
+            float weightSum = 0;
             for (float weight : resourceWeights) {
                 if (weight < 0) {
                     throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - resource weights cannot be smaller than 0.");
                 }
+                weightSum += weight;
             }
+            if (weightSum == 0) {
+                throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - all resource weights cannot be 0.");
+            }           
             
             return properties;
         } catch (IOException ex) {

@@ -64,7 +64,7 @@ public class UserPriorityCalculator {
         
         float currentPriority = 0;
         for (VmElement vm : vms) {                
-            if (vm.getRunTime() == 0 && vm.getState() != 6) {
+            if (vm.getRunTime() == 0) {
                 // assign a starting priority if the vm didnt run yet                
                 currentPriority += getStartingVmPriority(vm);
             } 
@@ -125,7 +125,6 @@ public class UserPriorityCalculator {
         float activeVmPriority = calculateActiveVmPriority(vm);
         float pastVmPriority = calculatePastVmPriority(vm);
         
-        // TODO: maybe remove if (should be ok like this, but without it calculation is more error proof)
         if (vm.getState() != 6) {
             VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, pastVmPriority);
             vmRecordManager.storeRecord(newRecord);
