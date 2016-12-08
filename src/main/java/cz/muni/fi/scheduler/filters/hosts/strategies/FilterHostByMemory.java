@@ -34,7 +34,7 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Integer reservation = getReservation(host);
         Integer actualMemoryUsage = schedulerData.getReservedMemory(host) + host.getMem_usage() + reservation;
-        log.info("Filtering Hosts by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=" + vm.getMemory());
+        log.info("Filtering Host " + host.getId() + " by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=(?)" + vm.getMemory());
         return ((host.getMax_mem() - actualMemoryUsage) >= vm.getMemory());
     }
     

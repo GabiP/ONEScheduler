@@ -19,11 +19,11 @@ public class FilterHostsBySchedulingRequirements implements IHostFilterStrategy 
     @Override
     public boolean test(VmElement vm, HostElement host) {
         if (vm.getSchedRequirements() == null) {
-            LOG.info("Vm does not have any host requirements");
+            LOG.info("Vm " + vm.getVmId() + " does not have any host requirements");
             return true;
         }
         if (vm.getSchedRequirements().equals("")) {
-            LOG.info("Vm does not have any host requirements");
+            LOG.info("Vm " + vm.getVmId() + " does not have any host requirements");
             return true;
         }
         String[] reqs = vm.getSchedRequirements().split("\\|");

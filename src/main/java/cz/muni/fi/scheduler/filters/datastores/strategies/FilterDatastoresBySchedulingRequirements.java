@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.elements.DatastoreElement;
@@ -26,11 +20,11 @@ public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilte
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host){
         if (vm.getSchedDsRequirements() == null) {
-            LOG.info("Vm does not have any datastore requirements");
+            LOG.info("Vm " + vm.getVmId() + " does not have any datastore requirements");
             return true;
         }
         if (vm.getSchedDsRequirements().equals("")) {
-            LOG.info("Vm does not have any datastore requirements");
+            LOG.info("Vm " + vm.getVmId() + " does not have any datastore requirements");
             return true;
         }
         String[] reqs = vm.getSchedDsRequirements().split("\\|");

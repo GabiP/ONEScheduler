@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.policies.hosts;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
@@ -14,6 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Load-aware policy:
@@ -25,6 +22,8 @@ import java.util.stream.Collectors;
  */
 public class LoadAware implements IPlacementPolicy {
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+    
     @Override
     public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();
@@ -35,7 +34,9 @@ public class LoadAware implements IPlacementPolicy {
                 HostElement maxValue = entry.getKey();
             }
         }*/
+        log.info("List of hosts: " + hosts);
         result.addAll(sortByValue(freeCpus).keySet());
+        log.info("List of sorted hosts: " + result);
         return result;
     }
     
