@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface IResultManager {
     
-     public List<VmElement> deployPlan(List<Match> plan);
+     List<VmElement> deployPlan(List<Match> plan);
      
-     public List<VmElement> migrate(List<Match> migrations);
+     List<VmElement> migrate(List<Match> migrations);
 }

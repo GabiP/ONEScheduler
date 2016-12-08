@@ -36,8 +36,8 @@ public class SetUp {
     private static int cycleinterval;
     private static boolean testingMode;
     
-    public static final String DEFAULT_FILE_NAME = "configuration.properties";
-    public static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
+    private static final String DEFAULT_FILE_NAME = "configuration.properties";
+    private static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
     
     protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
     
@@ -122,17 +122,13 @@ public class SetUp {
         for (Match match : plan) {
             System.out.println("Host: " + match.getHost().getId());
             System.out.println("Its vms: ");
-            for (VmElement vm : match.getVms()) {
-                System.out.println(vm);
-            }
+            match.getVms().forEach(System.out::println);
             System.out.println();
         }
     }
     
     private static void printFailedVms(List<VmElement> failedVms) {
         System.out.println("Failed Vms: ");
-        for (VmElement vm: failedVms) {
-            System.out.println(vm);
-        }
+        failedVms.forEach(System.out::println);
     }
 }

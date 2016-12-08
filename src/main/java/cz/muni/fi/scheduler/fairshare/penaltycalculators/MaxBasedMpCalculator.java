@@ -5,7 +5,6 @@
  */
 package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 
-import cz.muni.fi.config.FairshareConfig;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;

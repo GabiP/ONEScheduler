@@ -116,9 +116,6 @@ public class ClusterElement {
         if (!Objects.equals(this.getId(), other.getId())) {
             return false;
         }
-        if (!Objects.equals(this.getName(), other.getName())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getName(), other.getName());
     }
 }

@@ -1,14 +1,13 @@
 package cz.muni.fi.scheduler.elements;
 
-import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a Host.
@@ -139,34 +138,8 @@ public class HostElement {
         return null;     
     }
     
-    /**
-     * 
-     * @param sizeValue the capacity of all VM's disks
-     * @param clusterPool all clusters in the system
-     * @param dsPool all datasores in the system
-     * @param datastoreNodestorageCapacity actual host's datastore usage in the system during the scheduling process
-     * @return the index of the suitable datastore in the list of all datastore that this host has
-     */     
-    public Integer getHostsSuitableDatastoreNode(Integer sizeValue, IClusterPool clusterPool, IDatastorePool dsPool, Map<HostElement, List<Integer>> datastoreNodestorageCapacity) {
-        Integer indexOfSuitableNode = null;
-        for (DatastoreNode ds: datastores) {
-            List<Integer> datastoresUsages = datastoreNodestorageCapacity.get(ds);
-            for (int i = 0; i < datastoresUsages.size(); i ++) {
-                Integer freeSpace = datastoresUsages.get(i);
-                if (freeSpace > sizeValue) {
-                    indexOfSuitableNode = i;
-                }
-            }
-        }
-        return indexOfSuitableNode;
-    }
-    
     public List<Integer> getDatastoresIds() {
-        List<Integer> ids = new ArrayList<>();
-        for (DatastoreNode dsNode: datastores) {
-            ids.add(dsNode.getId_ds());
-        }
-        return ids;
+        return datastores.stream().map(DatastoreNode::getId_ds).collect(Collectors.toList());
     }
     
     /**
@@ -429,10 +402,7 @@ public class HostElement {
         if (!Objects.equals(this.getState(), other.getState())) {
             return false;
         }
-        if (!Objects.equals(this.getClusterId(), other.getClusterId())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getClusterId(), other.getClusterId());
     }
 
     /**

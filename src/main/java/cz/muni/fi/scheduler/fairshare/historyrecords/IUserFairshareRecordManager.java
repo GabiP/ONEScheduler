@@ -11,13 +11,13 @@ package cz.muni.fi.scheduler.fairshare.historyrecords;
  */
 public interface IUserFairshareRecordManager {
     
-    public float getPriority(int userId);
+    float getPriority(int userId);
     
-    public void storePriority(int userId, float priority);
+    void storePriority(int userId, float priority);
     
-    public long getLastDecayTime();
+    long getLastDecayTime();
     
-    public void applyDecay(int decayValue);
+    void applyDecay(int decayValue);
     
-    public void clearContent();    
+    void clearContent();
 }

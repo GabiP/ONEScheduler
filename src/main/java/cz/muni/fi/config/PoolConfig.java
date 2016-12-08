@@ -1,7 +1,6 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.one.oned.TmMadConfiguration;
 import cz.muni.fi.one.pools.AclElementPool;
 import cz.muni.fi.one.pools.ClusterElementPool;
 import cz.muni.fi.one.pools.DatastoreElementPool;

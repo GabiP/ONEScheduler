@@ -15,6 +15,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.opennebula.client.Pool;
 import org.opennebula.client.vm.VirtualMachinePool;
 
@@ -97,13 +99,7 @@ public class VmXmlPool implements IVmPool {
 
     @Override
     public List<VmElement> getReschedVms() {
-         List<VmElement> result = new ArrayList<>();
-        for (VmElement vm : vms) {
-             if (vm.isResched()) {
-                result.add(vm);
-            }
-        }
-        return result;
+        return vms.stream().filter(VmElement::isResched).collect(Collectors.toList());
     }
     
 }

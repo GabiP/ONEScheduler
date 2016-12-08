@@ -13,5 +13,5 @@ import cz.muni.fi.scheduler.elements.VmElement;
  */
 public interface ISchedulingHostFilterStrategy {
     
-    public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData);
+    boolean test(VmElement vm, HostElement host, SchedulerData schedulerData);
 }

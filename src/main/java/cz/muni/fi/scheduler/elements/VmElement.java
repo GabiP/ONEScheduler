@@ -8,6 +8,7 @@ import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This class represents a Virtual Machine.
@@ -100,7 +101,7 @@ public class VmElement {
      * Calculates the time how long the virtual machine was really running
      * during the given history.
      * 
-     * @param history
+     * @param history the history of the VM
      * @return The runtime
      */
     public int getHistoryRuntime(HistoryNode history) {
@@ -119,13 +120,7 @@ public class VmElement {
     }
     
     public List<HistoryNode> getClosedHistories() {
-        List<HistoryNode> closedHistories = new ArrayList<>();
-        for (HistoryNode h : histories) {
-            if (h.isClosed()) {
-                closedHistories.add(h);
-            }
-        }
-        return closedHistories;
+        return histories.stream().filter(HistoryNode::isClosed).collect(Collectors.toList());
     }
     
     public HistoryNode getLastClosedHistory() {
@@ -169,13 +164,7 @@ public class VmElement {
     }
     
     public List<DiskNode> getDisksWithSelfTarget() {
-        List<DiskNode> result = new ArrayList<>();
-        for(DiskNode disk: disks) {
-            if (disk.copyToImage()) {
-                result.add(disk);
-            }
-        } 
-        return result;
+        return disks.stream().filter(DiskNode::copyToImage).collect(Collectors.toList());
     }
     
     public Boolean isResched() {
@@ -494,9 +483,6 @@ public class VmElement {
         if (!Objects.equals(this.getCpu(), other.getCpu())) {
             return false;
         }
-        if (!Objects.equals(this.getMemory(), other.getMemory())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getMemory(), other.getMemory());
     }
 }

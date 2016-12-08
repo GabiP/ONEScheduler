@@ -105,9 +105,6 @@ public class UserElement {
         if (!Objects.equals(this.getId(), other.getId())) {
             return false;
         }
-        if (!Objects.equals(this.getGid(), other.getGid())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getGid(), other.getGid());
     }
 }

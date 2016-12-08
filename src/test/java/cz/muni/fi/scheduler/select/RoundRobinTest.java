@@ -5,7 +5,7 @@ import cz.muni.fi.scheduler.queues.Queue;
 import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -30,9 +30,7 @@ public class RoundRobinTest {
     
     @Test
     public void selecVmTest() {
-        for (Queue q: queues) {
-            System.out.println(q);
-        }
+        queues.forEach(System.out::println);
         VmElement selectedVm = roundRobin.selectVm(queues);
         Integer expectedId = 0;
         assertEquals(expectedId, selectedVm.getVmId());

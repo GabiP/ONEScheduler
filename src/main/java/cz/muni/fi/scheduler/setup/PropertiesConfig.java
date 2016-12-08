@@ -36,8 +36,7 @@ public class PropertiesConfig {
     }
 
     private static String[] extractStringArray(String value) {
-        String[] s = value.split("\\s*,\\s*");
-        return s;
+        return value.split("\\s*,\\s*");
     }
      
     public boolean getBoolean(String key) {

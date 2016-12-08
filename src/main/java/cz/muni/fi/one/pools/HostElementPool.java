@@ -6,6 +6,8 @@ import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.host.Host;
@@ -61,13 +63,7 @@ public class HostElementPool implements IHostPool{
      */
     @Override
     public List<HostElement> getActiveHosts() {
-        List<HostElement> activeHosts = new ArrayList<>();
-        for (HostElement host: getHosts()) {
-            if (host.getState() == 1 || host.getState() == 2) {
-                activeHosts.add(host);
-            }
-        }
-        return activeHosts;
+        return getHosts().stream().filter(host -> host.getState() == 1 || host.getState() == 2).collect(Collectors.toList());
     }
     
     @Override
@@ -78,10 +74,6 @@ public class HostElementPool implements IHostPool{
     
     @Override
     public List<Integer> getHostsIds() {
-        List<Integer> hostsIds = new ArrayList<>();
-        for(HostElement h: getHosts()) {
-            hostsIds.add(h.getId());
-        }
-        return hostsIds;
+        return getHosts().stream().map(HostElement::getId).collect(Collectors.toList());
     }
 }

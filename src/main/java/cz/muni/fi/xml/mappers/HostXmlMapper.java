@@ -13,6 +13,7 @@ import cz.muni.fi.xml.resources.HostXml;
 import cz.muni.fi.xml.resources.nodes.PciNodeXml;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -21,11 +22,7 @@ import java.util.List;
 public class HostXmlMapper {
     
     public static List<HostElement> map(List<HostXml> hosts) {
-        List<HostElement> result = new ArrayList<>();
-        for(HostXml xml : hosts) {
-            result.add(map(xml));
-        }        
-        return result;
+        return hosts.stream().map(HostXmlMapper::map).collect(Collectors.toList());
     }
     
     public static HostElement map(HostXml host) {
@@ -66,9 +63,7 @@ public class HostXmlMapper {
     public static List<PciNode> mapPcis(List<PciNodeXml> pcis) {
         List<PciNode> result = new ArrayList<>();
         if (pcis != null) {
-            for (PciNodeXml xml : pcis) {
-                result.add(map(xml));
-            }
+            result.addAll(pcis.stream().map(HostXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }
@@ -84,9 +79,7 @@ public class HostXmlMapper {
     public static List<DatastoreNode> mapDatastores(List<DatastoreNodeXml> datastores) {
         List<DatastoreNode> result = new ArrayList<>();
         if (datastores !=null) {
-            for (DatastoreNodeXml xml : datastores) {
-                result.add(map(xml));
-            }
+            result.addAll(datastores.stream().map(HostXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }

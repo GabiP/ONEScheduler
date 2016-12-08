@@ -18,8 +18,8 @@ import java.util.List;
  */
 public interface IStoragePolicy {
     
-    public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData);
+    RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData);
     
-    public DatastoreElement getBestRankedDatastore(List<RankPair> values);
+    DatastoreElement getBestRankedDatastore(List<RankPair> values);
     
 }

@@ -77,10 +77,7 @@ public class Match {
         if (!Objects.equals(this.getHost(), other.getHost())) {
             return false;
         }
-        if (!Objects.equals(this.getDatastore(), other.getDatastore())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getDatastore(), other.getDatastore());
     }
     
     public List<Match> addVm(List<Match> plan, VmElement vm) {

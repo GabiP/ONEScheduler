@@ -71,8 +71,7 @@ public class StorageStripingTest {
         datastoreNodes.add(dsNode1);
         
         host.setDatastores(datastoreNodes);
-        
-        when(schedulerData.getReservedStorage(ds1)).thenReturn(20);
+
         when(schedulerData.getReservedStorage(ds2)).thenReturn(0);
         when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
@@ -93,9 +92,7 @@ public class StorageStripingTest {
         datastoreNodes.add(dsNode1);
         
         host.setDatastores(datastoreNodes);
-        
-        when(schedulerData.getReservedStorage(ds1)).thenReturn(20);
-        when(schedulerData.getReservedStorage(ds2)).thenReturn(0);
+
         when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
         

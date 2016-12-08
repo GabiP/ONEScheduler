@@ -12,8 +12,7 @@ import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import cz.muni.fi.scheduler.elements.nodes.VmQuota;
 import java.util.ArrayList;
 import java.util.List;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

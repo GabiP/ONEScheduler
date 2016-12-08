@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface IHostPool {
     
-    public List<HostElement> getHosts();
+    List<HostElement> getHosts();
     
-    public List<HostElement> getActiveHosts();
+    List<HostElement> getActiveHosts();
     
-    public List<Integer> getHostsIds();
+    List<Integer> getHostsIds();
     
-    public HostElement getHost(int id);
+    HostElement getHost(int id);
 }

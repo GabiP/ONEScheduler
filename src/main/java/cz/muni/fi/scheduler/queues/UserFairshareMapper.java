@@ -33,8 +33,8 @@ public class UserFairshareMapper implements QueueMapper {
         Map<Integer, List<VmElement>> userVms = VmListExtension.getUserVms(vms);
         
         List<Queue> queues = new ArrayList<>();
-        for (int i=0; i<sortedUsers.size(); i++) {
-            int userId = sortedUsers.get(i);
+        for (Integer sortedUser : sortedUsers) {
+            int userId = sortedUser;
             Queue queue = createUserQueue(userId, userPriorities.get(userId), userVms.get(userId));
             queues.add(queue);
         }

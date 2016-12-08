@@ -6,16 +6,14 @@
 package cz.muni.fi.xml.mappers;
 
 import cz.muni.fi.scheduler.elements.UserElement;
-import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import cz.muni.fi.scheduler.elements.nodes.DatastoreQuota;
 import cz.muni.fi.scheduler.elements.nodes.VmQuota;
-import static cz.muni.fi.xml.mappers.HostXmlMapper.map;
 import cz.muni.fi.xml.resources.UserXml;
-import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;
 import cz.muni.fi.xml.resources.nodes.DatastoreQuotaXml;
 import cz.muni.fi.xml.resources.nodes.VmQuotaXml;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -24,11 +22,7 @@ import java.util.List;
 public class UserXmlMapper {
     
     public static List<UserElement> map(List<UserXml> users) {
-        List<UserElement> result = new ArrayList<>();
-        for(UserXml xml : users) {
-            result.add(map(xml));
-        }        
-        return result;
+        return users.stream().map(UserXmlMapper::map).collect(Collectors.toList());
     }
     
     public static UserElement map(UserXml user) {
@@ -44,9 +38,7 @@ public class UserXmlMapper {
     public static List<DatastoreQuota> mapDSQuotas(List<DatastoreQuotaXml> quotas) {
         List<DatastoreQuota> result = new ArrayList<>();
         if (quotas !=null) {
-            for (DatastoreQuotaXml xml : quotas) {
-                result.add(map(xml));
-            }
+            result.addAll(quotas.stream().map(UserXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }

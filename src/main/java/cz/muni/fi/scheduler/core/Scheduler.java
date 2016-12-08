@@ -141,8 +141,7 @@ public class Scheduler {
         }
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
-        List<Match> processed = processQueues(queues);
-        return processed;
+        return processQueues(queues);
     }
     
     /**
@@ -260,26 +259,26 @@ public class Scheduler {
             return authorizedHosts;
         }
         //filter authorized hosts for vm 
-        List<HostElement> filteredHosts = hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
-        return filteredHosts;
+        return hostFilter.getFilteredHosts(authorizedHosts, vm, schedulerData);
     }
 
     /**
      * This method process the chosen vm.
      * And does this:
      * - takes a subset of hosts that are suitable for the virtual machine on the input
-     * - sorts the hosts by placement policy 
+     * - sorts the hosts by placement policy
      * - filter and choose the best ranked ds for the VM.
      * From the suitable hosts and datastores creates candidate pairs.
      * If the candidates are no empty, then the match is created.
-     * @param queue the queue to be processed
+     * @param vm the VM to be processed
+     * @param hosts the hosts suitable for VM
      * @return the macth for the vm
      */
     private Match processVm(VmElement vm, List<HostElement> hosts) {
         Match match = null;
         if (hosts.isEmpty()) {
             log.info("No suitable hosts.");
-            return match;
+            return null;
         }
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
@@ -302,8 +301,8 @@ public class Scheduler {
      *  - host memory
      *  - running vms
      *  - datastore storage
-     * @param match
-     * @param vm 
+     * @param match the match with the host, datastore
+     * @param vm virtual machine's data to store
      */
     private void updateCachedData(Match match, VmElement vm) {
         schedulerData.reserveHostCpuCapacity(match.getHost(), vm);
@@ -374,7 +373,7 @@ public class Scheduler {
     private HostElement getFirstHostThatHasDs(Map<HostElement, RankPair> candidates, DatastoreElement chosenDs) {
         HostElement result = null;
         for(Map.Entry<HostElement, RankPair> entry: candidates.entrySet()) {
-            if (entry.getValue().equals(chosenDs)) {
+            if (entry.getValue().getDs().equals(chosenDs)) {
                 result = entry.getKey();
             }
         }

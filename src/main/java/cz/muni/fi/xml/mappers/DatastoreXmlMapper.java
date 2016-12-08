@@ -9,6 +9,7 @@ import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.xml.resources.DatastoreXml;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -17,11 +18,7 @@ import java.util.List;
 public class DatastoreXmlMapper {
 
     public static List<DatastoreElement> map(List<DatastoreXml> datastores) {
-        List<DatastoreElement> result = new ArrayList<>();
-        for (DatastoreXml xml : datastores) {
-            result.add(map(xml));
-        }
-        return result;
+        return datastores.stream().map(DatastoreXmlMapper::map).collect(Collectors.toList());
     }
 
     public static DatastoreElement map(DatastoreXml datastore) {

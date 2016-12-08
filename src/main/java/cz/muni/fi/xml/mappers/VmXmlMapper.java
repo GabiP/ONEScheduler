@@ -17,6 +17,7 @@ import cz.muni.fi.xml.resources.nodes.PciNodeXml;
 import cz.muni.fi.xml.resources.VmXml;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -25,11 +26,7 @@ import java.util.List;
 public class VmXmlMapper {
     
     public static List<VmElement> map(List<VmXml> vms) {
-        List<VmElement> result = new ArrayList<>();
-        for(VmXml xml : vms) {
-            result.add(map(xml));
-        }        
-        return result;
+        return vms.stream().map(VmXmlMapper::map).collect(Collectors.toList());
     }
     
     public static VmElement map(VmXml vm) {
@@ -61,9 +58,7 @@ public class VmXmlMapper {
     public static List<DiskNode> mapDisks(List<DiskNodeXml> disks) {
         List<DiskNode> result = new ArrayList<>();
         if (disks != null) {
-            for(DiskNodeXml xml : disks) {
-                result.add(map(xml));
-            }        
+            result.addAll(disks.stream().map(VmXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }
@@ -80,9 +75,7 @@ public class VmXmlMapper {
     public static List<HistoryNode> mapHistories(List<HistoryNodeXml> histories) {
         List<HistoryNode> result = new ArrayList<>();
         if (histories != null) {
-            for(HistoryNodeXml xml : histories) {
-                result.add(map(xml));
-            }        
+            result.addAll(histories.stream().map(VmXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }
@@ -99,9 +92,7 @@ public class VmXmlMapper {
     public static List<NicNode> mapNics(List<NicNodeXml> nics) {
         List<NicNode> result = new ArrayList<>();
         if (nics != null) {
-            for(NicNodeXml xml : nics) {
-                result.add(map(xml));
-            }   
+            result.addAll(nics.stream().map(VmXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }
@@ -115,9 +106,7 @@ public class VmXmlMapper {
     public static List<PciNode> mapPcis(List<PciNodeXml> pcis) {
         List<PciNode> result = new ArrayList<>();
         if (pcis != null) {
-            for(PciNodeXml xml : pcis) {
-                result.add(map(xml));
-            }        
+            result.addAll(pcis.stream().map(VmXmlMapper::map).collect(Collectors.toList()));
         }
         return result;
     }

@@ -14,5 +14,5 @@ import org.opennebula.client.acl.Acl;
  */
 public interface IAclPool {
     
-    public List<Acl> getAcls();
+    List<Acl> getAcls();
 }

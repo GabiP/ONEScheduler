@@ -25,7 +25,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         //check if ds and host have the same clusterId
         int sizeValue = vm.getCopyToSystemDiskSize();
-        boolean matched = false;
+        boolean matched;
         if (!(ds.getClusters().contains(host.getClusterId()))) {
             log.info("Filtering DS " + ds.getId() + " by storage. The DS and HOST cluster ids don't match");
             return false;

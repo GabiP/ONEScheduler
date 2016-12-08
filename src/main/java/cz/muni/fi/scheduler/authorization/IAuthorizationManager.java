@@ -16,7 +16,7 @@ import java.util.List;
  * @author Gabriela Podolnikova
  */
 public interface IAuthorizationManager {
-    public void authorize(VmElement vm);
-    public List<HostElement> getAuthorizedHosts();
-    public List<DatastoreElement> getAuthorizedDs();
+    void authorize(VmElement vm);
+    List<HostElement> getAuthorizedHosts();
+    List<DatastoreElement> getAuthorizedDs();
 }

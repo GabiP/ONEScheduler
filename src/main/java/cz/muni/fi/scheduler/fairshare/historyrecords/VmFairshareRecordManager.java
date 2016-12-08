@@ -112,10 +112,9 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
      */
     @Override
     public VmElement createVmFromRecord(VmElement vm, VmFairshareRecord record) {
-        VmElement newVm = vm;
-        newVm.setCpu(record.getLastCpu());
-        newVm.setMemory(record.getLastMemory());
-        return newVm;
+        vm.setCpu(record.getLastCpu());
+        vm.setMemory(record.getLastMemory());
+        return vm;
     }
     
     @Override

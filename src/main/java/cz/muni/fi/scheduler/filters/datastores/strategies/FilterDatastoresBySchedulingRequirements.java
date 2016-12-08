@@ -35,8 +35,6 @@ public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilte
                 Integer id = Integer.parseInt(req.substring(req.indexOf("=")+2, req.length()-1));
                 if (Objects.equals(ds.getId(), id)) {
                     fits = true;
-                } else {
-                    
                 }
             }
             if (req.contains("NAME")) {

@@ -1,6 +1,5 @@
 package cz.muni.fi.scheduler.elements.nodes;
 
-import java.util.List;
 import org.opennebula.client.PoolElement;
 
 /**
@@ -24,12 +23,7 @@ public class DatastoreNode extends AbstractNode {
          total_mb = Integer.parseInt(host.xpath(xpathExpr + "/TOTAL_MB"));
          used_mb = Integer.parseInt(host.xpath(xpathExpr + "/USED_MB"));
     }
-    
-    public void update(Integer vmUsage) {
-        free_mb -= vmUsage;
-        used_mb += vmUsage;
-    }
-    
+
     /**
      * @return the id_ds
      */

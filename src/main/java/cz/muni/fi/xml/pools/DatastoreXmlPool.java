@@ -1,25 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.xml.mappers.DatastoreXmlMapper;
-import cz.muni.fi.xml.resources.DatastoreXml;
 import cz.muni.fi.xml.resources.lists.DatastoreXmlList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -53,33 +44,17 @@ public class DatastoreXmlPool implements IDatastorePool {
 
     @Override
     public List<DatastoreElement> getSystemDs() {
-        List<DatastoreElement> systemDs = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            if (ds.getType() == 1) {
-                systemDs.add(ds);
-            }
-        }
-        return systemDs;
+        return getDatastores().stream().filter(ds -> ds.getType() == 1).collect(Collectors.toList());
     }
 
     @Override
     public List<Integer> getDatastoresIds() {
-        List<Integer> dsIds = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            dsIds.add(ds.getId());
-        }
-        return dsIds;
+        return getDatastores().stream().map(DatastoreElement::getId).collect(Collectors.toList());
     }
 
     @Override
     public List<DatastoreElement> getImageDs() {
-        List<DatastoreElement> systemDs = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            if (ds.getType() == 0) {
-                systemDs.add(ds);
-            }
-        }
-        return systemDs;
+        return getDatastores().stream().filter(ds -> ds.getType() == 0).collect(Collectors.toList());
     }
     
 }

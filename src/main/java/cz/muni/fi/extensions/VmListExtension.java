@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -20,33 +21,21 @@ import java.util.Set;
 public class VmListExtension {
     
     public static List<Integer> getVmIds(List<VmElement> vms) {
-        List<Integer> vmIds = new ArrayList<>();
-        for (VmElement vm : vms) {
-            vmIds.add(vm.getVmId());
-        }
-        return vmIds;
+        return vms.stream().map(VmElement::getVmId).collect(Collectors.toList());
     }
     
     /**
      * Returns the set of user IDs of the inputted virtual machines.
      * 
-     * @param vms
+     * @param vms to get the users ids
      * @return Set of user IDs
      */    
     public static Set<Integer> getUserIds(List<VmElement> vms) {
-        Set<Integer> userIds = new HashSet<>();
-        for (VmElement vm : vms) {
-            userIds.add(vm.getUid());
-        }
-        return userIds;
+        return vms.stream().map(VmElement::getUid).collect(Collectors.toSet());
     }    
     
     public static List<Integer> getRuntimes(List<VmElement> vms) {
-        List<Integer> vmRuntimes = new ArrayList<>();
-        for (VmElement vm : vms) {
-            vmRuntimes.add(vm.getRunTime());
-        }
-        return vmRuntimes;
+        return vms.stream().map(VmElement::getRunTime).collect(Collectors.toList());
     }
     
     public static Map<Integer, List<VmElement>> getUserVms(List<VmElement> vms) {

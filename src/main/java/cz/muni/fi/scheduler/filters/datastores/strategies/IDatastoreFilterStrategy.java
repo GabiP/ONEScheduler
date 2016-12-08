@@ -6,7 +6,6 @@
 
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
-import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
@@ -20,5 +19,5 @@ import cz.muni.fi.scheduler.elements.VmElement;
  */
 public interface IDatastoreFilterStrategy {
 
-    public boolean test(VmElement vm, DatastoreElement ds, HostElement host);
+    boolean test(VmElement vm, DatastoreElement ds, HostElement host);
 }

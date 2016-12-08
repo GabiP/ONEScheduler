@@ -42,7 +42,7 @@ public class AuthorizationManager implements IAuthorizationManager {
      * Finds the subset of hosts where the owner of specified virtual machine can deploy.
      * 
      * @param vm the virtual machine's user to be authorized
-     * @return an array with ids of authorized hosts
+     * Sets authorized hosts and datastores.
      */
     @Override
     public void authorize(VmElement vm) {
@@ -148,8 +148,7 @@ public class AuthorizationManager implements IAuthorizationManager {
     
     private Integer getIdFromResources(String resources, String mark) {
         String s = resources.substring(resources.indexOf(mark) + 1);
-        Integer id = Integer.valueOf(s);
-        return id;
+        return Integer.valueOf(s);
     }
     
     private void setAuthorizedHosts(List<Integer> authorizedHostsIds) {

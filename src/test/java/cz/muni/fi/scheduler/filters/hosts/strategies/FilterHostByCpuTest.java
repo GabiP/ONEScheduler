@@ -65,7 +65,7 @@ public class FilterHostByCpuTest {
         host.setCpu_usage(0.0f);
         host.setReservedCpu(0.0f);
         cluster.setReservedCpu(0.0f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.5f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.5f);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }
@@ -78,7 +78,7 @@ public class FilterHostByCpuTest {
         host.setCpu_usage(0.2f);
         host.setReservedCpu(0.0f);
         cluster.setReservedCpu(0.0f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.3f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.3f);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }
@@ -91,7 +91,7 @@ public class FilterHostByCpuTest {
         
         host.setReservedCpu(0.1f);
         cluster.setReservedCpu(0.0f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.0f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.0f);
 
         assertTrue(filter.test(vm, host, schedulerData));
     }
@@ -104,7 +104,7 @@ public class FilterHostByCpuTest {
         
         host.setReservedCpu(0.5f);
         cluster.setReservedCpu(0.0f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.0f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.0f);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }
@@ -117,7 +117,7 @@ public class FilterHostByCpuTest {
         
         host.setReservedCpu(0.0f);
         cluster.setReservedCpu(0.2f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.0f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.0f);
 
         assertTrue(filter.test(vm, host, schedulerData));
     }
@@ -130,7 +130,7 @@ public class FilterHostByCpuTest {
         
         host.setReservedCpu(0.0f);
         cluster.setReservedCpu(0.3f);
-        when(schedulerData.getReservedCpu(host)).thenReturn(new Float(0.2f));
+        when(schedulerData.getReservedCpu(host)).thenReturn(0.2f);
 
         assertFalse(filter.test(vm, host, schedulerData));
     }

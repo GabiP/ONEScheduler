@@ -17,5 +17,5 @@ import cz.muni.fi.scheduler.elements.VmElement;
  */
 public interface ISchedulingDatastoreFilterStrategy {
 
-    public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData);
+    boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData);
 }

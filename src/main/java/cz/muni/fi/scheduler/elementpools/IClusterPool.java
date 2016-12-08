@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IClusterPool {
     
-    public List<ClusterElement> getClusters();
+    List<ClusterElement> getClusters();
     
-    public ClusterElement getCluster(int id);
+    ClusterElement getCluster(int id);
 }

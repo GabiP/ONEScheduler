@@ -30,7 +30,9 @@ public class QueueByUserMapper implements QueueMapper {
         List<Queue> result = createQueueForUsers(users);
         for (VmElement vm: vms)  {
             Queue q = getUsersQueue(result, vm.getUid());
-            q.queue(vm);
+            if (q != null) {
+                q.queue(vm);
+            }
         }
         printQueues(result);
         return result;

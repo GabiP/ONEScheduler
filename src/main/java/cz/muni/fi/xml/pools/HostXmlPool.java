@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -34,22 +35,12 @@ public class HostXmlPool implements IHostPool {
     
     @Override
     public List<HostElement> getActiveHosts() {
-        List<HostElement> activeHosts = new ArrayList<>();
-        for (HostElement host: getHosts()) {
-            if (host.getState() == 1 || host.getState() == 2) {
-                activeHosts.add(host);
-            }
-        }
-        return activeHosts;
+        return getHosts().stream().filter(host -> host.getState() == 1 || host.getState() == 2).collect(Collectors.toList());
     }
 
     @Override
     public List<Integer> getHostsIds() {
-        List<Integer> hostsIds = new ArrayList<>();
-        for(HostElement h: getHosts()) {
-            hostsIds.add(h.getId());
-        }
-        return hostsIds;
+        return getHosts().stream().map(HostElement::getId).collect(Collectors.toList());
     }
 
     @Override

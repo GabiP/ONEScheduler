@@ -9,6 +9,7 @@ import cz.muni.fi.scheduler.elements.UserElement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -17,10 +18,6 @@ import java.util.Set;
 public class UserListExtension {
     
     public static Set<Integer> getUserIds(List<UserElement> users) {
-        Set<Integer> userIds = new HashSet<>();
-        for (UserElement user : users) {
-            userIds.add(user.getId());
-        }
-        return userIds;
+        return users.stream().map(UserElement::getId).collect(Collectors.toSet());
     }
 }

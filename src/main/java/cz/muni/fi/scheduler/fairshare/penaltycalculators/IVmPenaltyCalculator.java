@@ -18,8 +18,8 @@ public interface IVmPenaltyCalculator {
      * implementation  of this method is defining the strategy of the 
      * fair-share ordering.
      * 
-     * @param vm
+     * @param vm for which the penalty is calculated
      * @return Penalty for the virtual machine
      */
-    public float getPenalty(VmElement vm);  
+    float getPenalty(VmElement vm);
 }

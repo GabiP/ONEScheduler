@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Import;
  * @author Gabriela Podolnikova
  */
 @Configuration
-@Import({PoolConfig.class})
+@Import({PoolConfig.class, FairshareConfig.class})
 public class SchedulingConfig {
     
     @Autowired PoolConfig poolConfig;

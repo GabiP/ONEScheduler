@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IUserPool {
     
-    public List<UserElement> getUsers();    
+    List<UserElement> getUsers();
     
-    public UserElement getUser(int id);
+    UserElement getUser(int id);
 }

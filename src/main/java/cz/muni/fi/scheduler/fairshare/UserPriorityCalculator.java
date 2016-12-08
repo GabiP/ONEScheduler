@@ -44,7 +44,7 @@ public class UserPriorityCalculator {
     /**
      * Calculates the priority for each inputted user.
      * 
-     * @param userIds 
+     * @param userIds the users ids to get the priority
      * @return The user IDs paired with their priority
      */
     public Map<Integer, Float> getUserPriorities(Set<Integer> userIds) {
@@ -118,7 +118,7 @@ public class UserPriorityCalculator {
     /**
      * Calculates the priority of a virtual machine.
      * 
-     * @param vm 
+     * @param vm to get the priority for
      * @return The priority of the virtual machine
      */
     private float getVmPriority(VmElement vm) {         
