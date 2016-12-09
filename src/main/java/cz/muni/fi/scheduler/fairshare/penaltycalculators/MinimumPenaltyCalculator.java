@@ -36,8 +36,7 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     protected PropertiesConfig fairshareConfig;
     
     protected List<HostElement> hosts;
-    protected Map<Integer, Integer> clusterHostNumber;
-    protected Map<Integer, Float> clusterStorage;
+    protected Map<Integer, Float> dsHostShare;
 
     public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, PropertiesConfig fairshareConfig) {
         this.hostFilter = hostFilter;
@@ -46,8 +45,7 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         this.clusterPool = clusterPool;  
         this.fairshareConfig = fairshareConfig;
         hosts = hostPool.getHosts();  
-        clusterHostNumber = getClusterHostNumber();
-        clusterStorage = getClusterStorage();
+        dsHostShare = getDsHostShare();        
     }    
     
     @Override  
@@ -63,43 +61,35 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         } 
         return minPenalty;  
     }    
-    
-    private Map<Integer, Integer> getClusterHostNumber() {
-        Map<Integer, Integer> hostNumber = new HashMap<>();
-        for (ClusterElement cluster : clusterPool.getClusters()) {
-            hostNumber.put(cluster.getId(), cluster.getHosts().size());            
-        }
-        return hostNumber;
-    } 
-    
-    private Map<Integer, Float> getClusterStorage() {
-        Map<Integer, Float> dsStorage = new HashMap<>();
+        
+    private Map<Integer, Float> getDsHostShare() {
+        Map<Integer, Float> result = new HashMap<>();
         for (DatastoreElement ds : dsPool.getSystemDs()) {
             if (ds.isShared() && ds.isMonitored()) {  
                 int dsHosts = 0;
-                for (int cluster : ds.getClusters()) {
-                    dsHosts += clusterHostNumber.get(cluster);
-                }    
-                for (int cluster : ds.getClusters()) {
-                    float dsClusterShare = ((float)ds.getTotal_mb() / dsHosts) * clusterHostNumber.get(cluster);
-                    if (dsStorage.containsKey(cluster)) {
-                        dsStorage.put(cluster, dsStorage.get(cluster) + dsClusterShare);
-                    } else {
-                        dsStorage.put(cluster, dsClusterShare );
-                    }                    
-                }
+                for (int clusterId : ds.getClusters()) {
+                    ClusterElement cluster = clusterPool.getCluster(clusterId);
+                    dsHosts += cluster.getHosts().size();
+                } 
+                result.put(ds.getId(), (float)ds.getTotal_mb()/dsHosts);
             }
         }
-        return dsStorage;
-    }    
+        return result;
+    }
     
     protected float getHostStorageShare(HostElement host) {
         float hostLocalStorage = 0;
         for (DatastoreNode ds : host.getDatastores()) {
             hostLocalStorage += ds.getTotal_mb();
         }
-        float hostClusterStorageShare = clusterStorage.get(host.getClusterId()) / clusterHostNumber.get(host.getClusterId());
-        return hostLocalStorage + hostClusterStorageShare;
+        float hostSharedDsStorage = 0;
+        ClusterElement cluster = clusterPool.getCluster(host.getClusterId());
+        for (int ds : cluster.getDatastores()) {
+            if (dsHostShare.containsKey(ds)) {
+                hostSharedDsStorage += dsHostShare.get(ds);
+            }
+        }
+        return hostLocalStorage + hostSharedDsStorage;
     }
     
     protected abstract float getHostPenalty(VmElement vm, HostElement host);

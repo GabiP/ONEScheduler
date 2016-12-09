@@ -24,14 +24,17 @@ public class VmFairshareRecord {
     private float lastCpu;
     
     private int lastMemory;
+    
+    private int lastHdd;
 
-    public VmFairshareRecord(int vmId, int userId, float priority, int lastClosedHistory, float lastCpu, int lastMemory) {
+    public VmFairshareRecord(int vmId, int userId, float priority, int lastClosedHistory, float lastCpu, int lastMemory, int lastHdd) {
         this.vmId = vmId;
         this.userId = userId;
         this.priority = priority;
         this.lastClosedHistory = lastClosedHistory;
         this.lastCpu = lastCpu;
         this.lastMemory = lastMemory;
+        this.lastHdd = lastHdd;
     }
     
     public int getVmId() {
@@ -81,4 +84,12 @@ public class VmFairshareRecord {
     public void setLastMemory(int lastMemory) {
         this.lastMemory = lastMemory;
     }
+
+    public int getLastHdd() {
+        return lastHdd;
+    }
+
+    public void setLastHdd(int lastHdd) {
+        this.lastHdd = lastHdd;
+    }   
 }
