@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
 import java.util.List;
 import java.util.Objects;
@@ -116,9 +116,6 @@ public class ClusterElement {
         if (!Objects.equals(this.getId(), other.getId())) {
             return false;
         }
-        if (!Objects.equals(this.getName(), other.getName())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getName(), other.getName());
     }
 }

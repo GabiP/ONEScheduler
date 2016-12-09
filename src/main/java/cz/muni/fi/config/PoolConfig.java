@@ -1,7 +1,6 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.one.oned.TmMadConfiguration;
 import cz.muni.fi.one.pools.AclElementPool;
 import cz.muni.fi.one.pools.ClusterElementPool;
 import cz.muni.fi.one.pools.DatastoreElementPool;
@@ -45,7 +44,7 @@ public class PoolConfig {
     
     @Bean 
     public IAclPool aclPool() throws LoadingFailedException { 
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return null;
         }
         return new AclElementPool(client());               
@@ -53,7 +52,7 @@ public class PoolConfig {
     
     @Bean 
     public IVmPool vmPool() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             try {
                 return new VmXmlPool(properties.getString("vmpoolpath"));
             } catch (IOException ex) {
@@ -66,7 +65,7 @@ public class PoolConfig {
     
     @Bean 
     public IUserPool userPool() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             try {
                 return new UserXmlPool(properties.getString("userpoolpath"));
             } catch (IOException ex) {
@@ -79,7 +78,7 @@ public class PoolConfig {
     
     @Bean 
     public IHostPool hostPool() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             try {
                 return new HostXmlPool(properties.getString("hostpoolpath"));
             } catch (IOException ex) {
@@ -92,7 +91,7 @@ public class PoolConfig {
     
     @Bean 
     public IClusterPool clusterPool() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             try {
                 return new ClusterXmlPool(properties.getString("clusterpoolpath"));
             } catch (IOException ex) {
@@ -105,7 +104,7 @@ public class PoolConfig {
     
     @Bean 
     public IDatastorePool datastorePool() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             try {
                 return new DatastoreXmlPool(properties.getString("datastorepoolpath"));
             } catch (IOException ex) {
@@ -118,7 +117,7 @@ public class PoolConfig {
     
     @Bean 
     public Client client() throws LoadingFailedException{
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return null;
         }
         try {

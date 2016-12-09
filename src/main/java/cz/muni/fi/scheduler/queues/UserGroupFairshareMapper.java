@@ -10,8 +10,8 @@ import cz.muni.fi.extensions.QueueListExtension;
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
-import cz.muni.fi.scheduler.resources.UserElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.UserElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -39,8 +39,8 @@ public class UserGroupFairshareMapper implements QueueMapper {
         List<Integer> sortedUserGroups = MapExtension.sortByValue(userGroupPriorities);
         
         List<Queue> queues = new ArrayList<>();
-        for (int i=0; i<sortedUserGroups.size(); i++) {
-            int userGroupId = sortedUserGroups.get(i);
+        for (Integer sortedUserGroup : sortedUserGroups) {
+            int userGroupId = sortedUserGroup;
             Queue queue = new Queue("UserGroup" + userGroupId, userGroupPriorities.get(userGroupId), new ArrayList<>());
             queues.add(queue);
         }
@@ -87,8 +87,8 @@ public class UserGroupFairshareMapper implements QueueMapper {
         Collections.sort(userVms, (VmElement vm1, VmElement vm2) -> {
             return vm1.getVmId().compareTo(vm2.getVmId());
         });
-        for (int i=0; i<userVms.size(); i++) {
-            queue.queue(userVms.get(i));
+        for (VmElement userVm : userVms) {
+            queue.queue(userVm);
         }
     }   
 }

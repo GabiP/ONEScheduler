@@ -5,9 +5,9 @@
  */
 package cz.muni.fi.config;
 
-import cz.muni.fi.authorization.AuthorizationManager;
-import cz.muni.fi.authorization.AuthorizationManagerXml;
-import cz.muni.fi.authorization.IAuthorizationManager;
+import cz.muni.fi.scheduler.authorization.AuthorizationManager;
+import cz.muni.fi.scheduler.authorization.AuthorizationManagerXml;
+import cz.muni.fi.scheduler.authorization.IAuthorizationManager;
 import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.core.Scheduler;
@@ -100,7 +100,7 @@ public class SchedulerConfig {
     
     @Bean 
     public IAuthorizationManager authorizationManager() throws LoadingFailedException {
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return new AuthorizationManagerXml(poolConfig.hostPool(), poolConfig.datastorePool());
         } else {
             return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());

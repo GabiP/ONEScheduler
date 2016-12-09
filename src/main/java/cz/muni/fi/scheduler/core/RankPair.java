@@ -6,7 +6,7 @@
 
 package cz.muni.fi.scheduler.core;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 
 /**
  *

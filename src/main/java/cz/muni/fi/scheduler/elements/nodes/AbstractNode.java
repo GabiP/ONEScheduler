@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cz.muni.fi.scheduler.resources.nodes;
+package cz.muni.fi.scheduler.elements.nodes;
 
 import org.opennebula.client.PoolElement;
 

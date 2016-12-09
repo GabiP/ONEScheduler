@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**
@@ -14,17 +14,17 @@ import java.util.List;
  */
 public interface IVmPool {    
     
-    public VmElement getVm(int vmId);
+    VmElement getVm(int vmId);
     
-    public List<VmElement> getVms();
+    List<VmElement> getVms();
     
-    public List<VmElement> getAllVms();
+    List<VmElement> getAllVms();
     
-    public List<VmElement> getVmsByUser(int userId);
+    List<VmElement> getVmsByUser(int userId);
     
-    public List<VmElement> getAllVmsByUser(int userId);
+    List<VmElement> getAllVmsByUser(int userId);
 
-    public List<VmElement> getVmsByState(int state);
+    List<VmElement> getVmsByState(int state);
     
     /**
      * Gets virtual machines by user and state.
@@ -44,7 +44,7 @@ public interface IVmPool {
      * 
      * @return array of virtual machines
      */
-    public List<VmElement> getVms(int userId, int state);
+    List<VmElement> getVms(int userId, int state);
     
-    public List<VmElement> getReschedVms();
+    List<VmElement> getReschedVms();
 }

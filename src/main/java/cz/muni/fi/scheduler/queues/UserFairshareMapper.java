@@ -8,7 +8,7 @@ package cz.muni.fi.scheduler.queues;
 import cz.muni.fi.extensions.MapExtension;
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +33,8 @@ public class UserFairshareMapper implements QueueMapper {
         Map<Integer, List<VmElement>> userVms = VmListExtension.getUserVms(vms);
         
         List<Queue> queues = new ArrayList<>();
-        for (int i=0; i<sortedUsers.size(); i++) {
-            int userId = sortedUsers.get(i);
+        for (Integer sortedUser : sortedUsers) {
+            int userId = sortedUser;
             Queue queue = createUserQueue(userId, userPriorities.get(userId), userVms.get(userId));
             queues.add(queue);
         }

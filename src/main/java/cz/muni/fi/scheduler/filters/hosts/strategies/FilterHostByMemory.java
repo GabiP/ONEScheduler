@@ -2,9 +2,9 @@ package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Integer reservation = getReservation(host);
         Integer actualMemoryUsage = schedulerData.getReservedMemory(host) + host.getMem_usage() + reservation;
-        log.info("Filtering Hosts by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=" + vm.getMemory());
+        log.info("Filtering Host " + host.getId() + " by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=(?)" + vm.getMemory());
         return ((host.getMax_mem() - actualMemoryUsage) >= vm.getMemory());
     }
     

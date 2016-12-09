@@ -1,7 +1,7 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
-import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
-import cz.muni.fi.scheduler.resources.nodes.VmQuota;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreQuota;
+import cz.muni.fi.scheduler.elements.nodes.VmQuota;
 import java.util.List;
 import java.util.Objects;
 
@@ -105,9 +105,6 @@ public class UserElement {
         if (!Objects.equals(this.getId(), other.getId())) {
             return false;
         }
-        if (!Objects.equals(this.getGid(), other.getGid())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getGid(), other.getGid());
     }
 }

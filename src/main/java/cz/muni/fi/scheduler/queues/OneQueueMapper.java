@@ -1,6 +1,6 @@
 package cz.muni.fi.scheduler.queues;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public class OneFifoQueue implements QueueMapper {
+public class OneQueueMapper implements QueueMapper {
 
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {

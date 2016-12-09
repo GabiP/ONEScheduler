@@ -35,8 +35,8 @@ public class MapExtension {
 
         // Return the ordered keys from the List        
         List orderedKeys = new ArrayList<>();
-        for (Iterator it = list.iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        for (Object aList : list) {
+            Map.Entry entry = (Map.Entry) aList;
             orderedKeys.add(entry.getKey());
         }
         

@@ -1,14 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.core;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +22,10 @@ public class Match {
     public Match(HostElement host, DatastoreElement datastore) {
         this.host = host;
         this.datastore = datastore;
+    }
+    
+    public Match() {
+        
     }
     
     public HostElement getHost() {
@@ -79,10 +77,7 @@ public class Match {
         if (!Objects.equals(this.getHost(), other.getHost())) {
             return false;
         }
-        if (!Objects.equals(this.getDatastore(), other.getDatastore())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getDatastore(), other.getDatastore());
     }
     
     public List<Match> addVm(List<Match> plan, VmElement vm) {

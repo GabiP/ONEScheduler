@@ -1,9 +1,9 @@
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.nodes.PciNode;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.opennebula.client.host.Host;

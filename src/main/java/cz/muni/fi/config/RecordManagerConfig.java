@@ -34,7 +34,7 @@ public class RecordManagerConfig {
     
     @Bean
     public IUserFairshareRecordManager userRecordManager() {
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return new UserFairshareRecordManager(USER_RECORDS_PATH_XML);  
         } else {            
             return new UserFairshareRecordManager(USER_RECORDS_PATH); 
@@ -43,7 +43,7 @@ public class RecordManagerConfig {
     
     @Bean 
     public IVmFairshareRecordManager vmRecordManager() {
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return new VmFairshareRecordManager(VM_RECORDS_PATH_XML);  
         } else {            
             return new VmFairshareRecordManager(VM_RECORDS_PATH); 

@@ -1,8 +1,8 @@
 package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.scheduler.elementpools.IUserPool;
-import cz.muni.fi.scheduler.resources.UserElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.UserElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -14,13 +14,13 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Gabriela Podolnikova
  */
-public class QueueByUser implements QueueMapper {
+public class QueueByUserMapper implements QueueMapper {
     
     private IUserPool userPool;
     
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
-    public QueueByUser(IUserPool userPool) {
+    public QueueByUserMapper(IUserPool userPool) {
         this.userPool = userPool;
     }
 
@@ -30,7 +30,9 @@ public class QueueByUser implements QueueMapper {
         List<Queue> result = createQueueForUsers(users);
         for (VmElement vm: vms)  {
             Queue q = getUsersQueue(result, vm.getUid());
-            q.queue(vm);
+            if (q != null) {
+                q.queue(vm);
+            }
         }
         printQueues(result);
         return result;

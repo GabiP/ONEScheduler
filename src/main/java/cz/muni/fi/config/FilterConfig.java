@@ -55,8 +55,8 @@ public class FilterConfig {
         List<IHostFilterStrategy> filterStrategies = new ArrayList<>();
         filterStrategies.add(new FilterHostByMaxCpu());
         filterStrategies.add(new FilterHostByMaxMemory());
-        for (int i=0; i<filterConfig.length; i++) {
-            switch(filterConfig[i]) {
+        for (String aFilterConfig : filterConfig) {
+            switch (aFilterConfig) {
                 case HOST_PCI_FILTER:
                     filterStrategies.add(new FilterHostByPci());
                     break;
@@ -79,8 +79,8 @@ public class FilterConfig {
         String[] filterConfig = properties.getStringArray("hostFilters");
         List<IHostFilterStrategy> filterStrategies = new ArrayList<>();
         List<ISchedulingHostFilterStrategy> schedulingFilterStrategies = new ArrayList<>();
-        for (int i=0; i<filterConfig.length; i++) {
-            switch(filterConfig[i]) {
+        for (String aFilterConfig : filterConfig) {
+            switch (aFilterConfig) {
                 case HOST_CPU_FILTER:
                     schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool()));
                     break;
@@ -106,8 +106,8 @@ public class FilterConfig {
         String[] filterConfig = properties.getStringArray("datastoreFilters");
         List<IDatastoreFilterStrategy> filterStrategies = new ArrayList<>();
         List<ISchedulingDatastoreFilterStrategy> schedulingFilterStrategies = new ArrayList<>();
-        for (int i=0; i<filterConfig.length; i++) {
-            switch(filterConfig[i]) {
+        for (String aFilterConfig : filterConfig) {
+            switch (aFilterConfig) {
                 case DS_STORAGE_FILTER:
                     schedulingFilterStrategies.add(new FilterDatastoresByStorage());
                     break;

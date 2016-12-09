@@ -2,9 +2,9 @@ package cz.muni.fi.scheduler.policies.datastores;
 
 import cz.muni.fi.scheduler.core.RankPair;
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
@@ -72,8 +72,7 @@ public class StoragePackingTest {
         datastoreNodes.add(dsNode1);
         
         host.setDatastores(datastoreNodes);
-        
-        when(schedulerData.getReservedStorage(ds1)).thenReturn(20);
+
         when(schedulerData.getReservedStorage(ds2)).thenReturn(0);
         when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
@@ -96,10 +95,8 @@ public class StoragePackingTest {
         datastoreNodes.add(dsNode1);
         
         host.setDatastores(datastoreNodes);
-        
-        when(schedulerData.getReservedStorage(ds1)).thenReturn(20);
+
         when(schedulerData.getReservedStorage(ds2)).thenReturn(0);
-        when(schedulerData.getReservedStorage(ds3)).thenReturn(50);
         RankPair rankPair = policy.selectDatastore(datastores, host, schedulerData);
         
         //less free space has ds3, but it is not visible for host, so cannot make pair

@@ -2,10 +2,12 @@ package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.DatastoreMapper;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.opennebula.client.Client;
 import org.opennebula.client.OneResponse;
 import org.opennebula.client.datastore.Datastore;
@@ -67,13 +69,7 @@ public class DatastoreElementPool implements IDatastorePool {
      */
     @Override
     public List<DatastoreElement> getSystemDs() {
-        List<DatastoreElement> systemDs = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            if (ds.getType() == 1) {
-                systemDs.add(ds);
-            }
-        }
-        return systemDs;
+        return getDatastores().stream().filter(ds -> ds.getType() == 1).collect(Collectors.toList());
     }
 
     /**
@@ -82,21 +78,11 @@ public class DatastoreElementPool implements IDatastorePool {
      */
     @Override
     public List<Integer> getDatastoresIds() {
-        List<Integer> dsIds = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            dsIds.add(ds.getId());
-        }
-        return dsIds;
+        return getDatastores().stream().map(DatastoreElement::getId).collect(Collectors.toList());
     }
 
     @Override
     public List<DatastoreElement> getImageDs() {
-        List<DatastoreElement> systemDs = new ArrayList<>();
-        for (DatastoreElement ds: getDatastores()) {
-            if (ds.getType() == 0) {
-                systemDs.add(ds);
-            }
-        }
-        return systemDs;
+        return getDatastores().stream().filter(ds -> ds.getType() == 0).collect(Collectors.toList());
     }
 }

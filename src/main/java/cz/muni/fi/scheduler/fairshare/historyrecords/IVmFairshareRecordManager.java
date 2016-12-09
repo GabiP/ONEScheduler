@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare.historyrecords;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**
@@ -14,17 +14,17 @@ import java.util.List;
  */
 public interface IVmFairshareRecordManager {
     
-    public VmFairshareRecord getRecord(int vmId);
+    VmFairshareRecord getRecord(int vmId);
     
-    public List<VmFairshareRecord> getRecords(int userId);
+    List<VmFairshareRecord> getRecords(int userId);
     
-    public void storeRecord(VmFairshareRecord record);
+    void storeRecord(VmFairshareRecord record);
         
-    public void delete(int vmId);
+    void delete(int vmId);
     
-    public void delete(List<Integer> vmIds);
+    void delete(List<Integer> vmIds);
     
-    public VmFairshareRecord createRecord(VmElement vm, float priority);
+    VmFairshareRecord createRecord(VmElement vm, float priority);
     
     /**
      * Creates a new VmElement by updating the data in the inputted 
@@ -34,7 +34,7 @@ public interface IVmFairshareRecordManager {
      * @param record The history record used to update the data in vm
      * @return The updated VmElement
      */
-    public VmElement createVmFromRecord(VmElement vm, VmFairshareRecord record);
+    VmElement createVmFromRecord(VmElement vm, VmFairshareRecord record);
     
-    public void clearContent(); 
+    void clearContent();
 }

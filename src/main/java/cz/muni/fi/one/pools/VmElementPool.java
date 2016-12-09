@@ -2,7 +2,7 @@ package cz.muni.fi.one.pools;
 
 import cz.muni.fi.one.mappers.VmMapper;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

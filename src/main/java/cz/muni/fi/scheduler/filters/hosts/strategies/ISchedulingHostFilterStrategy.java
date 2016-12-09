@@ -1,8 +1,8 @@
 package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 
 /**
  * Filters are used for filtering active hosts in the system.
@@ -13,5 +13,5 @@ import cz.muni.fi.scheduler.resources.VmElement;
  */
 public interface ISchedulingHostFilterStrategy {
     
-    public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData);
+    boolean test(VmElement vm, HostElement host, SchedulerData schedulerData);
 }

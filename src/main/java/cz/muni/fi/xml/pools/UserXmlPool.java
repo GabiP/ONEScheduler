@@ -7,7 +7,7 @@ package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
-import cz.muni.fi.scheduler.resources.UserElement;
+import cz.muni.fi.scheduler.elements.UserElement;
 import cz.muni.fi.xml.mappers.UserXmlMapper;
 import cz.muni.fi.xml.resources.lists.UserXmlList;
 import java.io.IOException;

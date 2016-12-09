@@ -1,10 +1,10 @@
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,30 +25,30 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         //check if ds and host have the same clusterId
         int sizeValue = vm.getCopyToSystemDiskSize();
-        boolean matched = false;
+        boolean matched;
         if (!(ds.getClusters().contains(host.getClusterId()))) {
-            log.info("Filtering DS by storage. The DS and HOST ids don't match");
+            log.info("Filtering DS " + ds.getId() + " by storage. The DS and HOST cluster ids don't match");
             return false;
         }
         if (ds.isShared()) {
             //get the reserved storage for the datastore we are checking
             Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (!ds.isMonitored()) {
-                log.info("Datastore is not monitored. Cannot be matched.");
+                log.info("Datastore " + ds.getId() + " is not monitored. Cannot be matched.");
                 return false;
             } else if (vm.isResched()) {
                 log.info("VM is rescheduled. We do not need to check the datastore.");
                 return true;
             } else {
                 //test capacity on ds directly
-                log.info("Datastore is shared and being checked.");
+                log.info("Datastore " + ds.getId() + " is shared and being checked.");
                 matched = testOnDs(sizeValue, reservedStorage, ds.getFree_mb());
             }
         } else {
             //get the reserved storage for the datastore we are checking
             Integer reservedStorage = schedulerData.getReservedStorage(host, ds);
             //test ds capacity on host datastores
-            log.info("Datastore is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
+            log.info("Datastore " + ds.getId() + " is not shared and is checked if it is on host: " + host.getId() + " then the capacity will be checked.");
             matched = testOnDsNode(sizeValue, reservedStorage, host, ds);
         }
         return matched;

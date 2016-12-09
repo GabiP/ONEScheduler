@@ -9,7 +9,7 @@ import cz.muni.fi.result.IResultManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -34,10 +34,10 @@ public class SetUp {
     private static PropertiesConfig fairshareConfig;
     
     private static int cycleinterval;
-    private static boolean useXml;
+    private static boolean testingMode;
     
-    public static final String DEFAULT_FILE_NAME = "configuration.properties";
-    public static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
+    private static final String DEFAULT_FILE_NAME = "configuration.properties";
+    private static final String DEFAULT_FILE_NAME_FAIRSHARE = "fairshare.properties";
     
     protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
     
@@ -51,9 +51,9 @@ public class SetUp {
         }
         
         cycleinterval = configuration.getInt("cycleinterval");
-        useXml = configuration.getBoolean("useXml");
+        testingMode = configuration.getBoolean("testingMode");
         
-        if (useXml) {
+        if (testingMode) {
             clearFairshareRecords();
         } 
                 
@@ -94,7 +94,7 @@ public class SetUp {
     }
 
     private static void saveSchedulingTime() {
-        // TODO: when Dalibor's XML generator is ready add date it provides for Simulator
+        // TODO: when Dalibor's XML generator is ready add date it provides for testingMode
         TimeManager.getInstance().setSchedulingTimeStamp(new Date());
     }
     
@@ -118,17 +118,13 @@ public class SetUp {
         for (Match match : plan) {
             System.out.println("Host: " + match.getHost().getId());
             System.out.println("Its vms: ");
-            for (VmElement vm : match.getVms()) {
-                System.out.println(vm);
-            }
+            match.getVms().forEach(System.out::println);
             System.out.println();
         }
     }
     
     private static void printFailedVms(List<VmElement> failedVms) {
         System.out.println("Failed Vms: ");
-        for (VmElement vm: failedVms) {
-            System.out.println(vm);
-        }
+        failedVms.forEach(System.out::println);
     }
 }

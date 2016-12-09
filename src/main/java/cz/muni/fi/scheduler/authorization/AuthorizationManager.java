@@ -1,14 +1,14 @@
-package cz.muni.fi.authorization;
+package cz.muni.fi.scheduler.authorization;
 
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.acl.Acl;
@@ -42,7 +42,7 @@ public class AuthorizationManager implements IAuthorizationManager {
      * Finds the subset of hosts where the owner of specified virtual machine can deploy.
      * 
      * @param vm the virtual machine's user to be authorized
-     * @return an array with ids of authorized hosts
+     * Sets authorized hosts and datastores.
      */
     @Override
     public void authorize(VmElement vm) {
@@ -148,8 +148,7 @@ public class AuthorizationManager implements IAuthorizationManager {
     
     private Integer getIdFromResources(String resources, String mark) {
         String s = resources.substring(resources.indexOf(mark) + 1);
-        Integer id = Integer.valueOf(s);
-        return id;
+        return Integer.valueOf(s);
     }
     
     private void setAuthorizedHosts(List<Integer> authorizedHostsIds) {

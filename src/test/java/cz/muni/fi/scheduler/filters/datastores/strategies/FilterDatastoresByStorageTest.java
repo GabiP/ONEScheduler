@@ -1,19 +1,16 @@
 package cz.muni.fi.scheduler.filters.datastores.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.resources.nodes.DiskNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.when;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -107,7 +104,7 @@ public class FilterDatastoresByStorageTest {
         datastores.add(dsNode2);
         host2.setDatastores(datastores);
         
-        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(64);
 
         assertTrue(filter.test(vm, dsLocal1, host2, schedulerData));
     }
@@ -123,7 +120,7 @@ public class FilterDatastoresByStorageTest {
         //Calling the test with the first dsNode on host2, and it does not fit
         //On dsNode1 there is 300 mb free space, but 64 is reserved,
         //do the free space that is calculated is: 236 and the VM requires 300
-        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(64);
 
         assertFalse(filter.test(vm, dsLocal1, host2, schedulerData));
     }
@@ -136,7 +133,7 @@ public class FilterDatastoresByStorageTest {
         datastores.add(dsNode2);
         host2.setDatastores(datastores);
         
-        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsLocal1)).thenReturn(64);
 
         assertTrue(filter.test(vm, dsLocal1, host2, schedulerData));
     }
@@ -144,21 +141,21 @@ public class FilterDatastoresByStorageTest {
     @Test
     public void testFitsShared() {
         dsShared.setFree_mb(500);
-        when(schedulerData.getReservedStorage(dsShared)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsShared)).thenReturn(64);
         assertTrue(filter.test(vm, dsShared, host1, schedulerData));
     }
     
     @Test
     public void testFitsSharedWithAnotherHost() {
         dsShared.setFree_mb(500);
-        when(schedulerData.getReservedStorage(dsShared)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsShared)).thenReturn(64);
         assertTrue(filter.test(vm, dsShared, host2, schedulerData));
     }
     
     @Test
     public void testDoesNotFitShared() {
         dsShared.setFree_mb(300);
-        when(schedulerData.getReservedStorage(dsShared)).thenReturn(new Integer(64));
+        when(schedulerData.getReservedStorage(dsShared)).thenReturn(64);
         assertFalse(filter.test(vm, dsShared, host1, schedulerData));
     }
     

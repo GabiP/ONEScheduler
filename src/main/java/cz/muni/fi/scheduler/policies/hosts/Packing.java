@@ -1,7 +1,7 @@
 package cz.muni.fi.scheduler.policies.hosts;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Packing implements IPlacementPolicy {
        
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     @Override
     public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
@@ -34,11 +34,10 @@ public class Packing implements IPlacementPolicy {
                 moreVms = entry.getKey();
             }
         }*/
-        LOG.info("List of hosts: " + hosts);
+        log.info("List of hosts: " + hosts);
         Map<HostElement, Integer> listOfRunningVms = schedulerData.getActualRunningVms(hosts);
-        LOG.info("List of hosts: " + listOfRunningVms.keySet());
-        LOG.info("List of running vms: " + listOfRunningVms.values());
         result.addAll(sortByValue(listOfRunningVms).keySet());
+        log.info("List of sorted hosts: " + result);
         return result;
     }
     

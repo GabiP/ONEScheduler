@@ -9,12 +9,9 @@ package cz.muni.fi.scheduler.filters.datastores;
 import cz.muni.fi.scheduler.filters.datastores.strategies.IDatastoreFilterStrategy;
 import cz.muni.fi.scheduler.filters.datastores.strategies.ISchedulingDatastoreFilterStrategy;
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.elementpools.IHostPool;
-import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
-import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +38,7 @@ public class SchedulingDatastoreFilter {
      * @param datastores all system datastores in the system
      * @param host the host for matching the datastore
      * @param vm the vm to be tested
-     * @param schedulerData
+     * @param schedulerData scheduler data to get the cached data
      * @return the list of filtered datastores
      */
     public List<DatastoreElement> filterDatastores(List<DatastoreElement> datastores, HostElement host, VmElement vm, SchedulerData schedulerData) {
@@ -60,7 +57,7 @@ public class SchedulingDatastoreFilter {
      * @param host the host to be tested
      * @param ds the datasotre to be tested
      * @param vm the virtual machine to be tested
-     * @param schedulerData
+     * @param schedulerData scheduler data with cached data
      * @return true if the host and vm match, false othewise
      */
     public boolean isSuitableDatastore(HostElement host, DatastoreElement ds, VmElement vm, SchedulerData schedulerData) {

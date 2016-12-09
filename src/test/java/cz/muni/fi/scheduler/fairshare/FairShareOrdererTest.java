@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.when;
 import org.junit.Ignore;
-import static org.mockito.Mockito.mock;
+
 import static org.mockito.Mockito.mock;
 
 /**

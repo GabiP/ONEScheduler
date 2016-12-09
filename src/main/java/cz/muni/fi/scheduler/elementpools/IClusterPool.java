@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.ClusterElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IClusterPool {
     
-    public List<ClusterElement> getClusters();
+    List<ClusterElement> getClusters();
     
-    public ClusterElement getCluster(int id);
+    ClusterElement getCluster(int id);
 }

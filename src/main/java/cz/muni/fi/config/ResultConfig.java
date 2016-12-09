@@ -34,7 +34,7 @@ public class ResultConfig {
     
     @Bean 
     public IResultManager resultManager() throws LoadingFailedException { 
-        if (properties.getBoolean("useXml")) {
+        if (properties.getBoolean("testingMode")) {
             return new XmlResultManager(properties.getString("hostpoolpath"),
                     properties.getString("clusterpoolpath"),
                     properties.getString("userpoolpath"),

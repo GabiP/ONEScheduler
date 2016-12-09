@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.fairshare.historyrecords;
 
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -113,10 +113,9 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
      */
     @Override
     public VmElement createVmFromRecord(VmElement vm, VmFairshareRecord record) {
-        VmElement newVm = vm;
-        newVm.setCpu(record.getLastCpu());
-        newVm.setMemory(record.getLastMemory());
-        return newVm;
+        vm.setCpu(record.getLastCpu());
+        vm.setMemory(record.getLastMemory());
+        return vm;
     }
     
     @Override

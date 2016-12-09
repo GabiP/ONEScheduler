@@ -1,9 +1,10 @@
 package cz.muni.fi.scheduler.select;
 
+import cz.muni.fi.scheduler.selectors.QueueByQueue;
 import cz.muni.fi.scheduler.queues.Queue;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
-import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -26,9 +27,7 @@ public class QueueByQueueTest {
     
     @Test
     public void selecVmTest() {
-        for (Queue q: queues) {
-            System.out.println(q);
-        }
+        queues.forEach(System.out::println);
         VmElement selectedVm = queueByQueue.selectVm(queues);
         Integer expectedId = 0;
         assertEquals(expectedId, selectedVm.getVmId());

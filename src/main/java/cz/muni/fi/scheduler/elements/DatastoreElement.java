@@ -1,4 +1,4 @@
-package cz.muni.fi.scheduler.resources;
+package cz.muni.fi.scheduler.elements;
 
 import cz.muni.fi.one.oned.TmMadConfiguration;
 import java.util.List;
@@ -266,7 +266,7 @@ public class DatastoreElement {
     }
 
     /**
-     * @param cluster_id the cluster_id to set
+     * @param clusters the clusters to set
      */
     public void setClusters(List<Integer> clusters) {
         this.clusters = clusters;
@@ -361,10 +361,7 @@ public class DatastoreElement {
         if (!Objects.equals(this.getType(), other.getType())) {
             return false;
         }
-        if (!Objects.equals(this.getClusters(), other.getClusters())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.getClusters(), other.getClusters());
     }
 
     /**

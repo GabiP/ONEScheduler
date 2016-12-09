@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.DatastoreElement;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
 import java.util.List;
 
 /**
@@ -14,13 +14,13 @@ import java.util.List;
  */
 public interface IDatastorePool {
     
-    public List<DatastoreElement> getDatastores();
+    List<DatastoreElement> getDatastores();
     
-    public DatastoreElement getDatastore(int id);
+    DatastoreElement getDatastore(int id);
     
-    public List<DatastoreElement> getSystemDs();
+    List<DatastoreElement> getSystemDs();
     
-    public List<DatastoreElement> getImageDs();
+    List<DatastoreElement> getImageDs();
     
-    public List<Integer> getDatastoresIds();
+    List<Integer> getDatastoresIds();
 }

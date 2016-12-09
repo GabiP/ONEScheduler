@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.UserElement;
+import cz.muni.fi.scheduler.elements.UserElement;
 import java.util.List;
 
 /**
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IUserPool {
     
-    public List<UserElement> getUsers();    
+    List<UserElement> getUsers();
     
-    public UserElement getUser(int id);
+    UserElement getUser(int id);
 }

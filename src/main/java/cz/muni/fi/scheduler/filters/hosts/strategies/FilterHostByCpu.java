@@ -2,9 +2,9 @@ package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.core.SchedulerData;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
-import cz.muni.fi.scheduler.resources.ClusterElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.VmElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.VmElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Float reservation = getReservation(host);
         Float actualCpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage() + reservation;
-        log.info("Filtering Hosts by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=" + vm.getCpu());
+        log.info("Filtering Host " + host.getId() + " by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=(?)" + vm.getCpu());
         return ((host.getMax_cpu() - actualCpuUsage) >= vm.getCpu());
     }
     

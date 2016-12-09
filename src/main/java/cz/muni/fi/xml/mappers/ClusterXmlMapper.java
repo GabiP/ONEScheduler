@@ -5,10 +5,11 @@
  */
 package cz.muni.fi.xml.mappers;
 
-import cz.muni.fi.scheduler.resources.ClusterElement;
+import cz.muni.fi.scheduler.elements.ClusterElement;
 import cz.muni.fi.xml.resources.ClusterXml;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -17,11 +18,7 @@ import java.util.List;
 public class ClusterXmlMapper {
     
     public static List<ClusterElement> map(List<ClusterXml> clusters) {
-        List<ClusterElement> result = new ArrayList<>();
-        for (ClusterXml xml : clusters) {
-            result.add(map(xml));
-        }
-        return result;
+        return clusters.stream().map(ClusterXmlMapper::map).collect(Collectors.toList());
     }
 
     public static ClusterElement map(ClusterXml cluster) {

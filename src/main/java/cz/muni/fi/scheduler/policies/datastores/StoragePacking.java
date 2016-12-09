@@ -2,9 +2,9 @@ package cz.muni.fi.scheduler.policies.datastores;
 
 import cz.muni.fi.scheduler.core.RankPair;
 import cz.muni.fi.scheduler.core.SchedulerData;
-import cz.muni.fi.scheduler.resources.DatastoreElement;
-import cz.muni.fi.scheduler.resources.HostElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreNode;
+import cz.muni.fi.scheduler.elements.DatastoreElement;
+import cz.muni.fi.scheduler.elements.HostElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
 import java.util.List;
 
 /**
@@ -24,8 +24,8 @@ public class StoragePacking implements IStoragePolicy {
         Integer capacity;
         DatastoreElement result = null;
         for (DatastoreElement ds : datastores) {
-            Integer reservedStorage = schedulerData.getReservedStorage(ds);
             if (ds.isShared()) {
+                Integer reservedStorage = schedulerData.getReservedStorage(ds);
                 capacity = ds.getFree_mb() - reservedStorage;
                 if (capacity < lessFreeSpace) {
                     result = ds;
@@ -33,6 +33,7 @@ public class StoragePacking implements IStoragePolicy {
                 }
             } else {
                 DatastoreNode dsNode = host.getDatastoreNode(ds.getId());
+                Integer reservedStorage = schedulerData.getReservedStorage(host, ds);
                 if (dsNode != null) {
                     capacity = dsNode.getFree_mb() - reservedStorage;
                     if (capacity < lessFreeSpace) {

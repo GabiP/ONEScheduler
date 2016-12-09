@@ -5,7 +5,7 @@
  */
 package cz.muni.fi.scheduler.elementpools;
 
-import cz.muni.fi.scheduler.resources.HostElement;
+import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.List;
 
 /**
@@ -14,11 +14,11 @@ import java.util.List;
  */
 public interface IHostPool {
     
-    public List<HostElement> getHosts();
+    List<HostElement> getHosts();
     
-    public List<HostElement> getActiveHosts();
+    List<HostElement> getActiveHosts();
     
-    public List<Integer> getHostsIds();
+    List<Integer> getHostsIds();
     
-    public HostElement getHost(int id);
+    HostElement getHost(int id);
 }

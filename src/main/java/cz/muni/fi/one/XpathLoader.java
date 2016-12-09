@@ -1,6 +1,6 @@
 package cz.muni.fi.one;
 
-import cz.muni.fi.scheduler.resources.nodes.AbstractNode;
+import cz.muni.fi.scheduler.elements.nodes.AbstractNode;
 import java.util.ArrayList;
 import java.util.List;
 import org.opennebula.client.PoolElement;
@@ -45,8 +45,8 @@ public class XpathLoader {
      * @param clazz a type of class that we want to create = the node.
      * @param xpathExpr a string defining the xpath expression
      * @return the list of desired nodes
-     * @throws InstantiationException
-     * @throws IllegalAccessException 
+     * @throws InstantiationException not able to get the instance
+     * @throws IllegalAccessException bad access
      */
     public static <T extends AbstractNode> List<T> getNodeList(PoolElement element, Class<T> clazz, String xpathExpr) throws InstantiationException, IllegalAccessException {
         List<T> list = new ArrayList<>();

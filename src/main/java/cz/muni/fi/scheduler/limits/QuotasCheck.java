@@ -4,10 +4,10 @@ import cz.muni.fi.scheduler.limits.data.UserQuotasData;
 import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.limits.data.LimitCheckerData;
-import cz.muni.fi.scheduler.resources.UserElement;
-import cz.muni.fi.scheduler.resources.VmElement;
-import cz.muni.fi.scheduler.resources.nodes.DatastoreQuota;
-import cz.muni.fi.scheduler.resources.nodes.VmQuota;
+import cz.muni.fi.scheduler.elements.UserElement;
+import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.scheduler.elements.nodes.DatastoreQuota;
+import cz.muni.fi.scheduler.elements.nodes.VmQuota;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,17 +35,9 @@ public class QuotasCheck implements LimitChecker {
         List<DatastoreQuota> dsQuotas = user.getDatastoreQuota();
         VmQuota vmQuota = user.getVmQuota();
         boolean dsQuotasCheck;
-        if (dsQuotas.size() == 0) {
-            dsQuotasCheck = true;
-        } else {
-            dsQuotasCheck = checkDsQuotas(dsQuotas, vm, match, user);
-        }
+        dsQuotasCheck = dsQuotas.size() == 0 || checkDsQuotas(dsQuotas, vm, match, user);
         boolean vmQuotaCheck;
-        if (vmQuota.isEmpty()) {
-            vmQuotaCheck = true;
-        } else {
-            vmQuotaCheck = checkVmQuota(vmQuota, vm, user);
-        }
+        vmQuotaCheck = vmQuota.isEmpty() || checkVmQuota(vmQuota, vm, user);
         log.info("DsQuotaCheck result: " + dsQuotasCheck + " vmQuotaCheck result: " + vmQuotaCheck);
         return dsQuotasCheck && vmQuotaCheck;
     }
