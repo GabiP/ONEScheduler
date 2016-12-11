@@ -59,12 +59,12 @@ public class UserPriorityCalculator {
         return userPriorities;
     }  
     
-    private float calculateCurrentUserPriority(Integer userId) {
+    private float calculateCurrentUserPriority(int userId) {
         List<VmElement> vms = vmPool.getVmsByUser(userId);
         
         float currentPriority = 0;
         for (VmElement vm : vms) {                
-            if (vm.getRunTime() == 0 && vm.getState() != 6) {
+            if (vm.getRunTime() == 0) {
                 // assign a starting priority if the vm didnt run yet                
                 currentPriority += getStartingVmPriority(vm);
             } 
@@ -75,10 +75,11 @@ public class UserPriorityCalculator {
         return currentPriority;
     } 
     
-    private float calculatePastUserPriority(Integer userId) {
+    private float calculatePastUserPriority(int userId) {
         float pastPriority = userRecordManager.getPriority(userId);
         List<VmElement> vms;
         if (pastPriority == 0) { 
+            // get all vms in state DONE
             vms = vmPool.getVms(userId, 6);            
         } else {
             vms = getNewlyDoneVms(userId);              
@@ -121,11 +122,10 @@ public class UserPriorityCalculator {
      * @param vm to get the priority for
      * @return The priority of the virtual machine
      */
-    private float getVmPriority(VmElement vm) {         
+    private float getVmPriority(VmElement vm) {       
+        float pastVmPriority = calculatePastVmPriority(vm);  
         float activeVmPriority = calculateActiveVmPriority(vm);
-        float pastVmPriority = calculatePastVmPriority(vm);
-        
-        // TODO: maybe remove if (should be ok like this, but without it calculation is more error proof)
+        // unsless vm is DONE
         if (vm.getState() != 6) {
             VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, pastVmPriority);
             vmRecordManager.storeRecord(newRecord);
@@ -135,6 +135,7 @@ public class UserPriorityCalculator {
     
     private float calculateActiveVmPriority(VmElement vm) {
         float priority = 0;
+        // if vm is currently running
         if (vm.getState() == 3) {
             HistoryNode lastHistory = vm.getHistories().get(vm.getHistories().size()-1);
             int historyRunTime = vm.getHistoryRuntime(lastHistory);            
@@ -147,7 +148,7 @@ public class UserPriorityCalculator {
         VmFairshareRecord vmRecord = vmRecordManager.getRecord(vm.getVmId());
         if (vmRecord == null) {
             vmRecord = new VmFairshareRecord(
-                    vm.getVmId(), vm.getUid(), 0, -1, vm.getCpu(), vm.getMemory());
+                    vm.getVmId(), vm.getUid(), 0, -1, vm.getCpu(), vm.getMemory(), vm.getDiskSizes());
         }
         float priority = vmRecord.getPriority();        
         

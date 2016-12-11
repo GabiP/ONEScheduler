@@ -50,8 +50,9 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         int lastClosedHistory = Integer.parseInt(parts[2]);
         float lastCpu = Float.parseFloat(parts[3]);
         int lastMemory = Integer.parseInt(parts[4]);
+        int lastHdd = Integer.parseInt(parts[5]);
         
-        return new VmFairshareRecord(vmId, userId, vmPriority, lastClosedHistory, lastCpu, lastMemory);
+        return new VmFairshareRecord(vmId, userId, vmPriority, lastClosedHistory, lastCpu, lastMemory, lastHdd);
     }
     
     @Override
@@ -99,7 +100,7 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         }
         
         return new VmFairshareRecord(
-                vm.getVmId(), vm.getUid(), priority, lastClosedHistoryId, vm.getCpu(), vm.getMemory());        
+                vm.getVmId(), vm.getUid(), priority, lastClosedHistoryId, vm.getCpu(), vm.getMemory(), vm.getDiskSizes());        
     }
     
     /**
@@ -124,7 +125,7 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
     
     private void saveToFile() {
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
-            properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM");
+            properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM|lastHDD");
         } catch (IOException ex) {
             Logger.getLogger(UserFairshareRecordManager.class.getName()).log(Level.SEVERE, null, ex);
         }

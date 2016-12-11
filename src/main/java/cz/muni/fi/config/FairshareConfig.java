@@ -34,8 +34,7 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
-    private static final String CONFIG_DIRECTORY = "config";
-    private static final String CONFIG_PATH = "fairshare.properties";
+    private static final String CONFIG_PATH = "config" + File.separator + "fairshare.properties";
     
     private static final String CPU_TIME = "CpuTime";
     private static final String PROC_EQ = "PE";
@@ -87,11 +86,16 @@ public class FairshareConfig {
             resourceWeights.add(properties.getFloat(RAM_WEIGHT));
             resourceWeights.add(properties.getFloat(HDD_WEIGHT));
             
+            float weightSum = 0;
             for (float weight : resourceWeights) {
                 if (weight < 0) {
                     throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - resource weights cannot be smaller than 0.");
                 }
+                weightSum += weight;
             }
+            if (weightSum == 0) {
+                throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - all resource weights cannot be 0.");
+            }           
             
             return properties;
         } catch (IOException ex) {
@@ -100,6 +104,6 @@ public class FairshareConfig {
     }
 
     public static String getConfigPath() {
-        return CONFIG_DIRECTORY + File.separator + CONFIG_PATH;
+        return CONFIG_PATH;
     }
 }

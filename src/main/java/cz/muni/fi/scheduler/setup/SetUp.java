@@ -94,12 +94,8 @@ public class SetUp {
     }
 
     private static void saveSchedulingTime() {
-        if (testingMode) {            
-            // TODO: add date from Dalibor
-            TimeManager.getInstance().setSchedulingTimeStamp(new Date());
-        } else {
-            TimeManager.getInstance().setSchedulingTimeStamp(new Date());
-        }
+        // TODO: when Dalibor's XML generator is ready add date it provides for testingMode
+        TimeManager.getInstance().setSchedulingTimeStamp(new Date());
     }
     
     private static void checkDecayTime(IUserFairshareRecordManager userRecordManager) {
