@@ -18,7 +18,7 @@ import java.util.Map;
  *
  * @author Andras Urge
  */
-public class UserFairshareMapper implements QueueMapper {
+public class UserFairshareMapper implements IQueueMapper {
     
     private UserPriorityCalculator calculator;
     

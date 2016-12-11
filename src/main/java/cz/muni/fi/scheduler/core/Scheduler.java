@@ -1,12 +1,13 @@
 package cz.muni.fi.scheduler.core;
 
+import cz.muni.fi.extensions.QueueListExtension;
 import cz.muni.fi.scheduler.authorization.IAuthorizationManager;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.scheduler.filters.datastores.SchedulingDatastoreFilter;
 import cz.muni.fi.scheduler.filters.hosts.SchedulingHostFilter;
-import cz.muni.fi.scheduler.limits.LimitChecker;
+import cz.muni.fi.scheduler.limits.ILimitChecker;
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
@@ -15,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import cz.muni.fi.scheduler.policies.datastores.IStoragePolicy;
 import cz.muni.fi.scheduler.policies.hosts.IPlacementPolicy;
+import cz.muni.fi.scheduler.queues.IQueueMapper;
 import cz.muni.fi.scheduler.queues.Queue;
-import cz.muni.fi.scheduler.queues.QueueMapper;
 import cz.muni.fi.scheduler.elements.nodes.DiskNode;
-import cz.muni.fi.scheduler.selectors.VmSelector;
+import cz.muni.fi.scheduler.selectors.IVmSelector;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import org.slf4j.Logger;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * - authorization manager
  * - all the hosts and datastore filters
  * - policy for host and datastore sorting/selection
- * - instance of: QueueMapper, vmSelector and limitChecker
+ * - instance of: IQueueMapper, vmSelector and limitChecker
  * - creates an instance of SchedulerData 
  * 
  * @author Gabriela Podolnikova
@@ -75,17 +76,17 @@ public class Scheduler {
     /**
      * Mapping VMs into queues.
      */
-    private QueueMapper queueMapper;
+    private IQueueMapper queueMapper;
     
     /**
      * Selects VM to be scheduled.
      */
-    private VmSelector vmSelector;
+    private IVmSelector vmSelector;
     
     /**
      * Checks resources limits for a user.
      */
-    private LimitChecker limitChecker;
+    private ILimitChecker limitChecker;
     
     /**
      * Queues with waiting VMs.
@@ -105,10 +106,10 @@ public class Scheduler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
-            IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
-            SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy,
-            IStoragePolicy storagePolicy, int numberOfQueues,
-            boolean preferHostFit, QueueMapper queueMapper, VmSelector vmSelector, LimitChecker limitChecker) {
+                     IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
+                     SchedulingDatastoreFilter datastoreFilter, IPlacementPolicy placementPolicy,
+                     IStoragePolicy storagePolicy, int numberOfQueues,
+                     boolean preferHostFit, IQueueMapper queueMapper, IVmSelector vmSelector, ILimitChecker limitChecker) {
         this.authorizationManager = authorizationManager;
         this.hostPool = hostPool;
         this.vmPool = vmPool;
@@ -153,12 +154,11 @@ public class Scheduler {
      * @return all matches
      */
     public List<Match> migrate() {
-        Migration migration = new Migration(hostPool);
         List<Match> migrations = new ArrayList<>();
         List<VmElement> vmsToBeMigrated = vmPool.getReschedVms();
         for (VmElement vm: vmsToBeMigrated) {
             List<HostElement> suitableHosts = prepareHostsForVm(vm);
-            suitableHosts = migration.removeCurrentHost(vm, suitableHosts);
+            suitableHosts.remove(hostPool.getHost(Integer.valueOf(vm.getDeploy_id())));
             Match match = processVm(vm, suitableHosts);
             if (match != null) {
                 log.info("Migrating vm: " + vm.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
@@ -182,7 +182,7 @@ public class Scheduler {
      */
     private List<Match> processQueues(List<Queue> queues) {
         List<Match> plan = new ArrayList<>();
-        while (!vmSelector.queuesEmpty(queues)) {
+        while (!QueueListExtension.queuesEmpty(queues)) {
             VmElement vmSelected = vmSelector.selectVm(queues);
             System.out.println("Vm selected: " + vmSelected);
             if (!hasImageDsStorageAvailable(vmSelected)) {

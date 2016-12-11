@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public interface QueueMapper {
+public interface IQueueMapper {
 
     List<Queue> mapQueues(List<VmElement> vms);
 }

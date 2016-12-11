@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public class OneQueueMapper implements QueueMapper {
+public class OneQueueMapper implements IQueueMapper {
 
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {

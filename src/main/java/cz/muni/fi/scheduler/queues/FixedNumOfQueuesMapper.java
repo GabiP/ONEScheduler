@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Gabriela Podolnikova
  */
-public class FixedNumOfQueuesMapper implements QueueMapper {
+public class FixedNumOfQueuesMapper implements IQueueMapper {
 
     protected final org.slf4j.Logger log = LoggerFactory.getLogger(getClass());
     

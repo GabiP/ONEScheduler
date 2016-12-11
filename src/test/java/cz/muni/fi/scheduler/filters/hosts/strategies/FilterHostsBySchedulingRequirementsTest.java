@@ -23,13 +23,13 @@ public class FilterHostsBySchedulingRequirementsTest {
     private VmElement vm;
     private HostElement host;
     
-    private FilterHostsBySchedulingRequirements filter;
+    private FilterHostBySchedulingRequirements filter;
     
     @Before
     public void setUp() {
         vm = new VmElement();
         host = new HostElement();
-        filter = new FilterHostsBySchedulingRequirements(); 
+        filter = new FilterHostBySchedulingRequirements();
     }
     
     @Test

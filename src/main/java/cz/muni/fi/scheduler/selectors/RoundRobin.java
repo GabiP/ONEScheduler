@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Gabriela Podolnikova
  */
-public class RoundRobin implements VmSelector {
+public class RoundRobin implements IVmSelector {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
@@ -29,16 +29,6 @@ public class RoundRobin implements VmSelector {
         currentQueueIndex++;
         checkLastIndex(queues.size());
         return vmToReturn;
-    }
-    
-    @Override
-    public boolean queuesEmpty(List<Queue> queues) {
-        for (Queue q: queues) {
-            if (!q.isEmpty()) {
-                return false;
-            }
-        }    
-        return true;
     }
 
     private void checkLastIndex(int size) {

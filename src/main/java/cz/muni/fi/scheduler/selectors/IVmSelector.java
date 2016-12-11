@@ -9,9 +9,8 @@ import java.util.List;
  *
  * @author Gabriela Podolnikova
  */
-public interface VmSelector {
+public interface IVmSelector {
 
     VmElement selectVm(List<Queue> queues);
-    
-    boolean queuesEmpty(List<Queue> queues);
+
 }

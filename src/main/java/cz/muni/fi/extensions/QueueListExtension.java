@@ -22,4 +22,13 @@ public class QueueListExtension {
         }
         return null;
     }
+
+    public static boolean queuesEmpty(List<Queue> queues) {
+        for (Queue q: queues) {
+            if (!q.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

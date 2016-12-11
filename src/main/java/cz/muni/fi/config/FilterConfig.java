@@ -14,7 +14,7 @@ import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByMaxCpu;
 import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByMaxMemory;
 import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByMemory;
 import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostByPci;
-import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostsBySchedulingRequirements;
+import cz.muni.fi.scheduler.filters.hosts.strategies.FilterHostBySchedulingRequirements;
 import cz.muni.fi.scheduler.filters.hosts.strategies.IHostFilterStrategy;
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class FilterConfig {
                     filterStrategies.add(new FilterHostByPci());
                     break;
                 case HOST_SCHED_REQ_FILTER:
-                    filterStrategies.add(new FilterHostsBySchedulingRequirements());
+                    filterStrategies.add(new FilterHostBySchedulingRequirements());
                     break;
                 case HOST_CPU_FILTER:
                 case HOST_MEMORY_FILTER:
@@ -91,7 +91,7 @@ public class FilterConfig {
                     filterStrategies.add(new FilterHostByPci());
                     break;
                 case HOST_SCHED_REQ_FILTER:
-                    filterStrategies.add(new FilterHostsBySchedulingRequirements());
+                    filterStrategies.add(new FilterHostBySchedulingRequirements());
                     break;
                 default:
                     throw new LoadingFailedException("Wrong host filter configuration.");

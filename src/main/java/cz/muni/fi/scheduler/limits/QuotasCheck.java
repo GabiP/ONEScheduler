@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Gabriela Podolnikova
  */
-public class QuotasCheck implements LimitChecker {
+public class QuotasCheck implements ILimitChecker {
 
     UserQuotasData userQuotasData;
     

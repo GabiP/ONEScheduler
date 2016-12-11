@@ -8,7 +8,7 @@ import cz.muni.fi.scheduler.elements.VmElement;
  *
  * @author Gabriela Podolnikova
  */
-public interface LimitChecker {
+public interface ILimitChecker {
     
     boolean checkLimit(VmElement vm, Match match);
     

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Gabriela Podolnikova
  */
-public class QueueByUserMapper implements QueueMapper {
+public class QueueByUserMapper implements IQueueMapper {
     
     private IUserPool userPool;
     

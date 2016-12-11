@@ -74,7 +74,7 @@ public class SchedulerConfig {
     
     @Bean
     public IPlacementPolicy placementPolicy() throws LoadingFailedException {
-        switch(properties.getString("hostPolicies")) {
+        switch(properties.getString("hostPolicy")) {
             case HOST_LOAD_AWARE_POLICY:
                 return new LoadAware();
             case HOST_PACKING_POLICY:
@@ -88,7 +88,7 @@ public class SchedulerConfig {
     
     @Bean
     public IStoragePolicy storagePolicy() throws LoadingFailedException {
-        switch(properties.getString("datastorePolicies")) {
+        switch(properties.getString("datastorePolicy")) {
             case DS_PACKING_POLICY:
                 return new StoragePacking();
             case DS_STRIPING_POLICY:

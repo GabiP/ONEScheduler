@@ -1,18 +1,14 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.scheduler.limits.LimitChecker;
+import cz.muni.fi.scheduler.limits.ILimitChecker;
 import cz.muni.fi.scheduler.limits.NoLimits;
 import cz.muni.fi.scheduler.limits.QuotasCheck;
-import cz.muni.fi.scheduler.queues.FixedNumOfQueuesMapper;
-import cz.muni.fi.scheduler.queues.OneQueueMapper;
-import cz.muni.fi.scheduler.queues.QueueByUserMapper;
-import cz.muni.fi.scheduler.queues.QueueMapper;
-import cz.muni.fi.scheduler.queues.UserFairshareMapper;
-import cz.muni.fi.scheduler.queues.UserGroupFairshareMapper;
+import cz.muni.fi.scheduler.queues.*;
+import cz.muni.fi.scheduler.queues.IQueueMapper;
 import cz.muni.fi.scheduler.selectors.QueueByQueue;
 import cz.muni.fi.scheduler.selectors.RoundRobin;
-import cz.muni.fi.scheduler.selectors.VmSelector;
+import cz.muni.fi.scheduler.selectors.IVmSelector;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +47,7 @@ public class SchedulingConfig {
     }
     
     @Bean
-    public QueueMapper queueMapper() throws LoadingFailedException {
+    public IQueueMapper queueMapper() throws LoadingFailedException {
         switch (properties.getString("queueMapper")) {
             case FIXED_NUM_OF_QUEUES:
                 return new FixedNumOfQueuesMapper(properties.getInt("numberofqueues"));
@@ -69,7 +65,7 @@ public class SchedulingConfig {
     }
     
     @Bean
-    public VmSelector vmSelector() throws LoadingFailedException {
+    public IVmSelector vmSelector() throws LoadingFailedException {
         switch (properties.getString("vmSelector")) {
             case QUEUE_BY_QUEUE:
                 return new QueueByQueue();
@@ -81,7 +77,7 @@ public class SchedulingConfig {
     }
     
     @Bean
-    public LimitChecker limitChecker() throws LoadingFailedException {
+    public ILimitChecker limitChecker() throws LoadingFailedException {
         switch (properties.getString("limitChecker")) {
             case QUOTAS_CHECK:
                 return new QuotasCheck(poolConfig.userPool());

@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Gabriela Podolnikova
  */
-public class QueueByQueue implements VmSelector {
+public class QueueByQueue implements IVmSelector {
   
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
@@ -24,14 +24,5 @@ public class QueueByQueue implements VmSelector {
         log.info("Dequeued queue: " + queues.get(i) + " Vm removed: " + vmToReturn);
         return vmToReturn;
     }
-    
-    @Override
-    public boolean queuesEmpty(List<Queue> queues) {
-        for (Queue q: queues) {
-            if (!q.isEmpty()) {
-                return false;
-            }
-        }       
-        return true;
-    }
+
 }

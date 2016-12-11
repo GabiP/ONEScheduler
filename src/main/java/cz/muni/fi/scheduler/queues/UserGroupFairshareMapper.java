@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * @author Andras Urge
  */
-public class UserGroupFairshareMapper implements QueueMapper {
+public class UserGroupFairshareMapper implements IQueueMapper {
     
     private UserPriorityCalculator calculator;
     private IUserPool userPool;

@@ -9,7 +9,7 @@ import cz.muni.fi.scheduler.elements.VmElement;
  *
  * @author Gabriela Podolnikova
  */
-public class NoLimits implements LimitChecker {
+public class NoLimits implements ILimitChecker {
 
     NoLimitData noLimitData;
     

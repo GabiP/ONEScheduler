@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
  * Tests whether current host has enough free space(mb) in datastores to host
  * the specified vm disks. Simplified version: firstly it adds up the sizes(mb)
  * of vm's disks. Then this value is checked on cluster's datastores.
- * TODO: It can divide the sizes of disks and try if it will fit somehow on the available
  * datastores.
  *
  * @author Gabriela Podolnikova

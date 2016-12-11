@@ -100,6 +100,29 @@
                         <target>8</target>
                     </configuration>
                 </plugin>
+                <!--plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>org.opennebula.client:oneclient</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>install-file</goal>
+                            </goals>
+                            <configuration>
+                                <groupId>org.opennebula.client</groupId>
+                                <artifactId>oneclient</artifactId>
+                                <version>5.2.0</version>
+                                <packaging>jar</packaging>
+                                <file>${basedir}/src/main/resources/org.opennebula.client.jar</file>
+                                <createChecksum>true</createChecksum>
+                                <generatePom>true</generatePom>
+                            </configuration>
+                        </execution>
+                        <execution>...</execution>
+                    </executions>
+                </plugin-->
             </plugins>
         </pluginManagement>
     </build>

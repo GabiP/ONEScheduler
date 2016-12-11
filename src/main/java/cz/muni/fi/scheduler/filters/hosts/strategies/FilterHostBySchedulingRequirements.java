@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Gabriela Podolnikova
  */
-public class FilterHostsBySchedulingRequirements implements IHostFilterStrategy {
+public class FilterHostBySchedulingRequirements implements IHostFilterStrategy {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
