@@ -27,7 +27,7 @@ public class TmMadConfiguration {
         }
     }   
         
-    private static final String CONFIG_DIRECTORY = "config";
+    private static final String CONFIG_DIRECTORY = "configFiles";
     private static final String TM_MAD_CONF_FILE_NAME = "tmMadConf.xml";
 
     protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
