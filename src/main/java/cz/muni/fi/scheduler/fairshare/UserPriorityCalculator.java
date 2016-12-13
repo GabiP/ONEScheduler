@@ -14,7 +14,6 @@ import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecord;
 import cz.muni.fi.scheduler.elements.VmElement;
 import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,14 +62,8 @@ public class UserPriorityCalculator {
         List<VmElement> vms = vmPool.getVmsByUser(userId);
         
         float currentPriority = 0;
-        for (VmElement vm : vms) {                
-            if (vm.getRunTime() == 0) {
-                // assign a starting priority if the vm didnt run yet                
-                currentPriority += getStartingVmPriority(vm);
-            } 
-            else {
-                currentPriority += getVmPriority(vm);     
-            }
+        for (VmElement vm : vms) {
+            currentPriority += getVmPriority(vm);  
         }
         return currentPriority;
     } 
@@ -103,18 +96,7 @@ public class UserPriorityCalculator {
             }
         }
         return newlyDoneVms;
-    }
-    
-    private float getStartingVmPriority(VmElement vm) {   
-        List<VmElement> allVms = vmPool.getAllVmsByUser(vm.getUid());
-        float maxVmRuntime = Collections.max(VmListExtension.getRuntimes(allVms));
-        float startingPriority =  maxVmRuntime * penaltyCalculator.getPenalty(vm);
-        
-        VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, 0);        
-        vmRecordManager.storeRecord(newRecord);
-            
-        return startingPriority;
-    }  
+    } 
     
     /**
      * Calculates the priority of a virtual machine.

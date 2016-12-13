@@ -29,6 +29,10 @@ public class VmXmlMapper {
         return vms.stream().map(VmXmlMapper::map).collect(Collectors.toList());
     }
     
+    public static List<VmXml> mapToXml(List<VmElement> vms) {
+        return vms.stream().map(VmXmlMapper::mapToXml).collect(Collectors.toList());
+    }
+    
     public static VmElement map(VmXml vm) {
         VmElement result = new VmElement();
         result.setVmId(vm.getVmId());
@@ -55,6 +59,32 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static VmXml mapToXml(VmElement vm) {
+        VmXml result = new VmXml();
+        result.setVmId(vm.getVmId());
+        result.setUid(vm.getUid());
+        result.setGid(vm.getGid());
+        result.setName(vm.getName());
+        result.setState(vm.getState());
+        result.setLcm_state(vm.getLcm_state());
+        result.setResched(vm.getResched());
+        result.setDeploy_id(vm.getDeploy_id());
+        result.setCpu(vm.getCpu());
+        result.setMemory(vm.getMemory());
+        result.setTemplateId(vm.getTemplateId());
+        result.setSchedRank(vm.getSchedRank());
+        result.setSchedDsRank(vm.getSchedDsRank());
+        result.setSchedRequirements(vm.getSchedRequirements());
+        result.setSchedDsRequirements(vm.getSchedDsRequirements());
+                
+        result.setDisks(mapDisksToXml(vm.getDisks()));
+        result.setHistories(mapHistoriesToXml(vm.getHistories()));
+        result.setNics(mapNicsToXml(vm.getNics()));
+        result.setPcis(mapPcisToXml(vm.getPcis()));
+        
+        return result;
+    }
+    
     public static List<DiskNode> mapDisks(List<DiskNodeXml> disks) {
         List<DiskNode> result = new ArrayList<>();
         if (disks != null) {
@@ -63,8 +93,25 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static List<DiskNodeXml> mapDisksToXml(List<DiskNode> disks) {
+        List<DiskNodeXml> result = new ArrayList<>();
+        if (disks != null) {
+            result.addAll(disks.stream().map(VmXmlMapper::mapToXml).collect(Collectors.toList()));
+        }
+        return result;
+    }
+    
     public static DiskNode map(DiskNodeXml disk) {
         DiskNode result = new DiskNode();
+        result.setDatastore_id(disk.getDatastore_id());
+        result.setSize(disk.getSize());
+        result.setClone(disk.getClone());
+        result.setTmMadName(disk.getTmMadName());
+        return result;
+    }
+    
+    public static DiskNodeXml mapToXml(DiskNode disk) {
+        DiskNodeXml result = new DiskNodeXml();
         result.setDatastore_id(disk.getDatastore_id());
         result.setSize(disk.getSize());
         result.setClone(disk.getClone());
@@ -80,6 +127,14 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static List<HistoryNodeXml> mapHistoriesToXml(List<HistoryNode> histories) {
+        List<HistoryNodeXml> result = new ArrayList<>();
+        if (histories != null) {
+            result.addAll(histories.stream().map(VmXmlMapper::mapToXml).collect(Collectors.toList()));
+        }
+        return result;
+    }
+    
     public static HistoryNode map(HistoryNodeXml history) {
         HistoryNode result = new HistoryNode();
         result.setSequence(history.getSequence());        
@@ -89,6 +144,14 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static HistoryNodeXml mapToXml(HistoryNode history) {
+        HistoryNodeXml result = new HistoryNodeXml();
+        result.setSequence(history.getSequence());        
+        result.setStartTime(history.getStartTime());        
+        result.setEndTime(history.getEndTime());        
+        result.setReason(history.getReason());   
+        return result;
+    }
     public static List<NicNode> mapNics(List<NicNodeXml> nics) {
         List<NicNode> result = new ArrayList<>();
         if (nics != null) {
@@ -97,8 +160,22 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static List<NicNodeXml> mapNicsToXml(List<NicNode> nics) {
+        List<NicNodeXml> result = new ArrayList<>();
+        if (nics != null) {
+            result.addAll(nics.stream().map(VmXmlMapper::mapToXml).collect(Collectors.toList()));
+        }
+        return result;
+    }
+    
     public static NicNode map(NicNodeXml nic) {
         NicNode result = new NicNode();
+        result.setNetworkId(nic.getNetworkId());           
+        return result;
+    }
+    
+    public static NicNodeXml mapToXml(NicNode nic) {
+        NicNodeXml result = new NicNodeXml();
         result.setNetworkId(nic.getNetworkId());           
         return result;
     }
@@ -111,8 +188,25 @@ public class VmXmlMapper {
         return result;
     }
     
+    public static List<PciNodeXml> mapPcisToXml(List<PciNode> pcis) {
+        List<PciNodeXml> result = new ArrayList<>();
+        if (pcis != null) {
+            result.addAll(pcis.stream().map(VmXmlMapper::mapToXml).collect(Collectors.toList()));
+        }
+        return result;
+    }
+    
     public static PciNode map(PciNodeXml pci) {
         PciNode result = new PciNode();
+        result.setPci_class(pci.getPci_class());        
+        result.setDevice(pci.getDevice());        
+        result.setVendor(pci.getVendor());   
+        
+        return result;
+    }
+    
+    public static PciNodeXml mapToXml(PciNode pci) {
+        PciNodeXml result = new PciNodeXml();
         result.setPci_class(pci.getPci_class());        
         result.setDevice(pci.getDevice());        
         result.setVendor(pci.getVendor());   

@@ -5,11 +5,13 @@
  */
 package cz.muni.fi.xml.pools;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elements.ClusterElement;
 import cz.muni.fi.xml.mappers.ClusterXmlMapper;
 import cz.muni.fi.xml.resources.lists.ClusterXmlList;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -44,5 +46,12 @@ public class ClusterXmlPool implements IClusterPool {
             }
         }
         return null;
-    }    
+    } 
+    
+    public void writeToFile(String filePath) throws IOException {
+        File file = new File(filePath);         
+        XmlMapper xmlMapper = new XmlMapper(); 
+        xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+        xmlMapper.writeValue(file, this);
+    }
 }
