@@ -54,6 +54,7 @@ public class SetUp {
         testingMode = configuration.getBoolean("testingMode");
         
         if (testingMode) {
+            log.info("Dalibor was here");
             clearFairshareRecords();
         } 
                 
