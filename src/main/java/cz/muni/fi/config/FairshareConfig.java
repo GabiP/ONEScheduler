@@ -13,7 +13,6 @@ import cz.muni.fi.scheduler.fairshare.penaltycalculators.CpuTimeCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.MaxBasedMpCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.ProcessorEquivalentCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.RootBasedMpCalculator;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
-    private static final String CONFIG_PATH = "config" + File.separator + "fairshare.properties";
+    private static final String CONFIG_PATH = "fairshare.properties";
     
     private static final String CPU_TIME = "Cpu";
     private static final String PROC_EQ = "PE";
@@ -53,32 +52,32 @@ public class FairshareConfig {
     
     @Bean 
     public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {
-        switch (fairshareConfig().getString("penaltyFunction")) {
+        PropertiesConfig fairshareConfig = loadFairshareConfig();
+        switch (fairshareConfig.getString("penaltyFunction")) {
             case CPU_TIME:
                 return new CpuTimeCalculator();
             case PROC_EQ:
-                return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), fairshareConfig());
+                return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), fairshareConfig);
             case MAX_MP:  
                 return new MaxBasedMpCalculator(
                         poolConfig.hostPool(), 
                         poolConfig.datastorePool(), 
                         poolConfig.clusterPool(), 
                         filterConfig.fairshareHostFilter(), 
-                        fairshareConfig());
+                        fairshareConfig);
             case ROOT_MP:  
                 return new RootBasedMpCalculator(
                         poolConfig.hostPool(), 
                         poolConfig.datastorePool(), 
                         poolConfig.clusterPool(), 
                         filterConfig.fairshareHostFilter(), 
-                        fairshareConfig());
+                        fairshareConfig);
             default:    
                 throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - wrong penalty function.");
         }   
     }
     
-    @Bean 
-    public PropertiesConfig fairshareConfig() throws LoadingFailedException {
+    public PropertiesConfig loadFairshareConfig() throws LoadingFailedException {
         try {
             PropertiesConfig properties = new PropertiesConfig(CONFIG_PATH);
             List<Float> resourceWeights = new ArrayList<>();
@@ -101,9 +100,5 @@ public class FairshareConfig {
         } catch (IOException ex) {
             throw new LoadingFailedException(ex.toString());
         }
-    }
-
-    public static String getConfigPath() {
-        return CONFIG_PATH;
     }
 }
