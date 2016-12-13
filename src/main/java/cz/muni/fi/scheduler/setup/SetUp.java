@@ -101,7 +101,7 @@ public class SetUp {
     private static void checkDecayTime(IUserFairshareRecordManager userRecordManager) {
         long schedulingTime = TimeManager.getInstance().getSchedulingTimeStamp().getTime();
         long lastDecayTime = userRecordManager.getLastDecayTime();
-        long decayMillisInterval = TimeUnit.DAYS.toMillis(fairshareConfig.getInt("decayDayInterval"));
+        long decayMillisInterval = TimeUnit.HOURS.toMillis(fairshareConfig.getInt("decayInterval"));
         
         if (schedulingTime - lastDecayTime > decayMillisInterval) {
             int decayValue = fairshareConfig.getInt("decayValue");

@@ -7,6 +7,7 @@ package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.extensions.MapExtension;
 import cz.muni.fi.extensions.QueueListExtension;
+import cz.muni.fi.extensions.UserListExtension;
 import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -33,8 +35,9 @@ public class UserGroupFairshareMapper implements IQueueMapper {
     }
 
     @Override
-    public List<Queue> mapQueues(List<VmElement> vms) {
-        Map<Integer, Float> userPriorities = calculator.getUserPriorities(VmListExtension.getUserIds(vms));  
+    public List<Queue> mapQueues(List<VmElement> vms) {        
+        Set<Integer> userIds = UserListExtension.getUserIds(userPool.getUsers());
+        Map<Integer, Float> userPriorities = calculator.getUserPriorities(userIds);  
         Map<Integer, Float> userGroupPriorities = getUserGroupPriorities(userPriorities);  
         List<Integer> sortedUserGroups = MapExtension.sortByValue(userGroupPriorities);
         
@@ -51,6 +54,12 @@ public class UserGroupFairshareMapper implements IQueueMapper {
             int bestUserGroupId = getBestUserGroupId(sortedUsers.get(i), sortedUserGroups);
             Queue queue = QueueListExtension.getQueueByName(queues, "UserGroup" + bestUserGroupId);
             addVmsToQueue(userVms.get(i), queue);
+        }
+        
+        for (Queue q: queues) {
+            if(q.isEmpty()) {
+                queues.remove(q);
+            }
         }
         
         return queues;        
