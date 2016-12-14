@@ -49,16 +49,8 @@ public class ClusterXmlMapper {
         cl.setName(cluster.getName());
         cl.setHosts(cluster.getHosts());
         cl.setDatastores(cluster.getDatastores());
-        if (cluster.getReservedCpu() == null) {
-            cl.setReservedCpu(0.00f);
-        } else {
-            cl.setReservedCpu(cluster.getReservedCpu()/100);
-        }
-        if (cluster.getReservedMemory() == null) {
-            cl.setReservedMemory(0);
-        } else {
-            cl.setReservedMemory(cluster.getReservedMemory()/1024);
-        }
+        cl.setReservedCpu(cluster.getReservedCpu()*100);
+        cl.setReservedMemory(cluster.getReservedMemory()*1024);
         return cl;
     }
 }
