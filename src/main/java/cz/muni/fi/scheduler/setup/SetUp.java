@@ -10,6 +10,7 @@ import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.elements.VmElement;
+import cz.muni.fi.simulator.ONESimulator;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -53,8 +54,9 @@ public class SetUp {
         cycleinterval = configuration.getInt("cycleinterval");
         testingMode = configuration.getBoolean("testingMode");
         
-        if (testingMode) {
-            log.info("Dalibor was here");
+        if (testingMode) {            
+            ONESimulator oneSim = new ONESimulator();
+            oneSim.runONESimulator();
             clearFairshareRecords();
         } 
                 

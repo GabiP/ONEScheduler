@@ -34,7 +34,7 @@ public class FairshareConfig {
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
     
-    private static final String CONFIG_PATH = "config" + File.separator + "fairshare.properties";
+    private static final String CONFIG_PATH =/* "configFiles" + File.separator + */"fairshare.properties";
     
     private static final String CPU_TIME = "CpuTime";
     private static final String PROC_EQ = "PE";
