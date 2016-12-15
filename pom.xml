@@ -100,7 +100,7 @@
                         <target>8</target>
                     </configuration>
                 </plugin>
-                <!--plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <executions>
@@ -120,9 +120,8 @@
                                 <generatePom>true</generatePom>
                             </configuration>
                         </execution>
-                        <execution>...</execution>
                     </executions>
-                </plugin-->
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>

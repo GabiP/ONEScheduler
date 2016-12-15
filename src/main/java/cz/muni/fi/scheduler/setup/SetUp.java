@@ -76,17 +76,22 @@ public class SetUp {
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();
-            printPlan(plan);
-            
-            //deploy
-            List<VmElement> failedVms = resultManager.deployPlan(plan);
-            printFailedVms(failedVms);
+            if (planExists(plan)) {
+                printPlan(plan);
+                //deploy
+                List<VmElement> failedVms = resultManager.deployPlan(plan);
+                printFailedVms(failedVms);
+            }
             
             log.info("Another cycle will start in " + cycleinterval + "seconds.");
             TimeUnit.SECONDS.sleep(cycleinterval);
         }
     }
-    
+
+    private static boolean planExists(List<Match> plan) {
+        return plan != null;
+    }
+
     private static void clearFairshareRecords() {
         ApplicationContext context = new AnnotationConfigApplicationContext(RecordManagerConfig.class); 
         context.getBean(VmFairshareRecordManager.class).clearContent();
