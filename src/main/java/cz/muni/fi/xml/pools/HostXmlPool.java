@@ -8,24 +8,31 @@ import cz.muni.fi.xml.resources.lists.HostXmlList;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.inject.Inject;
+import org.mapstruct.factory.Mappers;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
+@Service
 public class HostXmlPool implements IHostPool {    
     
     private List<HostElement> hosts;
-
+    
+    HostXmlMapper hostXmlMapper = Mappers.getMapper(HostXmlMapper.class);
+    
     public HostXmlPool(String hostPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String hostPoolMessage = new String(Files.readAllBytes(Paths.get(hostPoolPath)));
         HostXmlList xmlList = xmlMapper.readValue(hostPoolMessage, HostXmlList.class);
-        hosts = HostXmlMapper.map(xmlList.getHosts());
+        hosts = hostXmlMapper.map(xmlList.getHosts());
     }
 
     @Override

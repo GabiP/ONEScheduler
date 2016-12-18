@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -18,13 +20,15 @@ import java.util.stream.Collectors;
  */
 public class DatastoreXmlPool implements IDatastorePool {
     
-    private List<DatastoreElement> datastores;   
+    private List<DatastoreElement> datastores;
+    
+    DatastoreXmlMapper datastoreXmlMapper = Mappers.getMapper(DatastoreXmlMapper.class);
 
     public DatastoreXmlPool(String dsPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String dsPoolMessage = new String(Files.readAllBytes(Paths.get(dsPoolPath)));
         DatastoreXmlList xmlList = xmlMapper.readValue(dsPoolMessage, DatastoreXmlList.class);
-        datastores = DatastoreXmlMapper.map(xmlList.getDatastores());
+        datastores = datastoreXmlMapper.map(xmlList.getDatastores());
     }
                     
     @Override

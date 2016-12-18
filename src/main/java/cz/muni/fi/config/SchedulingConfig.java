@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- *  Configures scheduler's behaviour.
+ *  Configures scheduler's behavior.
  * 
  * @author Gabriela Podolnikova
  */

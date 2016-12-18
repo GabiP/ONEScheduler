@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -16,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.mapstruct.factory.Mappers;
 
 import org.opennebula.client.Pool;
 import org.opennebula.client.vm.VirtualMachinePool;
@@ -27,12 +23,14 @@ import org.opennebula.client.vm.VirtualMachinePool;
 public class VmXmlPool implements IVmPool {
     
     private List<VmElement> vms;
+
+    VmXmlMapper vmXmlMapper = Mappers.getMapper(VmXmlMapper.class);
     
     public VmXmlPool(String vmPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String vmPoolMessage = new String(Files.readAllBytes(Paths.get(vmPoolPath)));
         VmXmlList xmlList = xmlMapper.readValue(vmPoolMessage, VmXmlList.class);
-        vms = VmXmlMapper.map(xmlList.getVms());
+        vms = vmXmlMapper.map(xmlList.getVms());
     }
     
     @Override

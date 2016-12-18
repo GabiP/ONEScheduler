@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.mappers;
 
 import cz.muni.fi.scheduler.elements.HostElement;
@@ -11,157 +6,59 @@ import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import cz.muni.fi.xml.resources.nodes.DatastoreNodeXml;
 import cz.muni.fi.xml.resources.HostXml;
 import cz.muni.fi.xml.resources.nodes.PciNodeXml;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  *
  * @author Gabriela Podolnikova
  */
-public class HostXmlMapper {
+@Mapper
+public abstract class HostXmlMapper {
     
-    public static List<HostElement> map(List<HostXml> hosts) {
-        return hosts.stream().map(HostXmlMapper::map).collect(Collectors.toList());
-    }
+    public abstract List<HostElement> map(List<HostXml> hosts);
     
-    public static List<HostXml> mapToXml(List<HostElement> hosts) {
-        return hosts.stream().map(HostXmlMapper::mapToXml).collect(Collectors.toList());
-    }
+    public abstract List<HostXml> mapToXml(List<HostElement> hosts);
     
-    public static HostElement map(HostXml host) {
-        HostElement h = new HostElement();
-        h.setId(host.getId());
-        h.setName(host.getName());
-        h.setState(host.getState());
-        h.setClusterId(host.getClusterId());
-        h.setDisk_usage(host.getDisk_usage());
-        h.setMem_usage(host.getMem_usage()/1024);
-        h.setCpu_usage(host.getCpu_usage()/100);
-        h.setMax_disk(host.getMax_disk());
-        h.setMax_mem(host.getMax_mem()/1024);
-        h.setMax_cpu(host.getMax_cpu()/100);
-        h.setFree_disk(host.getFree_disk());
-        h.setFree_mem(host.getFree_mem()/1024);
-        h.setFree_cpu(host.getFree_cpu()/100);
-        h.setUsed_disk(host.getUsed_disk());
-        h.setUsed_mem(host.getUsed_mem()/1024);
-        h.setUsed_cpu(host.getUsed_cpu()/100);
-        h.setRunningVms(host.getRunningVms());
-        if (host.getReservedCpu() == null) {
-            h.setReservedCpu(0.00f);
-        } else {
-            h.setReservedCpu(host.getReservedCpu());
-        }
-        if (host.getReservedMemory() == null) {
-            h.setReservedMemory(0);
-        } else {
-            h.setReservedMemory(host.getReservedMemory());
-        }
-        h.setVms(host.getVms());
-        h.setPcis(mapPcis(host.getPcis()));
-        h.setDatastores(mapDatastores(host.getDatastores()));
-        return h;
-    }
+    @Mapping(target = "mem_usage", expression = "java(host.getMem_usage()/1024)")
+    @Mapping(target = "cpu_usage", expression = "java(host.getCpu_usage()/100)")
+    @Mapping(target = "max_mem", expression = "java(host.getMax_mem()/1024)")
+    @Mapping(target = "max_cpu", expression = "java(host.getMax_cpu()/100)")
+    @Mapping(target = "free_mem", expression = "java(host.getFree_mem()/1024)")
+    @Mapping(target = "free_cpu", expression = "java(host.getFree_cpu()/100)")
+    @Mapping(target = "used_mem", expression = "java(host.getUsed_mem()/1024)")
+    @Mapping(target = "used_cpu", expression = "java(host.getUsed_cpu()/100)")
+    @Mapping(target = "reservedCpu", expression = "java((host.getReservedCpu() != null ? host.getReservedCpu()/100 : 0.00f))")
+    @Mapping(target = "reservedMemory", expression = "java((host.getReservedMemory() != null ? host.getReservedMemory()/1024 : 0))")
+    public abstract HostElement map(HostXml host);
     
-    public static HostXml mapToXml(HostElement host) {
-        HostXml h = new HostXml();
-        h.setId(host.getId());
-        h.setName(host.getName());
-        h.setState(host.getState());
-        h.setClusterId(host.getClusterId());
-        h.setDisk_usage(host.getDisk_usage());
-        h.setMem_usage(host.getMem_usage()/1024);
-        h.setCpu_usage(host.getCpu_usage()/100);
-        h.setMax_disk(host.getMax_disk());
-        h.setMax_mem(host.getMax_mem()/1024);
-        h.setMax_cpu(host.getMax_cpu()/100);
-        h.setFree_disk(host.getFree_disk());
-        h.setFree_mem(host.getFree_mem()/1024);
-        h.setFree_cpu(host.getFree_cpu()/100);
-        h.setUsed_disk(host.getUsed_disk());
-        h.setUsed_mem(host.getUsed_mem()/1024);
-        h.setUsed_cpu(host.getUsed_cpu()/100);
-        h.setRunningVms(host.getRunningVms());
-        if (host.getReservedCpu() == null) {
-            h.setReservedCpu(0.00f);
-        } else {
-            h.setReservedCpu(host.getReservedCpu());
-        }
-        if (host.getReservedMemory() == null) {
-            h.setReservedMemory(0);
-        } else {
-            h.setReservedMemory(host.getReservedMemory());
-        }
-        h.setVms(host.getVms());
-        h.setPcis(mapPcisToXml(host.getPcis()));
-        h.setDatastores(mapDatastoresToXml(host.getDatastores()));
-        return h;
-    }
+    @Mapping(target = "mem_usage", expression = "java(host.getMem_usage()*1024)")
+    @Mapping(target = "cpu_usage", expression = "java(host.getCpu_usage()*100)")
+    @Mapping(target = "max_mem", expression = "java(host.getMax_mem()*1024)")
+    @Mapping(target = "max_cpu", expression = "java(host.getMax_cpu()*100)")
+    @Mapping(target = "free_mem", expression = "java(host.getFree_mem()*1024)")
+    @Mapping(target = "free_cpu", expression = "java(host.getFree_cpu()*100)")
+    @Mapping(target = "used_mem", expression = "java(host.getUsed_mem()*1024)")
+    @Mapping(target = "used_cpu", expression = "java(host.getUsed_cpu()*100)")
+    @Mapping(target = "reservedCpu", expression = "java((host.getReservedCpu())*100)")
+    @Mapping(target = "reservedMemory", expression = "java((host.getReservedMemory())*1024)")
+    public abstract HostXml mapToXml(HostElement host);
     
-    public static List<PciNode> mapPcis(List<PciNodeXml> pcis) {
-        List<PciNode> result = new ArrayList<>();
-        if (pcis != null) {
-            result.addAll(pcis.stream().map(HostXmlMapper::map).collect(Collectors.toList()));
-        }
-        return result;
-    }
+    public abstract List<PciNode> mapPcis(List<PciNodeXml> pcis);
     
-    public static List<PciNodeXml> mapPcisToXml(List<PciNode> pcis) {
-        List<PciNodeXml> result = new ArrayList<>();
-        if (pcis != null) {
-            result.addAll(pcis.stream().map(HostXmlMapper::mapToXml).collect(Collectors.toList()));
-        }
-        return result;
-    }
+    public abstract List<PciNodeXml> mapPcisToXml(List<PciNode> pcis);
+            
+    public abstract PciNode map(PciNodeXml pci);
     
-    public static PciNode map(PciNodeXml pci) {
-        PciNode result = new PciNode();
-        result.setPci_class(pci.getPci_class());
-        result.setDevice(pci.getDevice());
-        result.setVendor(pci.getVendor());
-        return result;
-    }
+    public abstract PciNodeXml mapToXml(PciNode pci);
     
-    public static PciNodeXml mapToXml(PciNode pci) {
-        PciNodeXml result = new PciNodeXml();
-        result.setPci_class(pci.getPci_class());
-        result.setDevice(pci.getDevice());
-        result.setVendor(pci.getVendor());
-        return result;
-    }
+    public abstract List<DatastoreNode> mapDatastores(List<DatastoreNodeXml> datastores);
     
-    public static List<DatastoreNode> mapDatastores(List<DatastoreNodeXml> datastores) {
-        List<DatastoreNode> result = new ArrayList<>();
-        if (datastores !=null) {
-            result.addAll(datastores.stream().map(HostXmlMapper::map).collect(Collectors.toList()));
-        }
-        return result;
-    }
+    public abstract List<DatastoreNodeXml> mapDatastoresToXml(List<DatastoreNode> datastores);
     
-    public static List<DatastoreNodeXml> mapDatastoresToXml(List<DatastoreNode> datastores) {
-        List<DatastoreNodeXml> result = new ArrayList<>();
-        if (datastores !=null) {
-            result.addAll(datastores.stream().map(HostXmlMapper::mapToXml).collect(Collectors.toList()));
-        }
-        return result;
-    }
+    public abstract DatastoreNode map(DatastoreNodeXml ds);
     
-    public static DatastoreNode map(DatastoreNodeXml ds) {
-        DatastoreNode result = new DatastoreNode();
-        result.setId_ds(ds.getId_ds());
-        result.setTotal_mb(ds.getTotal_mb());
-        result.setFree_mb(ds.getFree_mb());
-        result.setUsed_mb(ds.getUsed_mb());
-        return result;
-    }
+    public abstract DatastoreNodeXml mapToXml(DatastoreNode ds);
     
-    public static DatastoreNodeXml mapToXml(DatastoreNode ds) {
-        DatastoreNodeXml result = new DatastoreNodeXml();
-        result.setId_ds(ds.getId_ds());
-        result.setTotal_mb(ds.getTotal_mb());
-        result.setFree_mb(ds.getFree_mb());
-        result.setUsed_mb(ds.getUsed_mb());
-        return result;
-    }
 }
