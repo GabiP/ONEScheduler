@@ -6,16 +6,13 @@
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
-import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.fairshare.UserPriorityCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.IVmPenaltyCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.CpuTimeCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.MaxBasedMpCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.ProcessorEquivalentCalculator;
 import cz.muni.fi.scheduler.fairshare.penaltycalculators.RootBasedMpCalculator;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,21 +26,16 @@ import org.springframework.context.annotation.Import;
 @Import({PoolConfig.class, FilterConfig.class, RecordManagerConfig.class})
 public class FairshareConfig {
     
+    private static final String CONFIG_PATH = "fairshare.properties";
+    
     @Autowired PoolConfig poolConfig;
     @Autowired FilterConfig filterConfig;
     @Autowired RecordManagerConfig recConfig;    
-    
-    private static final String CONFIG_PATH = "fairshare.properties";
-    
+        
     private static final String CPU_TIME = "Cpu";
     private static final String PROC_EQ = "PE";
     private static final String MAX_MP = "MaxBasedMP";
     private static final String ROOT_MP = "RootBasedMP";
-    
-    private static final String CPU_WEIGHT = "cpuWeight";
-    private static final String RAM_WEIGHT = "ramWeight";
-    private static final String HDD_WEIGHT = "hddWeight";    
-    
         
     @Bean 
     public UserPriorityCalculator userPriorityCalculator() throws LoadingFailedException {
@@ -51,54 +43,29 @@ public class FairshareConfig {
     }
     
     @Bean 
-    public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {
-        PropertiesConfig fairshareConfig = loadFairshareConfig();
-        switch (fairshareConfig.getString("penaltyFunction")) {
+    public IVmPenaltyCalculator vmPenaltyCalculator() throws LoadingFailedException {        
+        FairshareConfiguration config = new FairshareConfiguration(CONFIG_PATH);        
+        switch (config.getPenaltyFunction()) {
             case CPU_TIME:
                 return new CpuTimeCalculator();
             case PROC_EQ:
-                return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), fairshareConfig);
+                return new ProcessorEquivalentCalculator(poolConfig.hostPool(), poolConfig.datastorePool(), config);
             case MAX_MP:  
                 return new MaxBasedMpCalculator(
                         poolConfig.hostPool(), 
                         poolConfig.datastorePool(), 
                         poolConfig.clusterPool(), 
                         filterConfig.fairshareHostFilter(), 
-                        fairshareConfig);
+                        config);
             case ROOT_MP:  
                 return new RootBasedMpCalculator(
                         poolConfig.hostPool(), 
                         poolConfig.datastorePool(), 
                         poolConfig.clusterPool(), 
                         filterConfig.fairshareHostFilter(), 
-                        fairshareConfig);
+                        config);
             default:    
-                throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - wrong penalty function.");
-        }   
-    }
-    
-    public PropertiesConfig loadFairshareConfig() throws LoadingFailedException {
-        try {
-            PropertiesConfig properties = new PropertiesConfig(CONFIG_PATH);
-            List<Float> resourceWeights = new ArrayList<>();
-            resourceWeights.add(properties.getFloat(CPU_WEIGHT));
-            resourceWeights.add(properties.getFloat(RAM_WEIGHT));
-            resourceWeights.add(properties.getFloat(HDD_WEIGHT));
-            
-            float weightSum = 0;
-            for (float weight : resourceWeights) {
-                if (weight < 0) {
-                    throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - resource weights cannot be smaller than 0.");
-                }
-                weightSum += weight;
-            }
-            if (weightSum == 0) {
-                throw new LoadingFailedException("Incorrect fairshare configuration in " + CONFIG_PATH + " - all resource weights cannot be 0.");
-            }           
-            
-            return properties;
-        } catch (IOException ex) {
-            throw new LoadingFailedException(ex.toString());
-        }
+                throw new LoadingFailedException("Incorrect fairshare configuration - wrong penalty function.");
+        } 
     }
 }
