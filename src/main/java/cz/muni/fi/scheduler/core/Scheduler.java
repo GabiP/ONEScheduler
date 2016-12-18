@@ -140,6 +140,7 @@ public class Scheduler {
             log.info("No pendings");
             return null;
         }
+        authorizationManager.authorize(pendingVms);
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
         return processQueues(queues);
@@ -246,14 +247,13 @@ public class Scheduler {
     
     /**
      * For each VM prepares suitable hosts.
-     * Firt get the authorized hosts.
+     * First get the authorized hosts.
      * Then filters them with selected filters.
      * @param vm the VM with the requirements
      * @return list of hosts that suits the requirements.
      */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
-        authorizationManager.authorize(vm);
-        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts();
+        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());
         if (authorizedHosts.isEmpty()) {
             log.info("Empty authorized hosts.");
             return authorizedHosts;
@@ -333,7 +333,7 @@ public class Scheduler {
     private LinkedHashMap<HostElement, RankPair> getCandidates(List<HostElement> sortedHosts, VmElement vm) {
         LinkedHashMap<HostElement, RankPair> candidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
-            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(), host, vm, schedulerData);
+            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(vm.getUid()), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
                 candidates.put(host, ds);

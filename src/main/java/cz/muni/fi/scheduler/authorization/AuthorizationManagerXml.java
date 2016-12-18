@@ -31,16 +31,16 @@ public class AuthorizationManagerXml implements IAuthorizationManager {
     }
     
     @Override
-    public void authorize(VmElement vm) {
+    public void authorize(List<VmElement> vms) {
     }
 
     @Override
-    public List<HostElement> getAuthorizedHosts() {
+    public List<HostElement> getAuthorizedHosts(Integer id) {
         return hosts;
     }
 
     @Override
-    public List<DatastoreElement> getAuthorizedDs() {
+    public List<DatastoreElement> getAuthorizedDs(Integer id) {
         return datastores;
     }       
 }
