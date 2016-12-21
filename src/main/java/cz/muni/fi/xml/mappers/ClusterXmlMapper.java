@@ -24,5 +24,5 @@ public abstract class ClusterXmlMapper {
     @Mapping(target = "reservedCpu", expression = "java((cluster.getReservedCpu())*100)")
     @Mapping(target = "reservedMemory", expression = "java((cluster.getReservedMemory())*1024)")
     public abstract ClusterXml mapToXml(ClusterElement cluster);
-    
+
 }

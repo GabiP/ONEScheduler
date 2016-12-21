@@ -44,7 +44,7 @@ public abstract class HostXmlMapper {
     @Mapping(target = "reservedCpu", expression = "java((host.getReservedCpu())*100)")
     @Mapping(target = "reservedMemory", expression = "java((host.getReservedMemory())*1024)")
     public abstract HostXml mapToXml(HostElement host);
-    
+
     public abstract List<PciNode> mapPcis(List<PciNodeXml> pcis);
     
     public abstract List<PciNodeXml> mapPcisToXml(List<PciNode> pcis);

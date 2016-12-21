@@ -5,6 +5,7 @@ import cz.muni.fi.scheduler.core.Match;
 import cz.muni.fi.scheduler.core.Scheduler;
 import cz.muni.fi.config.RecordManagerConfig;
 import cz.muni.fi.config.SchedulerConfig;
+import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.result.IResultManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.IUserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.opennebula.client.ClientConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SetUp {
     
     private static PropertiesConfig configuration;
-    private static PropertiesConfig fairshareConfig;
+    private static FairshareConfiguration fairshareConfig;
     
     private static int cycleinterval;
     private static boolean testingMode;
@@ -45,8 +47,8 @@ public class SetUp {
     public static void main(String[] args) throws InterruptedException, ClientConfigurationException {
         try {
             configuration = new PropertiesConfig(DEFAULT_FILE_NAME);
-            fairshareConfig = new PropertiesConfig(DEFAULT_FILE_NAME_FAIRSHARE);
-        } catch (IOException e) {
+            fairshareConfig = new FairshareConfiguration(DEFAULT_FILE_NAME_FAIRSHARE);
+        } catch (LoadingFailedException | IOException e) {
             log.error("Could not load configuration file!" + e);
             return;
         }
@@ -77,17 +79,22 @@ public class SetUp {
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();
-            printPlan(plan);
-            
-            //deploy
-            List<VmElement> failedVms = resultManager.deployPlan(plan);
-            printFailedVms(failedVms);
+            if (planExists(plan)) {
+                printPlan(plan);
+                //deploy
+                List<VmElement> failedVms = resultManager.deployPlan(plan);
+                printFailedVms(failedVms);
+            }
             
             log.info("Another cycle will start in " + cycleinterval + "seconds.");
             TimeUnit.SECONDS.sleep(cycleinterval);
         }
     }
-    
+
+    private static boolean planExists(List<Match> plan) {
+        return plan != null;
+    }
+
     private static void clearFairshareRecords() {
         ApplicationContext context = new AnnotationConfigApplicationContext(RecordManagerConfig.class); 
         context.getBean(VmFairshareRecordManager.class).clearContent();
@@ -102,10 +109,10 @@ public class SetUp {
     private static void checkDecayTime(IUserFairshareRecordManager userRecordManager) {
         long schedulingTime = TimeManager.getInstance().getSchedulingTimeStamp().getTime();
         long lastDecayTime = userRecordManager.getLastDecayTime();
-        long decayMillisInterval = TimeUnit.HOURS.toMillis(fairshareConfig.getInt("decayInterval"));
+        long decayMillisInterval = TimeUnit.HOURS.toMillis(fairshareConfig.getDecayInterval());
         
         if (schedulingTime - lastDecayTime > decayMillisInterval) {
-            int decayValue = fairshareConfig.getInt("decayValue");
+            int decayValue = fairshareConfig.getDecayValue();
             userRecordManager.applyDecay(decayValue);
         }
     }
