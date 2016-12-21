@@ -47,7 +47,7 @@ public class UserElementPool implements IUserPool{
             System.out.println("User: " + element);
             UserElement u = UserMapper.map(element);
             System.out.println("User: " + u);
-            getUsers().add(u);
+            users.add(u);
         }
         return users;
     }

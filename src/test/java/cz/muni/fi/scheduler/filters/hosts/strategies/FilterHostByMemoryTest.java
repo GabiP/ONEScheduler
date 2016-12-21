@@ -48,7 +48,7 @@ public class FilterHostByMemoryTest {
         cluster = new ClusterElement();
         cluster.setId(100);
         host.setClusterId(100);
-        filter = new FilterHostByMemory(clusterPool);
+        filter = new FilterHostByMemory(clusterPool, true);
         when(clusterPool.getCluster(100)).thenReturn(cluster);
     }
     

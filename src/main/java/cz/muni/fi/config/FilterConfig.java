@@ -82,10 +82,10 @@ public class FilterConfig {
         for (String aFilterConfig : filterConfig) {
             switch (aFilterConfig) {
                 case HOST_CPU_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool()));
+                    schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool(), properties.getBoolean("testingMode")));
                     break;
                 case HOST_MEMORY_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByMemory(poolConfig.clusterPool()));
+                    schedulingFilterStrategies.add(new FilterHostByMemory(poolConfig.clusterPool(), properties.getBoolean("testingMode")));
                     break;
                 case HOST_PCI_FILTER:
                     filterStrategies.add(new FilterHostByPci());

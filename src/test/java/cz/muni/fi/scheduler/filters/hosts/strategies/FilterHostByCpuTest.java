@@ -40,7 +40,7 @@ public class FilterHostByCpuTest {
         cluster = new ClusterElement();
         cluster.setId(100);
         host.setClusterId(100);
-        filter = new FilterHostByCpu(clusterPool);
+        filter = new FilterHostByCpu(clusterPool, true);
         when(clusterPool.getCluster(100)).thenReturn(cluster);
     }
     

@@ -72,10 +72,12 @@ public class SetUp {
             
             //Plan migrations
             List<Match> migrations = scheduler.migrate();
-            printPlan(migrations);
-            //migrate
-            List<VmElement> failedMigrations = resultManager.migrate(migrations);
-            printFailedVms(failedMigrations);
+            if (planExists(migrations) || !migrations.isEmpty()) {
+                printPlan(migrations);
+                //migrate
+                List<VmElement> failedMigrations = resultManager.migrate(migrations);
+                printFailedVms(failedMigrations);
+            }
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();

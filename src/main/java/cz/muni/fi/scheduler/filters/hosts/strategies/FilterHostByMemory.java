@@ -18,12 +18,21 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     
     private IClusterPool clusterPool;
     
-    public FilterHostByMemory(IClusterPool clusterPool) {
+    private Boolean testingMode;
+    
+    public FilterHostByMemory(IClusterPool clusterPool, Boolean testingMode) {
         this.clusterPool = clusterPool;
+        this.testingMode = testingMode;
     }
     /**
      * Tests whether a VM can be hosted by the host.
      * Checks the memory capacity on host.
+     * 
+     * Note that this implementation uses Max memory and Used memory from Host.
+     * The max Memory already descreases or increases its value by the reserved memory
+     * in host or cluster template in OpenNebula.
+     * 
+     * For the testing mode, the reservations are calculated here.
      * 
      * @param vm Vm to be checked
      * @param host Host to be checked
@@ -32,7 +41,12 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
-        Integer reservation = getReservation(host);
+        Integer reservation;
+        if (testingMode) {
+            reservation = getReservation(host);
+        } else {
+            reservation = 0;
+        }
         Integer actualMemoryUsage = schedulerData.getReservedMemory(host) + host.getMem_usage() + reservation;
         log.info("Filtering Host " + host.getId() + " by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=(?)" + vm.getMemory());
         return ((host.getMax_mem() - actualMemoryUsage) >= vm.getMemory());
