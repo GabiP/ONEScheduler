@@ -16,7 +16,7 @@ public class PropertiesConfig {
     
     private final Properties props = new Properties();
     
-    private static final String CONFIG_DIRECTORY = "config";
+    private static final String CONFIG_DIRECTORY = "configFiles";
     
     public PropertiesConfig(String path) throws IOException {
         InputStream is = new FileInputStream(CONFIG_DIRECTORY + File.separator + path);
