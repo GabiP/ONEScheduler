@@ -7,6 +7,7 @@ package cz.muni.fi.scheduler.setup;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  *
@@ -30,6 +31,9 @@ public class FairshareConfiguration {
     private float ramWeight;
     private float hddWeight;
     
+    private Map<Integer, Float> userPercentages;
+    private Map<Integer, Float> userGroupPercentages;
+    
 
     public FairshareConfiguration(String path) throws LoadingFailedException {
         try {
@@ -39,6 +43,7 @@ public class FairshareConfiguration {
             decayValue = properties.getInt("decayValue");
             decayInterval = properties.getInt("decayInterval");
             loadWeights(properties);
+            loadFairsharePercentages(properties);
         } catch (IOException ex) {
             throw new LoadingFailedException(ex.toString());
         }
@@ -63,6 +68,10 @@ public class FairshareConfiguration {
         }  
     }
 
+    private void loadFairsharePercentages(PropertiesConfig properties) {
+        //TODO: implement
+    }
+    
     public String getPath() {
         return path;
     }
@@ -90,4 +99,12 @@ public class FairshareConfiguration {
     public float getHddWeight() {
         return hddWeight;
     }    
+
+    public Map<Integer, Float> getUserPercentages() {
+        return userPercentages;
+    }
+
+    public Map<Integer, Float> getUserGroupPercentages() {
+        return userGroupPercentages;
+    }
 }

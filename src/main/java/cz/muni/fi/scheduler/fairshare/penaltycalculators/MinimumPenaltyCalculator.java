@@ -51,6 +51,9 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     @Override  
     public float getPenalty(VmElement vm) {
         List<HostElement> filteredHosts = hostFilter.getFilteredHosts(hosts, vm);
+        if (filteredHosts.isEmpty()) {
+            return 0;
+        }
         HostElement firstHost = filteredHosts.get(0);
         float minPenalty = getHostPenalty(vm, firstHost);
         for (int i=1; i<filteredHosts.size(); i++) {

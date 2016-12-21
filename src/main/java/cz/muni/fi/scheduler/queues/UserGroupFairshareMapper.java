@@ -28,26 +28,36 @@ public class UserGroupFairshareMapper implements IQueueMapper {
     
     private UserPriorityCalculator calculator;
     private IUserPool userPool;
+    
+    private Map<Integer, Float> userPercentages;
+    private Map<Integer, Float> userGroupPercentages;
 
-    public UserGroupFairshareMapper(UserPriorityCalculator calculator, IUserPool userPool) {
+    public UserGroupFairshareMapper(UserPriorityCalculator calculator, IUserPool userPool, 
+            Map<Integer, Float> userPercentages, Map<Integer, Float> userGroupPercentages) {
         this.calculator = calculator;
         this.userPool = userPool;
+        this.userPercentages = userPercentages;
+        this.userGroupPercentages = userGroupPercentages;
     }
 
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {        
         Set<Integer> userIds = UserListExtension.getUserIds(userPool.getUsers());
         Map<Integer, Float> userPriorities = calculator.getUserPriorities(userIds);  
+        
         Map<Integer, Float> userGroupPriorities = getUserGroupPriorities(userPriorities);  
+        userGroupPriorities = applyFairsharePercentages(userGroupPriorities, userGroupPercentages);
         List<Integer> sortedUserGroups = MapExtension.sortByValue(userGroupPriorities);
         
+        // create queues for the user groups
         List<Queue> queues = new ArrayList<>();
-        for (Integer sortedUserGroup : sortedUserGroups) {
-            int userGroupId = sortedUserGroup;
+        for (int userGroupId : sortedUserGroups) {
             Queue queue = new Queue("UserGroup" + userGroupId, userGroupPriorities.get(userGroupId), new ArrayList<>());
             queues.add(queue);
         }
         
+        // add vms to queues sorted by user priority
+        userPriorities = applyFairsharePercentages(userPriorities, userPercentages);        
         List<Integer> sortedUsers = MapExtension.sortByValue(userPriorities);
         Map<Integer, List<VmElement>> userVms = VmListExtension.getUserVms(vms);
         for (int i=0; i<sortedUsers.size(); i++) {
@@ -78,6 +88,14 @@ public class UserGroupFairshareMapper implements IQueueMapper {
             }
         }
         return groupPriorities;
+    }
+    
+    private Map<Integer, Float> applyFairsharePercentages(Map<Integer, Float> priorities, Map<Integer, Float> percentages) {
+        for (int userGroupId : priorities.keySet()) {
+            float modifier = percentages.getOrDefault(userGroupId, 100f);
+            priorities.put(userGroupId, priorities.get(userGroupId) / modifier);
+        }
+        return priorities;
     }
     
     private int getBestUserGroupId(int userGroupId, List<Integer> sortedUserGroups) {

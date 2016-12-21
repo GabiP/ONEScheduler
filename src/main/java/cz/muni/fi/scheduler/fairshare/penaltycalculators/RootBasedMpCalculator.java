@@ -36,10 +36,11 @@ public class RootBasedMpCalculator extends MinimumPenaltyCalculator {
         float ramShare = ((float)vm.getMemory()) / host.getMax_mem();
         float hddShare = ((float)vm.getDiskSizes()) / getHostStorageShare(host);
         
-        float resourcePenalty = (float) (1 - Math.pow(1/(cpuWeight + ramWeight + hddWeight),
+        float resourcePenalty = (float) (1 - Math.pow(
                 Math.pow(1 - cpuShare, cpuWeight)*
                 Math.pow(1 - ramShare, ramWeight)*
-                Math.pow(1 - hddShare, hddWeight)));        
+                Math.pow(1 - hddShare, hddWeight), 
+                1/(cpuWeight + ramWeight + hddWeight)));        
         return resourcePenalty * host.getMax_cpu();
     }  
 }
