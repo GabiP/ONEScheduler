@@ -9,6 +9,7 @@ import cz.muni.fi.scheduler.queues.IQueueMapper;
 import cz.muni.fi.scheduler.selectors.QueueByQueue;
 import cz.muni.fi.scheduler.selectors.RoundRobin;
 import cz.muni.fi.scheduler.selectors.IVmSelector;
+import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ public class SchedulingConfig {
     @Autowired FairshareConfig fairshareConfig;
     
     private PropertiesConfig properties;
+    private FairshareConfiguration fairshareProperties;
     
     private static final String FIXED_NUM_OF_QUEUES = "FixedNumOfQueues";
     private static final String QUEUE_BY_USER = "QueueByUser";
@@ -42,8 +44,9 @@ public class SchedulingConfig {
     private static final String QUOTAS_CHECK = "QuotasCheck";
     private static final String NO_LIMITS = "NoLimits";
     
-    public SchedulingConfig() throws IOException {
+    public SchedulingConfig() throws IOException, LoadingFailedException {
         properties = new PropertiesConfig("configuration.properties");
+        fairshareProperties = new FairshareConfiguration("fairshare.properties");
     }
     
     @Bean
@@ -54,9 +57,15 @@ public class SchedulingConfig {
             case QUEUE_BY_USER:
                 return new QueueByUserMapper(poolConfig.userPool());
             case USER_FAIRSHARE:
-                return new UserFairshareMapper(fairshareConfig.userPriorityCalculator());
+                return new UserFairshareMapper(
+                        fairshareConfig.userPriorityCalculator(), 
+                        fairshareProperties.getUserPercentages());
             case USER_GROUP_FAIRSHARE:
-                return new UserGroupFairshareMapper(fairshareConfig.userPriorityCalculator(), poolConfig.userPool());
+                return new UserGroupFairshareMapper(
+                        fairshareConfig.userPriorityCalculator(), 
+                        poolConfig.userPool(), 
+                        fairshareProperties.getUserPercentages(), 
+                        fairshareProperties.getUserGroupPercentages());
             case ONE_QUEUE:
                 return new OneQueueMapper();
             default:

@@ -14,7 +14,7 @@ import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
 import cz.muni.fi.scheduler.elements.nodes.DatastoreNode;
-import cz.muni.fi.scheduler.setup.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +33,12 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     private IDatastorePool dsPool;
     private IClusterPool clusterPool;    
     
-    protected PropertiesConfig fairshareConfig;
+    protected FairshareConfiguration fairshareConfig;
     
     protected List<HostElement> hosts;
     protected Map<Integer, Float> dsHostShare;
 
-    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, PropertiesConfig fairshareConfig) {
+    public MinimumPenaltyCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, FairshareConfiguration fairshareConfig) {
         this.hostFilter = hostFilter;
         this.hostPool = hostPool;     
         this.dsPool = dsPool;           
@@ -51,6 +51,9 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
     @Override  
     public float getPenalty(VmElement vm) {
         List<HostElement> filteredHosts = hostFilter.getFilteredHosts(hosts, vm);
+        if (filteredHosts.isEmpty()) {
+            return 0;
+        }
         HostElement firstHost = filteredHosts.get(0);
         float minPenalty = getHostPenalty(vm, firstHost);
         for (int i=1; i<filteredHosts.size(); i++) {

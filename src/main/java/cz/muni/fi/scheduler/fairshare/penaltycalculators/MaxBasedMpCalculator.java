@@ -11,7 +11,7 @@ import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.filters.hosts.HostFilter;
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
-import cz.muni.fi.scheduler.setup.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
@@ -22,7 +22,7 @@ import cz.muni.fi.scheduler.setup.PropertiesConfig;
  */
 public class MaxBasedMpCalculator extends MinimumPenaltyCalculator { 
 
-    public MaxBasedMpCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, PropertiesConfig fairshareConfig) {
+    public MaxBasedMpCalculator(IHostPool hostPool, IDatastorePool dsPool, IClusterPool clusterPool, HostFilter hostFilter, FairshareConfiguration fairshareConfig) {
         super(hostPool, dsPool, clusterPool, hostFilter, fairshareConfig);
     }        
     
@@ -30,9 +30,9 @@ public class MaxBasedMpCalculator extends MinimumPenaltyCalculator {
     protected float getHostPenalty(VmElement vm, HostElement host) {
         
         float maxResource = Math.max(Math.max(
-                                (vm.getCpu()/host.getMax_cpu()) * fairshareConfig.getFloat("cpuWeight"), 
-                                ((float)vm.getMemory()/host.getMax_mem()) * fairshareConfig.getFloat("ramWeight")),
-                                ((float)vm.getDiskSizes()/getHostStorageShare(host)) * fairshareConfig.getFloat("hddWeight"));
+                                (vm.getCpu()/host.getMax_cpu()) * fairshareConfig.getCpuWeight(), 
+                                ((float)vm.getMemory()/host.getMax_mem()) * fairshareConfig.getRamWeight()),
+                                ((float)vm.getDiskSizes()/getHostStorageShare(host)) * fairshareConfig.getHddWeight());
         return maxResource * host.getMax_cpu();
     }  
 }

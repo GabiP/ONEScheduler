@@ -21,14 +21,17 @@ import java.util.Map;
 public class UserFairshareMapper implements IQueueMapper {
     
     private UserPriorityCalculator calculator;
+    private Map<Integer, Float> percentages;
     
-    public UserFairshareMapper(UserPriorityCalculator calculator) {
+    public UserFairshareMapper(UserPriorityCalculator calculator, Map<Integer, Float> percentages) {
         this.calculator = calculator;
+        this.percentages = percentages;
     }
 
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         Map<Integer, Float> userPriorities = calculator.getUserPriorities(VmListExtension.getUserIds(vms));
+        userPriorities = applyFairsharePercentages(userPriorities);
         List<Integer> sortedUsers = MapExtension.sortByValue(userPriorities);
         Map<Integer, List<VmElement>> userVms = VmListExtension.getUserVms(vms);
         
@@ -39,6 +42,15 @@ public class UserFairshareMapper implements IQueueMapper {
             queues.add(queue);
         }
         return queues;
+    }
+    
+
+    private Map<Integer, Float> applyFairsharePercentages(Map<Integer, Float> userPriorities) {
+        for (int userId : userPriorities.keySet()) {
+            float modifier = percentages.getOrDefault(userId, 100f);
+            userPriorities.put(userId, userPriorities.get(userId) / modifier);
+        }
+        return userPriorities;
     }
     
     private Queue createUserQueue(int userId, float priority, List<VmElement> userVms) {

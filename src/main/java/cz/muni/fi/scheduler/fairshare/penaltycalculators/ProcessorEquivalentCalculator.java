@@ -10,7 +10,7 @@ import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
-import cz.muni.fi.scheduler.setup.PropertiesConfig;
+import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
@@ -20,7 +20,7 @@ import cz.muni.fi.scheduler.setup.PropertiesConfig;
  */
 public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     
-    protected PropertiesConfig fairshareConfig;
+    protected FairshareConfiguration fairshareConfig;
     
     private IHostPool hostPool;  
     private IDatastorePool dsPool;  
@@ -29,7 +29,7 @@ public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     private Integer availableMemory;
     private Integer availableStorageCapacity;
 
-    public ProcessorEquivalentCalculator(IHostPool hostPool, IDatastorePool dsPool, PropertiesConfig fairshareConfig) {        
+    public ProcessorEquivalentCalculator(IHostPool hostPool, IDatastorePool dsPool, FairshareConfiguration fairshareConfig) {        
         this.hostPool = hostPool;
         this.dsPool = dsPool;
         this.fairshareConfig = fairshareConfig;
@@ -41,9 +41,9 @@ public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
     @Override
     public float getPenalty(VmElement vm) {
         float maxResource = Math.max(Math.max(
-                                (vm.getCpu()/availableCpu) * fairshareConfig.getFloat("cpuWeight"), 
-                                ((float)vm.getMemory()/availableMemory) * fairshareConfig.getFloat("ramWeight")),
-                                ((float)vm.getDiskSizes()/availableStorageCapacity) * fairshareConfig.getFloat("hddWeight"));
+                                (vm.getCpu()/availableCpu) * fairshareConfig.getCpuWeight(), 
+                                ((float)vm.getMemory()/availableMemory) * fairshareConfig.getRamWeight()),
+                                ((float)vm.getDiskSizes()/availableStorageCapacity) * fairshareConfig.getHddWeight());
         return maxResource * availableCpu;
     }
 
