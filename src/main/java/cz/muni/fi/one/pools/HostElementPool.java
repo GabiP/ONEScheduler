@@ -4,6 +4,7 @@ import cz.muni.fi.one.mappers.HostMapper;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elements.HostElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,18 +29,11 @@ public class HostElementPool implements IHostPool{
     
     private HostPool hp;
     
+    private List<HostElement> hosts;
+    
     public HostElementPool(Client oneClient) {
         hp = new HostPool(oneClient);
-    }
-    
-    /**
-     * Goes through the pool and maps all hosts.
-     * 
-     * @return list of HostElements
-     */
-    @Override
-    public List<HostElement> getHosts() {
-        List<HostElement> hosts = new ArrayList<>();
+        hosts = new ArrayList<>();
         OneResponse hpr = hp.info();
         if (hpr.isError()) {
             log.error(hpr.getErrorMessage());
@@ -47,12 +41,19 @@ public class HostElementPool implements IHostPool{
         Iterator<Host> itr = hp.iterator();
         while (itr.hasNext()) {
             Host element = itr.next();
-            System.out.println("Host: " + element + "   state: " + element.state() + " id: " + element.getId());
             HostElement h = HostMapper.map(element);
-            System.out.println("HostElement: " + h);
             hosts.add(h);
         }
-        return hosts;
+    }
+    
+    /**
+     * Gets all cached hosts.
+     * 
+     * @return list of HostElements
+     */
+    @Override
+    public List<HostElement> getHosts() {
+        return Collections.unmodifiableList(hosts);
     }
     
     /**
@@ -68,8 +69,12 @@ public class HostElementPool implements IHostPool{
     
     @Override
     public HostElement getHost(int id) {
-        hp.info();
-        return HostMapper.map(hp.getById(id));
+        for (HostElement h : hosts) {
+            if (h.getId() == id) {
+                return h;
+            }
+        }
+        return null;
     }
     
     @Override

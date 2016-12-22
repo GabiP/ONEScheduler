@@ -49,7 +49,6 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
             reservation = 0.00f;
         }
         Float actualCpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage() + reservation;
-        log.info("Filtering Host " + host.getId() + " by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=(?)" + vm.getCpu());
         return ((host.getMax_cpu() - actualCpuUsage) >= vm.getCpu());
     }
     
@@ -58,10 +57,8 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
         ClusterElement cluster = clusterPool.getCluster(host.getClusterId());
         Float reservedClusterCpu = cluster.getReservedCpu();
         if (reservedCpu == 0) {
-            log.info("Reserved cluster cpu: " + reservedClusterCpu);
             return reservedClusterCpu;
         } else {
-            log.info("Reserved host cpu: " + reservedCpu);
             return reservedCpu;
         }
     }

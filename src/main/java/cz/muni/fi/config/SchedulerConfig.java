@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.config;
 
 import cz.muni.fi.scheduler.authorization.AuthorizationManager;
@@ -103,7 +98,7 @@ public class SchedulerConfig {
         if (properties.getBoolean("testingMode")) {
             return new AuthorizationManagerXml(poolConfig.hostPool(), poolConfig.datastorePool());
         } else {
-            return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());
+            return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool(), poolConfig.groupPool());
         }        
     }
 }

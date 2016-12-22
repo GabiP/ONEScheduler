@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *

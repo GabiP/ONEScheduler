@@ -1,10 +1,10 @@
 package cz.muni.fi.scheduler.authorization;
 
 import cz.muni.fi.extensions.UserListExtension;
-import cz.muni.fi.extensions.VmListExtension;
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IGroupPool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elements.ClusterElement;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.opennebula.client.acl.Acl;
 
 /**
@@ -31,25 +30,27 @@ public class AuthorizationManager implements IAuthorizationManager {
     private final IHostPool hostPool;
     private final IDatastorePool datastorePool;
     private final IUserPool userPool;
+    private final IGroupPool groupPool;
     
     private Map<Integer, List<HostElement>> authorizedHostsByUser;
     private Map<Integer, List<DatastoreElement>> authorizedDatastoresByUser;
     
-    public AuthorizationManager(IAclPool acls, IClusterPool clusters, IHostPool hosts, IDatastorePool datastores, IUserPool userPool) {
+    public AuthorizationManager(IAclPool acls, IClusterPool clusters, IHostPool hosts, IDatastorePool datastores, IUserPool userPool, IGroupPool groupPool) {
         this.aclPool = acls;
         this.clusterPool = clusters;
         this.hostPool = hosts;
         this.datastorePool = datastores;
         this.userPool = userPool;
+        this.groupPool = groupPool;
         authorizedHostsByUser = new HashMap<>();
         authorizedDatastoresByUser = new HashMap<>();
     }
     
     /**
-     * Finds the subset of hosts where the owner of specified virtual machine can deploy.
+     * Finds the subset of hosts and datastores where the VMs can be deployed.
      * 
-     * @param vm the virtual machine's user to be authorized
-     * Sets authorized hosts and datastores.
+     * @param vms the pending VMs
+     * Sets authorized hosts and datastores for each user defined in ACL.
      */
     @Override
     public void authorize(List<VmElement> vms) {
@@ -60,21 +61,20 @@ public class AuthorizationManager implements IAuthorizationManager {
             //rule for user
             if (splittedRule[0].contains("#")) {
                Integer aclUid = Integer.valueOf(splittedRule[0].substring(1).trim());
-               setAuthorizedHost(aclUid, evaluateHost(splittedRule[2], splittedRule[1]));
-               setAuthorizedDatastores(aclUid, evaluateDatastore(splittedRule[2], splittedRule[1]));
+               List<Integer> uids = new ArrayList<>();
+               uids.add(aclUid);
+               evaluateAcl(splittedRule[2], splittedRule[1], uids);
             }
             //rule for group - get users of that group
             if (splittedRule[0].contains("@")) {
                 Integer aclGid = Integer.valueOf(splittedRule[0].substring(1).trim());
-                Set<Integer> usersOfGroup = UserListExtension.getUsersOfGroup(userPool.getUsers(), aclGid);
-                setAuthorizedHostForMoreUsers(usersOfGroup, evaluateHost(splittedRule[2], splittedRule[1]));
-                setAuthorizedDatastoreForMoreUsers(usersOfGroup, evaluateDatastore(splittedRule[2], splittedRule[1]));
+                List<Integer> usersOfGroup = groupPool.getGroup(aclGid).getUsers();
+                evaluateAcl(splittedRule[2], splittedRule[1], usersOfGroup);
             }
             //rule for all
             if (splittedRule[0].contains("*")) {
-                Set<Integer> userIds = UserListExtension.getUserIds(userPool.getUsers());
-                setAuthorizedHostForMoreUsers(userIds, evaluateHost(splittedRule[2], splittedRule[1]));
-                setAuthorizedDatastoreForMoreUsers(userIds, evaluateDatastore(splittedRule[2], splittedRule[1]));
+                List<Integer> userIds = UserListExtension.getListUserIds(userPool.getUsers());
+                evaluateAcl(splittedRule[2], splittedRule[1], userIds);
             }
         }
     }
@@ -89,6 +89,16 @@ public class AuthorizationManager implements IAuthorizationManager {
         return authorizedDatastoresByUser.get(id);
     }
     
+    private void evaluateAcl(String rights, String resources, List<Integer> users) {
+        if (rights.contains("MANAGE") && resources.contains("HOST")) {
+            List<HostElement> authorizedHosts = evaluateHost(rights, resources);
+            setAuthorizedHostForMoreUsers(users, authorizedHosts);
+        }
+        if (rights.contains("USE") && resources.contains("DATASTORE")) {
+            List<DatastoreElement> authorizedDss = evaluateDatastore(rights, resources);
+            setAuthorizedDatastoreForMoreUsers(users, authorizedDss);
+        }
+    }
     
     /**
      * Evaluates given acl rule - its rights and resources.
@@ -100,20 +110,18 @@ public class AuthorizationManager implements IAuthorizationManager {
      */
     private List<HostElement> evaluateHost(String rights, String resources) {
         List<Integer> authorizedHosts = new ArrayList<>();
-        if (rights.contains("MANAGE") && resources.contains("HOST")) {
-            if (resources.contains("*")) {
-                authorizedHosts.addAll(hostPool.getHostsIds());
-            }
-            if (resources.contains("#")) {
-                Integer hostId = getIdFromResources(resources, "#");
-                HostElement host = hostPool.getHost(hostId);
-                authorizedHosts.add(host.getId());
-            }
-            if (resources.contains("%")) {
-                Integer clusterId = getIdFromResources(resources, "%");
-                ClusterElement cl = clusterPool.getCluster(clusterId);
-                authorizedHosts.addAll(cl.getHosts());
-            }
+        if (resources.contains("*")) {
+            authorizedHosts.addAll(hostPool.getHostsIds());
+        }
+        if (resources.contains("#")) {
+            Integer hostId = getIdFromResources(resources, "#");
+            HostElement host = hostPool.getHost(hostId);
+            authorizedHosts.add(host.getId());
+        }
+        if (resources.contains("%")) {
+            Integer clusterId = getIdFromResources(resources, "%");
+            ClusterElement cl = clusterPool.getCluster(clusterId);
+            authorizedHosts.addAll(cl.getHosts());
         }
         return getHosts(authorizedHosts);
     }
@@ -128,20 +136,19 @@ public class AuthorizationManager implements IAuthorizationManager {
      */
     private List<DatastoreElement> evaluateDatastore(String rights, String resources) {
         List<Integer> authorizedDatastores = new ArrayList<>();
-        if (rights.contains("USE") && resources.contains("DATASTORE")) {
-            if (resources.contains("*")) {
-                authorizedDatastores.addAll(datastorePool.getDatastoresIds());
-            }
-            if (resources.contains("#")) {
-                Integer dsId = getIdFromResources(resources, "#");
-                authorizedDatastores.add(dsId);
-            }
-            if (resources.contains("%")) {
-                Integer clusterId = getIdFromResources(resources, "%");
-                ClusterElement cl = clusterPool.getCluster(clusterId);
-                authorizedDatastores.addAll(cl.getDatastores());
-            }
+        if (resources.contains("*")) {
+            authorizedDatastores.addAll(datastorePool.getDatastoresIds());
         }
+        if (resources.contains("#")) {
+            Integer dsId = getIdFromResources(resources, "#");
+            authorizedDatastores.add(dsId);
+        }
+        if (resources.contains("%")) {
+            Integer clusterId = getIdFromResources(resources, "%");
+            ClusterElement cl = clusterPool.getCluster(clusterId);
+            authorizedDatastores.addAll(cl.getDatastores());
+        }
+
         return getDatastores(authorizedDatastores);
     }
     
@@ -150,7 +157,7 @@ public class AuthorizationManager implements IAuthorizationManager {
         return Integer.valueOf(s);
     }
     
-    private void setAuthorizedHostForMoreUsers(Set<Integer> userIds, List<HostElement> hosts) {
+    private void setAuthorizedHostForMoreUsers(List<Integer> userIds, List<HostElement> hosts) {
         for (Integer userId: userIds) {
             setAuthorizedHost(userId, hosts);
         }
@@ -159,13 +166,18 @@ public class AuthorizationManager implements IAuthorizationManager {
     private void setAuthorizedHost(Integer userId, List<HostElement> hosts) {
         if (!hosts.isEmpty()) {
             if (authorizedHostsByUser.containsKey(userId)) {
-                authorizedHostsByUser.get(userId).addAll(hosts);
+                for (HostElement host: hosts) {
+                    if (!authorizedHostsByUser.get(userId).contains(host)) {
+                        authorizedHostsByUser.get(userId).add(host);
+                    }
+                }
             } else {
                 authorizedHostsByUser.put(userId, hosts);
             }
         }
     }
-    private void setAuthorizedDatastoreForMoreUsers(Set<Integer> userIds, List<DatastoreElement> dss) {
+    
+    private void setAuthorizedDatastoreForMoreUsers(List<Integer> userIds, List<DatastoreElement> dss) {
         for (Integer userId: userIds) {
             setAuthorizedDatastores(userId, dss);
         }
@@ -174,7 +186,11 @@ public class AuthorizationManager implements IAuthorizationManager {
     private void setAuthorizedDatastores(Integer userId, List<DatastoreElement> dss) {
         if (!dss.isEmpty()) {
             if (authorizedDatastoresByUser.containsKey(userId)) {
-                authorizedDatastoresByUser.get(userId).addAll(dss);
+                for (DatastoreElement ds: dss) {
+                    if (!authorizedDatastoresByUser.get(userId).contains(ds)) {
+                        authorizedDatastoresByUser.get(userId).addAll(dss);
+                    }
+                }
             } else {
                 authorizedDatastoresByUser.put(userId, dss);
             }

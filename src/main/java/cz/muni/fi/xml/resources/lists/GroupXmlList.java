@@ -5,28 +5,28 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import cz.muni.fi.xml.resources.UserXml;
+import cz.muni.fi.xml.resources.GroupXml;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 /**
  *
- * @author Andras Urge
+ * @author Gabriela Podolnikova
  */
-@JacksonXmlRootElement(localName = "USERPOOL")
-public class UserXmlList {
-    
-    @JacksonXmlProperty(localName = "USER")
-    @JacksonXmlElementWrapper(useWrapping = false)
-    private List<UserXml> users;
+@JacksonXmlRootElement(localName = "GROUPPOOL")
+public class GroupXmlList {
 
-    public List<UserXml> getUsers() {
-        return users;
+    @JacksonXmlProperty(localName = "GROUP")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<GroupXml> groups;
+
+    public List<GroupXml> getGroups() {
+        return groups;
     }
 
-    public void setUsers(List<UserXml> users) {
-        this.users = users;
+    public void setGroups(List<GroupXml> groups) {
+        this.groups = groups;
     }
     
     public void writeToFile(String filePath) throws IOException {
@@ -35,4 +35,5 @@ public class UserXmlList {
         xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
         xmlMapper.writeValue(file, this);
     }
+    
 }

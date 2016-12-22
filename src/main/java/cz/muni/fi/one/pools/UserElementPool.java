@@ -4,6 +4,7 @@ import cz.muni.fi.one.mappers.UserMapper;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elements.UserElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.opennebula.client.Client;
@@ -26,8 +27,21 @@ public class UserElementPool implements IUserPool{
     
     private UserPool up;
     
+    private List<UserElement> users;
+    
     public UserElementPool(Client oneClient) {
         up = new UserPool(oneClient);
+        users = new ArrayList<>();
+        OneResponse upr = up.info();
+        if (upr.isError()) {
+            log.error(upr.getErrorMessage());
+        }
+        Iterator<User> itr = up.iterator();
+        while (itr.hasNext()) {
+            User element = itr.next();
+            UserElement u = UserMapper.map(element);
+            users.add(u);
+        }
     }
     
     /**
@@ -36,26 +50,17 @@ public class UserElementPool implements IUserPool{
      */
     @Override
     public List<UserElement> getUsers() {
-        List<UserElement> users = new ArrayList<>();
-        OneResponse upr = up.info();
-        if (upr.isError()) {
-            log.error(upr.getErrorMessage());
-        }
-        Iterator<User> itr = up.iterator();
-        while (itr.hasNext()) {
-            User element = itr.next();
-            System.out.println("User: " + element);
-            UserElement u = UserMapper.map(element);
-            System.out.println("User: " + u);
-            users.add(u);
-        }
-        return users;
+        return Collections.unmodifiableList(users);
     }
     
     @Override
     public UserElement getUser(int id) {
-        up.info();
-        return UserMapper.map(up.getById(id));
+        for (UserElement user: users) {
+            if (user.getId().equals(id)){
+                return user;
+            }
+        }
+        return null;
     }
 
 }

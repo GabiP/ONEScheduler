@@ -48,7 +48,6 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
             reservation = 0;
         }
         Integer actualMemoryUsage = schedulerData.getReservedMemory(host) + host.getMem_usage() + reservation;
-        log.info("Filtering Host " + host.getId() + " by memory: " + host.getMax_mem() + "-" + actualMemoryUsage + "=" +(host.getMax_mem() - actualMemoryUsage) + ">=(?)" + vm.getMemory());
         return ((host.getMax_mem() - actualMemoryUsage) >= vm.getMemory());
     }
     
@@ -57,10 +56,8 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
         ClusterElement cluster = clusterPool.getCluster(host.getClusterId());
         Integer reservedClusterMemory = cluster.getReservedMemory();
         if (reservedMemory == 0) {
-            log.info("Reserved cluster memory: " + reservedClusterMemory);
             return reservedClusterMemory;
         } else {
-            log.info("Reserved host memory: " + reservedMemory);
             return reservedMemory;
         }
     }

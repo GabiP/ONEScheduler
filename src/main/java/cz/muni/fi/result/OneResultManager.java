@@ -36,18 +36,23 @@ public class OneResultManager implements IResultManager {
      */
     @Override
     public List<VmElement> deployPlan(List<Match> plan) {
-        oneVmPool.info();
+        oneVmPool.infoAll();
         List<VmElement> failedVms = new ArrayList<>();
         for (Match match: plan) {
             Integer hostId = match.getHost().getId();
             Integer dsId = match.getDatastore().getId();
             List<VmElement> vms = match.getVms();
             for (VmElement vm: vms) {
-                VirtualMachine virtualMachine = oneVmPool.getById(vm.getVmId());
-                OneResponse oneResp = virtualMachine.deploy(hostId, true, dsId);
-                if (oneResp.getMessage() == null) {
-                    log.error("Deployment failed of VM: " + virtualMachine.getId() + " oneResponse: " + oneResp.getErrorMessage());
-                    failedVms.add(vm);
+                VirtualMachine virtualMachine;
+                try {
+                    virtualMachine = oneVmPool.getById(vm.getVmId());
+                    OneResponse oneResp = virtualMachine.deploy(hostId, true, dsId);
+                    if (oneResp.getMessage() == null) {
+                        log.error("Deployment failed of VM: " + virtualMachine.getId() + " oneResponse: " + oneResp.getErrorMessage());
+                        failedVms.add(vm);
+                    }
+                } catch (Exception e) {
+                    log.info("The VM " + vm.getVmId() + " was not found.");
                 }
             }
         }

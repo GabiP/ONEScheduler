@@ -43,7 +43,6 @@ public class AclElementPool implements IAclPool{
         Iterator<Acl> itr = aclpool.iterator();
         while (itr.hasNext()) {
             Acl el = itr.next();
-            System.out.println("Acl rule number: " + el.getId() + " toString: " + el.toString());
             acls.add(el);
         }
         return acls;

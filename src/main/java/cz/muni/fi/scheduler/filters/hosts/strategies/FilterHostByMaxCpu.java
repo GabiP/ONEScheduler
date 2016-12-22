@@ -22,7 +22,6 @@ public class FilterHostByMaxCpu implements IHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host) {
-        LOG.info("Filtering Vm with ID: " + vm.getVmId() + " and Host with ID: " + host.getId());
         return host.getMax_cpu() >= vm.getCpu();
     }
     

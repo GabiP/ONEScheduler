@@ -15,13 +15,11 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.opennebula.client.ClientConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * This class contains the main method.
@@ -72,7 +70,7 @@ public class SetUp {
             
             //Plan migrations
             List<Match> migrations = scheduler.migrate();
-            if (planExists(migrations) || !migrations.isEmpty()) {
+            if (!migrations.isEmpty()) {
                 printPlan(migrations);
                 //migrate
                 List<VmElement> failedMigrations = resultManager.migrate(migrations);
@@ -134,7 +132,9 @@ public class SetUp {
     }
     
     private static void printFailedVms(List<VmElement> failedVms) {
-        System.out.println("Failed Vms: ");
-        failedVms.forEach(System.out::println);
+        if (!failedVms.isEmpty()){
+            System.out.println("Failed Vms: ");
+            failedVms.forEach(System.out::println);
+        }
     }
 }
