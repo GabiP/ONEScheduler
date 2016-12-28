@@ -34,10 +34,8 @@ public class Packing implements IPlacementPolicy {
                 moreVms = entry.getKey();
             }
         }*/
-        log.info("List of hosts: " + hosts);
         Map<HostElement, Integer> listOfRunningVms = schedulerData.getActualRunningVms(hosts);
         result.addAll(sortByValue(listOfRunningVms).keySet());
-        log.info("List of sorted hosts: " + result);
         return result;
     }
     

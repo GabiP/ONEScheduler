@@ -4,14 +4,6 @@
         <NAME>oneadmin</NAME>
         <USERS>
             <ID>0</ID>
-            <ID>1</ID>
-        </USERS>
-    </GROUP>
-    <GROUP>
-        <ID>100</ID>
-        <NAME>users</NAME>
-        <USERS>
-            <ID>1</ID>
         </USERS>
     </GROUP>
 </GROUPPOOL>

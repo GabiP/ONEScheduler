@@ -26,10 +26,15 @@ public class VmXmlPool implements IVmPool {
 
     VmXmlMapper vmXmlMapper = Mappers.getMapper(VmXmlMapper.class);
     
+    private long usedMB;
+    
     public VmXmlPool(String vmPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String vmPoolMessage = new String(Files.readAllBytes(Paths.get(vmPoolPath)));
         VmXmlList xmlList = xmlMapper.readValue(vmPoolMessage, VmXmlList.class);
+        System.gc();
+        Runtime rt = Runtime.getRuntime();
+        usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024; 
         vms = vmXmlMapper.map(xmlList.getVms());
     }
     
@@ -98,6 +103,14 @@ public class VmXmlPool implements IVmPool {
     @Override
     public List<VmElement> getReschedVms() {
         return vms.stream().filter(VmElement::isResched).collect(Collectors.toList());
+    }
+
+    public long getUsedMB() {
+        return usedMB;
+    }
+
+    public void setUsedMB(long usedMB) {
+        this.usedMB = usedMB;
     }
     
 }

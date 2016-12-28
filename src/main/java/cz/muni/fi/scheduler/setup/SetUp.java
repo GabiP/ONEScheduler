@@ -12,6 +12,8 @@ import cz.muni.fi.scheduler.fairshare.historyrecords.UserFairshareRecordManager;
 import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.elements.VmElement;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -57,11 +59,21 @@ public class SetUp {
         if (testingMode) {
             clearFairshareRecords();
         } 
-                
-        while (true) {
-            log.info("Starting scheduling cycle.");     
+        
+        List<Long> runtimes = new ArrayList<>();
+        List<Long> maxMbUsages = new ArrayList<>();
+        
+        for (int i = 0; i < 10; i++) {
+            log.info("Starting scheduling cycle.");
+            long start = System.currentTimeMillis();
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
+            
+            List<Long> mbUsage = new ArrayList<>();
+            System.gc();
+            Runtime rt = Runtime.getRuntime();
+            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            mbUsage.add(usedMB);
             
             saveSchedulingTime();
             checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
@@ -71,24 +83,39 @@ public class SetUp {
             //Plan migrations
             List<Match> migrations = scheduler.migrate();
             if (!migrations.isEmpty()) {
-                printPlan(migrations);
+                //printPlan(migrations);
                 //migrate
                 List<VmElement> failedMigrations = resultManager.migrate(migrations);
-                printFailedVms(failedMigrations);
+                //printFailedVms(failedMigrations);
             }
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();
             if (planExists(plan)) {
-                printPlan(plan);
+                //printPlan(plan);
                 //deploy
                 List<VmElement> failedVms = resultManager.deployPlan(plan);
-                printFailedVms(failedVms);
+                //printFailedVms(failedVms);
             }
             
-            log.info("Another cycle will start in " + cycleinterval + "seconds.");
-            TimeUnit.SECONDS.sleep(cycleinterval);
+            List<Long> usedMbs = scheduler.getUsedMb();
+            mbUsage.addAll(usedMbs);
+            Long maxMb = Collections.max(mbUsage);
+            //log.info("Used mbs:" + mbUsage);
+            //log.info("Max mem used: " + maxMb + "mb");
+            maxMbUsages.add(maxMb);
+            
+            List<VmElement> notAssignedVms = scheduler.getNotAssignedVms();
+            log.info("Not assigned Vms :" + notAssignedVms);
+            
+            //log.info("Runtime in miliseconds:" + (System.currentTimeMillis() - start));
+            runtimes.add(System.currentTimeMillis() - start);
+            
+            //log.info("Another cycle will start in " + cycleinterval + "seconds.");
+            //TimeUnit.SECONDS.sleep(cycleinterval);
         }
+        System.out.println("Rutimes: " + runtimes);
+        System.out.println("Max mb usages: " + maxMbUsages);
     }
 
     private static boolean planExists(List<Match> plan) {

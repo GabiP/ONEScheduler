@@ -25,7 +25,7 @@ public class RoundRobin implements IVmSelector {
             currentQueue = queues.get(currentQueueIndex);
         }
         VmElement vmToReturn = currentQueue.dequeue();
-        log.info("Dequeued queue: " + queues.get(currentQueueIndex) + " Vm removed: " + vmToReturn);
+        //log.info("Dequeued queue: " + queues.get(currentQueueIndex) + " Vm removed: " + vmToReturn);
         currentQueueIndex++;
         checkLastIndex(queues.size());
         return vmToReturn;

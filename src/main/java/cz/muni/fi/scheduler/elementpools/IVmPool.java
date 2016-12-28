@@ -47,4 +47,6 @@ public interface IVmPool {
     List<VmElement> getVms(int userId, int state);
     
     List<VmElement> getReschedVms();
+    
+    public long getUsedMB();
 }

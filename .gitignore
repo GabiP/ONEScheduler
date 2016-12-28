@@ -12,3 +12,5 @@ userRecordsXml.txt
 ONEscheduler.iml
 userRecords.txt
 configFiles/configuration.properties
+nbactions.xml
+experiments

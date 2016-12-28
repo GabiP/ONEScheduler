@@ -97,4 +97,8 @@ public class VmElementPool implements IVmPool{
         }
         return vms;
     }
+    
+    public long getUsedMB() {
+        return 0;
+    }
 }

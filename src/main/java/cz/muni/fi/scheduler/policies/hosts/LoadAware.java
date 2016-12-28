@@ -34,9 +34,7 @@ public class LoadAware implements IPlacementPolicy {
                 HostElement maxValue = entry.getKey();
             }
         }*/
-        log.info("List of hosts: " + hosts);
         result.addAll(sortByValue(freeCpus).keySet());
-        log.info("List of sorted hosts: " + result);
         return result;
     }
     

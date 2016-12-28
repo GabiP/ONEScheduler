@@ -21,7 +21,7 @@ public class QueueByQueue implements IVmSelector {
             i++;
         }
         VmElement vmToReturn = queues.get(i).dequeue();
-        log.info("Dequeued queue: " + queues.get(i) + " Vm removed: " + vmToReturn);
+        //log.info("Dequeued queue: " + queues.get(i) + " Vm removed: " + vmToReturn);
         return vmToReturn;
     }
 

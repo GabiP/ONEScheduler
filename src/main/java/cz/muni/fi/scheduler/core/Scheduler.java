@@ -104,6 +104,10 @@ public class Scheduler {
     private static final Integer HOLD_STATE = 2;
     
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    
+    private List<Long> usedMbs;
+    
+    private List<VmElement> notAssignedVms;
 
     public Scheduler(IAuthorizationManager authorizationManager, IHostPool hostPool,
                      IVmPool vmPool, IDatastorePool dsPool, SchedulingHostFilter hostFilter,
@@ -125,6 +129,8 @@ public class Scheduler {
         this.limitChecker = limitChecker;
         //initialize scheduler data entity
         schedulerData = new SchedulerData();
+        usedMbs = new ArrayList<>();
+        notAssignedVms = new ArrayList<>();
     }
     
     /**
@@ -136,6 +142,10 @@ public class Scheduler {
     public List<Match> schedule() {
         //get pendings, state = 1 is pending
         List<VmElement> pendingVms = vmPool.getVmsByState(PENDING_STATE);
+        System.gc();
+        Runtime rt = Runtime.getRuntime();
+        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        usedMbs.add(usedMB);
         if (pendingVms.isEmpty()) {
             log.info("No pendings");
             return null;
@@ -143,6 +153,13 @@ public class Scheduler {
         authorizationManager.authorize(pendingVms);
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
+        
+        System.gc();
+        rt = Runtime.getRuntime();
+        usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        usedMbs.add(usedMB);
+        usedMbs.add(vmPool.getUsedMB());
+        
         return processQueues(queues);
     }
     
@@ -189,14 +206,28 @@ public class Scheduler {
             if (!hasImageDsStorageAvailable(vmSelected)) {
                 continue;
             }
+            System.gc();
+            Runtime rt = Runtime.getRuntime();
+            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            usedMbs.add(usedMB);
             List<HostElement> suitableHosts = prepareHostsForVm(vmSelected);
+            System.gc();
+            rt = Runtime.getRuntime();
+            usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            usedMbs.add(usedMB);
             Match match = processVm(vmSelected, suitableHosts);
+            System.gc();
+            rt = Runtime.getRuntime();
+            usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            usedMbs.add(usedMB);
             if (match != null) {
                 if (limitChecker.checkLimit(vmSelected, match)) {
                     plan = match.addVm(plan, vmSelected);
                     log.info("Scheduling vm: " + vmSelected.getVmId() + " on host: " + match.getHost().getId() + " and ds: " + match.getDatastore().getId());
                     limitChecker.getDataInstance().increaseData(vmSelected);
                 }
+            } else {
+                notAssignedVms.add(vmSelected);
             }
         }
         return plan;
@@ -205,7 +236,7 @@ public class Scheduler {
     /**
      * Checks the Image datastore.
      * The image datastore needs to be checked only for those disks in VM that
-     * has the CLONE_TARGET/LN_TARGET (depends wheter the VM is persistent) equals
+     * has the CLONE_TARGET/LN_TARGET (depends whether the VM is persistent) equals
      * to SELF.
      * It  means that the image of the disk is cloned in the image datastore.
      * @param vm the VM to be checked
@@ -254,6 +285,10 @@ public class Scheduler {
      */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
         List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());
+        System.gc();
+        Runtime rt = Runtime.getRuntime();
+        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        usedMbs.add(usedMB);
         if (authorizedHosts.isEmpty()) {
             log.info("Empty authorized hosts.");
             return authorizedHosts;
@@ -282,6 +317,10 @@ public class Scheduler {
         }
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
+        System.gc();
+        Runtime rt = Runtime.getRuntime();
+        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        usedMbs.add(usedMB);
         //filter and sort datastores for hosts
         LinkedHashMap<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
         // deploy if candidates is not empty
@@ -360,6 +399,12 @@ public class Scheduler {
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
+        
+        System.gc();
+        Runtime rt = Runtime.getRuntime();
+        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+        usedMbs.add(usedMB);
+        
         log.info("Created match host: " + chosenHost.getId() + " and datastore " + chosenDs.getId());
         return new Match(chosenHost, chosenDs);
     }
@@ -373,10 +418,22 @@ public class Scheduler {
     private HostElement getFirstHostThatHasDs(Map<HostElement, RankPair> candidates, DatastoreElement chosenDs) {
         HostElement result = null;
         for(Map.Entry<HostElement, RankPair> entry: candidates.entrySet()) {
+            System.gc();
+            Runtime rt = Runtime.getRuntime();
+            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
+            usedMbs.add(usedMB);
             if (entry.getValue().getDs().equals(chosenDs)) {
                 result = entry.getKey();
             }
         }
         return result;
+    }
+    
+    public List<Long> getUsedMb() {
+        return usedMbs;
+    }
+    
+    public List<VmElement> getNotAssignedVms() {
+        return notAssignedVms;
     }
 }
