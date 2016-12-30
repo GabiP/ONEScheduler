@@ -11,8 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FilterHostByMaxMemory implements IHostFilterStrategy {
     
-    protected final Logger LOG = LoggerFactory.getLogger(getClass());
-    
     /**
      * Tests whether the maximum RAM of a host is sufficient for the VM.
      * 
@@ -22,7 +20,6 @@ public class FilterHostByMaxMemory implements IHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host) {
-        LOG.info("Filtering Vm with ID: " + vm.getVmId() + " and Host qith ID: " + host.getId());
         return host.getMax_mem() >= vm.getMemory();
     }
 }

@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * This class provides access to property files. These files hold the
@@ -22,6 +24,14 @@ public class PropertiesConfig {
         InputStream is = new FileInputStream(CONFIG_DIRECTORY + File.separator + path);
         props.load(is);
         is.close();
+    }
+    
+    public Set<String> keySet() {
+        Set<String> result = new HashSet<>();
+        for (Object key : props.keySet()) {
+            result.add((String) key);
+        }
+        return result;
     }
     
     public String getString(String key) {
