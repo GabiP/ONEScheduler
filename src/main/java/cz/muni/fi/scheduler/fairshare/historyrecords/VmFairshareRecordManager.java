@@ -17,8 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The class responsible for handling the storage of virtual machine 
- * History Records.
+ * The class responsible for storing fairshare records of virtual machines that
+ * are not finished yet. The values are stored in a file.
  * 
  * @author Andras Urge
  */
@@ -38,6 +38,12 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         }
     }
     
+    /** 
+     * Returns the record for the given VM.
+     * 
+     * @param vmId the ID of the vm
+     * @return record for the vm
+     */
     @Override
     public VmFairshareRecord getRecord(int vmId) {
         String recordData = properties.getProperty(Integer.toString(vmId));
@@ -55,6 +61,12 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         return new VmFairshareRecord(vmId, userId, vmPriority, lastClosedHistory, lastCpu, lastMemory, lastHdd);
     }
     
+    /** 
+     * Returns the records for the VMs of the given user.
+     * 
+     * @param userId the ID of the user
+     * @return records for the VMs of the user
+     */
     @Override
     public List<VmFairshareRecord> getRecords(int userId) {
         List<VmFairshareRecord> userRecords = new ArrayList<>();
@@ -68,20 +80,35 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         return userRecords;
     }
     
+    /**
+     * Stores the given record.
+     * 
+     * @param record the record to be stored
+     */
     @Override
     public void storeRecord(VmFairshareRecord record){
-        String recordData = record.getUserId() + "|" + record.getPriority() + "|" 
+        String recordData = record.getUserId() + "|" + record.getUsage() + "|" 
                 + record.getLastClosedHistory() + "|" + record.getLastCpu() + "|" + record.getLastMemory();
         properties.setProperty(Integer.toString(record.getVmId()), recordData);
         saveToFile();
     }    
     
+    /**
+     * Deletes the given record.
+     * 
+     * @param vmId ID of the record to be deleted
+     */
     @Override
     public void delete(int vmId) {
         properties.remove(Integer.toString(vmId));
         saveToFile();
     }
 
+    /**
+     * Deletes the given records.
+     * 
+     * @param vmIds list of the IDs of the records to be deleted
+     */
     @Override
     public void delete(List<Integer> vmIds) {
         for (int id : vmIds) {
@@ -90,6 +117,13 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         saveToFile();
     }
     
+    /**
+     * Creates a record from the given VM with the specified fairshare usage.
+     * 
+     * @param vm the virtual machine
+     * @param usage the fairshare usage of the vm
+     * @return 
+     */
     @Override
     public VmFairshareRecord createRecord(VmElement vm, float priority) {
         int lastClosedHistoryId;
@@ -118,11 +152,17 @@ public class VmFairshareRecordManager implements IVmFairshareRecordManager {
         return vm;
     }
     
+    /**
+     * Removes all the stored VM records.
+     */
     @Override
     public void clearContent() {
         file.delete();
     }
     
+    /**
+     * Saves the values in the properties to the file.
+     */
     private void saveToFile() {
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "vmId=userId|vmPriority|lastClosedHistory|lastCpu|lastRAM|lastHDD");

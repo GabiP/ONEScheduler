@@ -13,11 +13,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author andris
+ * Class containing helper methods for a Map.
+ * 
+ * @author Andras Urge
  */
 public class MapExtension {
     
+    /**
+     * Returns the keys sorted according to the values of the map.
+     * 
+     * @param unsortedMap the map
+     * @return sorted keys
+     */
     public static List sortByValue(Map unsortedMap) {
         // Create value comparator
         Comparator<Map.Entry> valueComparator = (Map.Entry e1, Map.Entry e2) -> {

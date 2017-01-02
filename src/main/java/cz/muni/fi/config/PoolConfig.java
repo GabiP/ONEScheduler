@@ -28,7 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * The class responsible for creating beans for the element pool classes.
+ * 
  * @author Andras Urge
  */
 @Configuration

@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Class holding information about all the fairshare related settings.
+ * 
  * @author Andras Urge
  */
 public class FairshareConfiguration {
@@ -36,6 +37,12 @@ public class FairshareConfiguration {
     private Map<Integer, Float> userGroupPercentages = new HashMap<>();
     
 
+    /**
+     * Loads the fairshare configuration from a file.
+     * 
+     * @param path path tho the configuration file
+     * @throws LoadingFailedException 
+     */
     public FairshareConfiguration(String path) throws LoadingFailedException {
         try {
             PropertiesConfig properties = new PropertiesConfig(path);

@@ -8,7 +8,8 @@ package cz.muni.fi.scheduler.core;
 import java.util.Date;
 
 /**
- *
+ * A singleton class used for managing scheduling related time information.
+ * 
  * @author Andras Urge
  */
 public class TimeManager {

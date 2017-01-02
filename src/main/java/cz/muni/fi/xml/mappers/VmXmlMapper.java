@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * This class maps the VmXml class to the VmElement class and vice versa.
  * @author Andras Urge
  */
 public class VmXmlMapper {

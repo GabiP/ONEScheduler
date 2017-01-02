@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * This class maps the UserXml class to the UserElement class and vice versa.
  * @author Andras Urge
  */
 public class UserXmlMapper {

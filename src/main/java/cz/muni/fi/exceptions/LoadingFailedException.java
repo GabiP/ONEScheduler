@@ -6,7 +6,8 @@
 package cz.muni.fi.exceptions;
 
 /**
- *
+ * The exception thrown when initializing the ApplicationContext.
+ * 
  * @author Andras Urge
  */
 public class LoadingFailedException extends Exception {

@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * Class that maps virtual machines into queues based 
+ * on the fairshare priority of their user groups.
+ * 
  * @author Andras Urge
  */
 public class UserGroupFairshareMapper implements IQueueMapper {
@@ -40,6 +42,15 @@ public class UserGroupFairshareMapper implements IQueueMapper {
         this.userGroupPercentages = userGroupPercentages;
     }
 
+    /**
+     * Creates queues for the user groups of the provided VMs. The queues are filled
+     * with the the corresponding VMs and ordered by the fairshare priorities of
+     * the user groups. The VMs inside a Queue are ordered by the priority of their 
+     * users.
+     * 
+     * @param vms the virtual machines to be mapped
+     * @return list of ordered queues
+     */
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {        
         Set<Integer> userIds = UserListExtension.getUserIds(userPool.getUsers());
@@ -66,6 +77,7 @@ public class UserGroupFairshareMapper implements IQueueMapper {
             addVmsToQueue(userVms.get(i), queue);
         }
         
+        // remove queues without vms
         for (Queue q: queues) {
             if(q.isEmpty()) {
                 queues.remove(q);
@@ -75,6 +87,14 @@ public class UserGroupFairshareMapper implements IQueueMapper {
         return queues;        
     }
     
+    /**
+     * Calculates the fairshare priorities for the user groups. The fairshare 
+     * priority of a user group is equal to the sum of its users' fairshare
+     * priorities.
+     * 
+     * @param userPriorities the fairshare priorities of users 
+     * @return the user group fairshare priorities
+     */
     private Map<Integer, Float> getUserGroupPriorities(Map<Integer, Float> userPriorities) {
         Map<Integer, Float> groupPriorities = new HashMap<>();
         for (int u : userPriorities.keySet()) {
@@ -90,16 +110,30 @@ public class UserGroupFairshareMapper implements IQueueMapper {
         return groupPriorities;
     }
     
+    /**
+     * Adjusts the provided fairshare priorities by the fairshare percentages.
+     * 
+     * @param priorities the fairshare priorities
+     * @param percentages the fairshare percentages
+     * @return the adjusted fairshare priorities
+     */
     private Map<Integer, Float> applyFairsharePercentages(Map<Integer, Float> priorities, Map<Integer, Float> percentages) {
-        for (int userGroupId : priorities.keySet()) {
-            float modifier = percentages.getOrDefault(userGroupId, 100f);
-            priorities.put(userGroupId, priorities.get(userGroupId) / modifier);
+        for (int id : priorities.keySet()) {
+            float modifier = percentages.getOrDefault(id, 100f);
+            priorities.put(id, priorities.get(id) / modifier);
         }
         return priorities;
     }
     
-    private int getBestUserGroupId(int userGroupId, List<Integer> sortedUserGroups) {
-        UserElement user = userPool.getUser(userGroupId);
+    /**
+     * Returns the user's user group that has the best fairshare priority.
+     * 
+     * @param userId the ID of the user
+     * @param sortedUserGroups user groups sorted by their fairshare priority
+     * @return the user's user group with the best fairshare priority
+     */
+    private int getBestUserGroupId(int userId, List<Integer> sortedUserGroups) {
+        UserElement user = userPool.getUser(userId);
         int bestUserGroup = user.getGroups().get(0);
         for (int j=1; j<user.getGroups().size(); j++) {
             int userGroup = user.getGroups().get(j);
@@ -110,6 +144,12 @@ public class UserGroupFairshareMapper implements IQueueMapper {
         return bestUserGroup;
     }
     
+    /**
+     * Inserts the vms to the queue. The vms are first ordered by their ID. 
+     * 
+     * @param userVms
+     * @param queue 
+     */
     private void addVmsToQueue(List<VmElement> userVms, Queue queue) {
         Collections.sort(userVms, (VmElement vm1, VmElement vm2) -> {
             return vm1.getVmId().compareTo(vm2.getVmId());

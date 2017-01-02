@@ -16,7 +16,8 @@ import cz.muni.fi.scheduler.setup.FairshareConfiguration;
 /**
  * This class calculates the penalty of a Virtual Machine by comparing the
  * desired resources to the resources of every deployable host. The penalty
- * is calculated using the host that gives the smallest possible penalty.
+ * is calculated by a Max-based function using the host that gives the smallest 
+ * possible penalty.
  * 
  * @author Andras Urge
  */
@@ -26,6 +27,14 @@ public class MaxBasedMpCalculator extends MinimumPenaltyCalculator {
         super(hostPool, dsPool, clusterPool, hostFilter, fairshareConfig);
     }        
     
+    /**
+     * Penalty calculated for the pair of a virtual machine and a host using a 
+     * Max-based function.
+     * 
+     * @param vm the virtual machine
+     * @param host the host
+     * @return the penalty of the vm for this host
+     */
     @Override
     protected float getHostPenalty(VmElement vm, HostElement host) {
         

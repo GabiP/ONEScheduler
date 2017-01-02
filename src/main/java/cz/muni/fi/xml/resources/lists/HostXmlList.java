@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
+ * This class represents a list of hosts retrived from xml.
  * @author Andras Urge
  */
 @JacksonXmlRootElement(localName = "HOSTPOOL")

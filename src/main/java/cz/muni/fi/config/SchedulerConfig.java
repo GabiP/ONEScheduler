@@ -27,7 +27,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- *
+ * The class responsible for creating beans for the basic scheduler components.
+ * 
  * @author Andras Urge
  */
 @Configuration

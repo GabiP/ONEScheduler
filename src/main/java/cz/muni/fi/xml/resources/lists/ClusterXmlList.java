@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
+ * This class represents a list of clusters retrived from xml.
  * @author Andras Urge
  */
 @JacksonXmlRootElement(localName = "CLUSTERPOOL")

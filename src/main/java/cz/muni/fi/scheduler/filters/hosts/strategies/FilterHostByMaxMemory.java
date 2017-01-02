@@ -2,8 +2,6 @@ package cz.muni.fi.scheduler.filters.hosts.strategies;
 
 import cz.muni.fi.scheduler.elements.HostElement;
 import cz.muni.fi.scheduler.elements.VmElement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *

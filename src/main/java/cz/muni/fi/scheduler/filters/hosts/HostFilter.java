@@ -12,7 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Class used to filter hosts that are suitable for a specified VM.
+ * 
  * @author Andras Urge
  */
 public class HostFilter {

@@ -17,7 +17,7 @@ public class VmFairshareRecord {
     
     private int userId;
     
-    private float priority;
+    private float usage;
     
     private int lastClosedHistory;
     
@@ -27,10 +27,10 @@ public class VmFairshareRecord {
     
     private int lastHdd;
 
-    public VmFairshareRecord(int vmId, int userId, float priority, int lastClosedHistory, float lastCpu, int lastMemory, int lastHdd) {
+    public VmFairshareRecord(int vmId, int userId, float usage, int lastClosedHistory, float lastCpu, int lastMemory, int lastHdd) {
         this.vmId = vmId;
         this.userId = userId;
-        this.priority = priority;
+        this.usage = usage;
         this.lastClosedHistory = lastClosedHistory;
         this.lastCpu = lastCpu;
         this.lastMemory = lastMemory;
@@ -53,12 +53,12 @@ public class VmFairshareRecord {
         this.userId = userId;
     }
 
-    public float getPriority() {
-        return priority;
+    public float getUsage() {
+        return usage;
     }
 
-    public void setPriority(float priority) {
-        this.priority = priority;
+    public void setUsage(float usage) {
+        this.usage = usage;
     }
 
     public int getLastClosedHistory() {
