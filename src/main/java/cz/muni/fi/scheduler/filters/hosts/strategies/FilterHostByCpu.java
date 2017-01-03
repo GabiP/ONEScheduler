@@ -44,7 +44,8 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Float reservation;
         if (testingMode) {
-            reservation = getReservation(host);
+            //reservation = getReservation(host);
+            reservation = 0.00f;
         } else {
             reservation = 0.00f;
         }

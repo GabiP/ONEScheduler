@@ -43,7 +43,8 @@ public class FilterHostByMemory implements ISchedulingHostFilterStrategy {
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
         Integer reservation;
         if (testingMode) {
-            reservation = getReservation(host);
+            //reservation = getReservation(host);
+            reservation = 0;
         } else {
             reservation = 0;
         }

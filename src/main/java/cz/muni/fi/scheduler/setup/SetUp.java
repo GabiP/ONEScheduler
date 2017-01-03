@@ -60,15 +60,20 @@ public class SetUp {
             clearFairshareRecords();
         } 
         
+        //ALL THE TRACKED RUNTIMES
         List<Long> runtimes = new ArrayList<>();
+        
+        //ALL THE TRACKED MEMORY USAGES
         List<Long> maxMbUsages = new ArrayList<>();
         
+        //REPEATING TEST 10 TIMES
         for (int i = 0; i < 10; i++) {
             log.info("Starting scheduling cycle.");
             long start = System.currentTimeMillis();
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
             
+            //MEMORY USAGE
             List<Long> mbUsage = new ArrayList<>();
             System.gc();
             Runtime rt = Runtime.getRuntime();
@@ -80,7 +85,7 @@ public class SetUp {
             Scheduler scheduler = context.getBean(Scheduler.class);
             IResultManager resultManager = context.getBean(IResultManager.class);
             
-            //Plan migrations
+            //Plan migrations - TURNED OFF FOR EXPERIMENTS
             List<Match> migrations = scheduler.migrate();
             if (!migrations.isEmpty()) {
                 //printPlan(migrations);
@@ -89,7 +94,7 @@ public class SetUp {
                 //printFailedVms(failedMigrations);
             }
             
-            //Plan pendings
+            //Plan pendings - TURNED OFF FOR EXPERIMENTS
             List<Match> plan = scheduler.schedule();
             if (planExists(plan)) {
                 //printPlan(plan);
@@ -98,26 +103,53 @@ public class SetUp {
                 //printFailedVms(failedVms);
             }
             
+            //RESUTLS OF TRACKED MEMORY USAGES
             List<Long> usedMbs = scheduler.getUsedMb();
             mbUsage.addAll(usedMbs);
             Long maxMb = Collections.max(mbUsage);
-            //log.info("Used mbs:" + mbUsage);
-            //log.info("Max mem used: " + maxMb + "mb");
+            log.info("Used mbs:" + mbUsage);
+            log.info("Max mem used: " + maxMb + "mb");
             maxMbUsages.add(maxMb);
             
+            //PRINT NOT ASSIGNED VMS
             List<VmElement> notAssignedVms = scheduler.getNotAssignedVms();
-            log.info("Not assigned Vms :" + notAssignedVms);
+            log.info("Number of not assigned Vms :" + notAssignedVms.size());
             
-            //log.info("Runtime in miliseconds:" + (System.currentTimeMillis() - start));
             runtimes.add(System.currentTimeMillis() - start);
             
             //log.info("Another cycle will start in " + cycleinterval + "seconds.");
             //TimeUnit.SECONDS.sleep(cycleinterval);
         }
+        //PRINT STATISTICS
         System.out.println("Rutimes: " + runtimes);
         System.out.println("Max mb usages: " + maxMbUsages);
+        System.out.println("Mean runtime: " + mean(runtimes));
+        System.out.println("Standard deviation: " + getStdDev(runtimes));
     }
 
+    public static double mean(List<Long> runtimes) {
+        double sum = 0;
+        for (int i = 0; i < runtimes.size(); i++) {
+            sum += runtimes.get(i);
+        }
+        return sum / runtimes.size();
+    }
+    
+    public static double getVariance(List<Long> runtimes)
+    {
+        double mean = mean(runtimes);
+        double temp = 0;
+        for(Long l: runtimes)
+            temp += (l-mean)*(l-mean);
+        return temp/runtimes.size();
+    }
+
+    public static double getStdDev(List<Long> runtimes)
+    {
+        return Math.sqrt(getVariance(runtimes));
+    }
+
+    
     private static boolean planExists(List<Match> plan) {
         return plan != null;
     }

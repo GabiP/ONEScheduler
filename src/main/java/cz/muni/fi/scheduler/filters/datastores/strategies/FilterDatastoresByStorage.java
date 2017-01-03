@@ -26,7 +26,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         int sizeValue = vm.getCopyToSystemDiskSize();
         boolean matched;
         if (!(ds.getClusters().contains(host.getClusterId()))) {
-            log.info("The DS " + ds.getId() + " and HOST " + host.getId() + " cluster ids don't match");
+            //log.info("The DS " + ds.getId() + " and HOST " + host.getId() + " cluster ids don't match");
             return false;
         }
         if (ds.isShared()) {
@@ -64,7 +64,7 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         if (dsNode != null) {
             return testOnDs(sizeValue, reservedStorage, dsNode.getFree_mb());
         } else {
-            log.info("Ds: " + ds.getId() + " is not a datastore node of the host: " + host.getId());
+            //log.info("Ds: " + ds.getId() + " is not a datastore node of the host: " + host.getId());
             return false;
         }
     }

@@ -1,0 +1,9 @@
+<GROUPPOOL xmlns="http://opennebula.org/XMLSchema">
+    <GROUP>
+        <ID>0</ID>
+        <NAME>oneadmin</NAME>
+        <USERS>
+            <ID>0</ID>
+        </USERS>
+    </GROUP>
+</GROUPPOOL>

@@ -154,6 +154,7 @@ public class Scheduler {
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
         
+        //MEMORY USAGE
         System.gc();
         rt = Runtime.getRuntime();
         usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
@@ -204,22 +205,32 @@ public class Scheduler {
             VmElement vmSelected = vmSelector.selectVm(queues);
             System.out.println("Vm selected: " + vmSelected);
             if (!hasImageDsStorageAvailable(vmSelected)) {
+                log.info("Does not have image ds available - when clone target = self");
                 continue;
             }
+            
+            //MEMORY USAGE
             System.gc();
             Runtime rt = Runtime.getRuntime();
             long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
             usedMbs.add(usedMB);
+            
             List<HostElement> suitableHosts = prepareHostsForVm(vmSelected);
+            
+            //MEMORY USAGE
             System.gc();
             rt = Runtime.getRuntime();
             usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
             usedMbs.add(usedMB);
+            
             Match match = processVm(vmSelected, suitableHosts);
+            
+            //MEMORY USAGE
             System.gc();
             rt = Runtime.getRuntime();
             usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
             usedMbs.add(usedMB);
+            
             if (match != null) {
                 if (limitChecker.checkLimit(vmSelected, match)) {
                     plan = match.addVm(plan, vmSelected);
@@ -285,10 +296,13 @@ public class Scheduler {
      */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
         List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());
+        
+        //MEMORY USAGE
         System.gc();
         Runtime rt = Runtime.getRuntime();
         long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
         usedMbs.add(usedMB);
+        
         if (authorizedHosts.isEmpty()) {
             log.info("Empty authorized hosts.");
             return authorizedHosts;
@@ -317,10 +331,13 @@ public class Scheduler {
         }
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
+        
+        //MEMORY USAGE
         System.gc();
         Runtime rt = Runtime.getRuntime();
         long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
         usedMbs.add(usedMB);
+        
         //filter and sort datastores for hosts
         LinkedHashMap<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
         // deploy if candidates is not empty
@@ -400,6 +417,7 @@ public class Scheduler {
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
         
+        //MEMORY USAGE
         System.gc();
         Runtime rt = Runtime.getRuntime();
         long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
