@@ -13,7 +13,6 @@ import cz.muni.fi.scheduler.fairshare.historyrecords.VmFairshareRecordManager;
 import cz.muni.fi.scheduler.elements.VmElement;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -63,22 +62,12 @@ public class SetUp {
         //ALL THE TRACKED RUNTIMES
         List<Long> runtimes = new ArrayList<>();
         
-        //ALL THE TRACKED MEMORY USAGES
-        List<Long> maxMbUsages = new ArrayList<>();
-        
         //REPEATING TEST 10 TIMES
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             log.info("Starting scheduling cycle.");
             long start = System.currentTimeMillis();
             
             ApplicationContext context = new AnnotationConfigApplicationContext(SchedulerConfig.class);
-            
-            //MEMORY USAGE
-            List<Long> mbUsage = new ArrayList<>();
-            System.gc();
-            Runtime rt = Runtime.getRuntime();
-            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            mbUsage.add(usedMB);
             
             saveSchedulingTime();
             checkDecayTime(context.getBean(IUserFairshareRecordManager.class));
@@ -103,14 +92,6 @@ public class SetUp {
                 //printFailedVms(failedVms);
             }
             
-            //RESUTLS OF TRACKED MEMORY USAGES
-            List<Long> usedMbs = scheduler.getUsedMb();
-            mbUsage.addAll(usedMbs);
-            Long maxMb = Collections.max(mbUsage);
-            log.info("Used mbs:" + mbUsage);
-            log.info("Max mem used: " + maxMb + "mb");
-            maxMbUsages.add(maxMb);
-            
             //PRINT NOT ASSIGNED VMS
             List<VmElement> notAssignedVms = scheduler.getNotAssignedVms();
             log.info("Number of not assigned Vms :" + notAssignedVms.size());
@@ -122,7 +103,6 @@ public class SetUp {
         }
         //PRINT STATISTICS
         System.out.println("Rutimes: " + runtimes);
-        System.out.println("Max mb usages: " + maxMbUsages);
         System.out.println("Mean runtime: " + mean(runtimes));
         System.out.println("Standard deviation: " + getStdDev(runtimes));
     }

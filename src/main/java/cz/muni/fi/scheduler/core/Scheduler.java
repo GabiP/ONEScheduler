@@ -154,13 +154,6 @@ public class Scheduler {
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
         
-        //MEMORY USAGE
-        System.gc();
-        rt = Runtime.getRuntime();
-        usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-        usedMbs.add(usedMB);
-        usedMbs.add(vmPool.getUsedMB());
-        
         return processQueues(queues);
     }
     
@@ -209,27 +202,9 @@ public class Scheduler {
                 continue;
             }
             
-            //MEMORY USAGE
-            System.gc();
-            Runtime rt = Runtime.getRuntime();
-            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            usedMbs.add(usedMB);
-            
             List<HostElement> suitableHosts = prepareHostsForVm(vmSelected);
             
-            //MEMORY USAGE
-            System.gc();
-            rt = Runtime.getRuntime();
-            usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            usedMbs.add(usedMB);
-            
             Match match = processVm(vmSelected, suitableHosts);
-            
-            //MEMORY USAGE
-            System.gc();
-            rt = Runtime.getRuntime();
-            usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            usedMbs.add(usedMB);
             
             if (match != null) {
                 if (limitChecker.checkLimit(vmSelected, match)) {
@@ -295,13 +270,7 @@ public class Scheduler {
      * @return list of hosts that suits the requirements.
      */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
-        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());
-        
-        //MEMORY USAGE
-        System.gc();
-        Runtime rt = Runtime.getRuntime();
-        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-        usedMbs.add(usedMB);
+        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());    
         
         if (authorizedHosts.isEmpty()) {
             log.info("Empty authorized hosts.");
@@ -331,12 +300,6 @@ public class Scheduler {
         }
         //sort hosts
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
-        
-        //MEMORY USAGE
-        System.gc();
-        Runtime rt = Runtime.getRuntime();
-        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-        usedMbs.add(usedMB);
         
         //filter and sort datastores for hosts
         LinkedHashMap<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
@@ -416,13 +379,6 @@ public class Scheduler {
             chosenDs = storagePolicy.getBestRankedDatastore(new ArrayList(sortedCandidates.values()));
             chosenHost = getFirstHostThatHasDs(sortedCandidates, chosenDs);
         }
-        
-        //MEMORY USAGE
-        System.gc();
-        Runtime rt = Runtime.getRuntime();
-        long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-        usedMbs.add(usedMB);
-        
         log.info("Created match host: " + chosenHost.getId() + " and datastore " + chosenDs.getId());
         return new Match(chosenHost, chosenDs);
     }
@@ -436,10 +392,6 @@ public class Scheduler {
     private HostElement getFirstHostThatHasDs(Map<HostElement, RankPair> candidates, DatastoreElement chosenDs) {
         HostElement result = null;
         for(Map.Entry<HostElement, RankPair> entry: candidates.entrySet()) {
-            System.gc();
-            Runtime rt = Runtime.getRuntime();
-            long usedMB = (rt.totalMemory() - rt.freeMemory()) / 1024 / 1024;
-            usedMbs.add(usedMB);
             if (entry.getValue().getDs().equals(chosenDs)) {
                 result = entry.getKey();
             }
