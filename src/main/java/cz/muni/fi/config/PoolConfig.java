@@ -31,7 +31,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * The class responsible for creating beans for the element pool classes.
+ * The instantiation depends on the configuration.
+ * 
  * @author Andras Urge
  */
 @Configuration

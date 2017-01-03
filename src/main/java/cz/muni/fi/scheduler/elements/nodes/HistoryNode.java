@@ -25,6 +25,12 @@ public class HistoryNode extends AbstractNode {
      */
     private int reason;    
         
+    /**
+     * Loads the attributes of the HistoryNode from the provided PooleElement.
+     * 
+     * @param vm the element containing the required data
+     * @param xpathExpr the xpath expression to the HistoryNode inside the element
+     */
     @Override
     public void load(PoolElement vm, String xpathExpr) {
         sequence = Integer.parseInt(vm.xpath(xpathExpr + "/SEQ"));
@@ -33,6 +39,13 @@ public class HistoryNode extends AbstractNode {
         reason = Integer.parseInt(vm.xpath(xpathExpr + "/REASON"));        
     }  
     
+    /**
+     * A history is closed if it contains a valid start time and end time.
+     * This should happen when the virtual machine finishes executing during
+     * the given period.
+     * 
+     * @return whether the history is closed
+     */
     public boolean isClosed() {
         return (startTime > 0) && (endTime > 0) && (endTime > startTime);
     }   

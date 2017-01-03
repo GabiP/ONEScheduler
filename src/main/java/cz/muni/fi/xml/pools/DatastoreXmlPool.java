@@ -12,10 +12,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Datastores in the XML document are mapped to DatastoreElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 public class DatastoreXmlPool implements IDatastorePool {

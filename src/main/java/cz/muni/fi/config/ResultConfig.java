@@ -32,6 +32,11 @@ public class ResultConfig {
         properties = new PropertiesConfig("configuration.properties");
     }
     
+    /**
+     * Returns the according result manager.
+     * @return the according result manager.
+     * @throws LoadingFailedException 
+     */
     @Bean 
     public IResultManager resultManager() throws LoadingFailedException { 
         if (properties.getBoolean("testingMode")) {

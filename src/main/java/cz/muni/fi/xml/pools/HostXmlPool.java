@@ -15,7 +15,10 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Hosts in the XML document are mapped to HostElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 @Service

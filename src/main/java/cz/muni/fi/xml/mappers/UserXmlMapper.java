@@ -10,7 +10,8 @@ import java.util.List;
 import org.mapstruct.Mapper;
 
 /**
- *
+ * This class maps the UserXml class to the UserElement class and vice versa.
+ * 
  * @author Andras Urge
  */
 @Mapper

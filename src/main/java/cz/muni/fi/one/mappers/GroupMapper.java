@@ -8,6 +8,7 @@ import org.opennebula.client.group.Group;
  * This class maps OpenNebula's Group class to GroupElement class.
  * Retreives from OpenNebula's Group instance its attributes by using OpenNebula's Java API.
  * For further information of Java API please refer to: https://docs.opennebula.org/5.2/integration/system_interfaces/java.html
+ * 
  * @author Gabriela Podolnikova
  */
 public class GroupMapper {

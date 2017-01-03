@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
  * The paths to the XML files is provided.
  * 
  * The plan should be parsed and the XML files should be updated.
- * This is the place were the simulation mode should be implemented.
+ * 
+ * This is the place were the simulation module can be attached.
  * 
  * @author Gabriela Podolnikova
  */

@@ -15,7 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- *
+ * The class responsible for creating beans for fairshare record related classes.
+ * 
  * @author Andras Urge
  */
 @Configuration

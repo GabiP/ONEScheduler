@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Tests whether a VM can be hosted by the host.
  * @author Gabriela Podolnikova
  */
 public class FilterHostByCpu implements ISchedulingHostFilterStrategy {

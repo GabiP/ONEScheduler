@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
- *
+ * This class represents a Datastore quota node retrieved from xml.
  * @author Gabriela Podolnikova
  */
 @JacksonXmlRootElement(localName = "DATASTORE")

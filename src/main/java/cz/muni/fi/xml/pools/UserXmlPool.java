@@ -13,6 +13,7 @@ import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 /**
+ * Class responsible for reading users from an XML file.
  *
  * @author Andras Urge
  */
@@ -22,6 +23,12 @@ public class UserXmlPool implements IUserPool {
 
     UserXmlMapper userXmlMapper = Mappers.getMapper(UserXmlMapper.class);
     
+    /**
+     * Loads the users from a file.
+     * 
+     * @param userPoolPath path to the file
+     * @throws IOException 
+     */
     public UserXmlPool(String userPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String userPoolMessage = new String(Files.readAllBytes(Paths.get(userPoolPath)));
@@ -29,11 +36,22 @@ public class UserXmlPool implements IUserPool {
         users = userXmlMapper.map(xmlList.getUsers());
     }
     
+    /**
+     * Gets all the users.
+     * 
+     * @return all the users
+     */
     @Override
     public List<UserElement> getUsers() {
         return Collections.unmodifiableList(users);
     }
 
+    /**
+     * Gets a user by the provided ID.
+     * 
+     * @param id the user ID
+     * @return user
+     */
     @Override
     public UserElement getUser(int id) {
         for (UserElement u : users) {

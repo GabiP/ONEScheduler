@@ -6,16 +6,17 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This class contains only static methods that are frequently used.
+ * Class containing helper methods for a List of UserElements
  * 
  * @author Andras Urge
  */
 public class UserListExtension {
     
     /**
-     * Gets only ids from given users.
-     * @param users to get the id from.
-     * @return set of users' ids.
+     * Returns the IDs of the users.
+     * 
+     * @param users list of users
+     * @return set of IDs for the users
      */
     public static Set<Integer> getUserIds(List<UserElement> users) {
         return users.stream().map(UserElement::getId).collect(Collectors.toSet());

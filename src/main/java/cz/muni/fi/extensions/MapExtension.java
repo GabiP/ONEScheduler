@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.extensions;
 
 import java.util.ArrayList;
@@ -13,11 +8,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author andris
+ * Class containing helper methods for a Map.
+ * 
+ * @author Andras Urge
  */
 public class MapExtension {
     
+    /**
+     * Returns the keys sorted according to the values of the map.
+     * 
+     * @param unsortedMap the map
+     * @return sorted keys
+     */
     public static List sortByValue(Map unsortedMap) {
         // Create value comparator
         Comparator<Map.Entry> valueComparator = (Map.Entry e1, Map.Entry e2) -> {

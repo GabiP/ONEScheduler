@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.authorization;
 
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
@@ -14,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents authorization manager for XML representation of cloud resources.
+ * This class represents authorization manager for the testing mode.
  * We do not provide ACLs XML file. Therefore we assume that all users can use all resources.
  * Which means that for every VM we return all active hosts available in the system.
+ * 
+ * If the ACL authorization is developped in the future, the authorize method in this class will manage the authorization.
  * 
  * @author Gabriela Podolnikova
  */

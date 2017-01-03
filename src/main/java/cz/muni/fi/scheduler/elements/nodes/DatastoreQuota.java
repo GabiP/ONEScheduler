@@ -3,7 +3,9 @@ package cz.muni.fi.scheduler.elements.nodes;
 import org.opennebula.client.PoolElement;
 
 /**
- *
+ * This class represents a Datastore Quota.
+ * A user can have assigned quotas for datastore usage.
+ * Loads the data from xml by using OpenNebula's API.
  * @author Gabriela Podolnikova
  */
 public class DatastoreQuota extends AbstractNode {

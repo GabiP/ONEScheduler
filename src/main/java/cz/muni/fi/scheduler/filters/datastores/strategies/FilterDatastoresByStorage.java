@@ -20,6 +20,14 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
+    /**
+     * Tests whether current host has enough free space(mb)
+     * @param vm with the disks sizes to be checked
+     * @param ds to be checked
+     * @param host to be checked
+     * @param schedulerData with the current reservations on resources.
+     * @return 
+     */
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host, SchedulerData schedulerData) {
         //check if ds and host have the same clusterId
@@ -56,6 +64,14 @@ public class FilterDatastoresByStorage implements ISchedulingDatastoreFilterStra
         return (actualStorage > sizeValue);
     }
 
+    /**
+     * Tests the capacity directly on the datastore node on Host.
+     * @param sizeValue the size to be checked
+     * @param reservedStorage the reserved storage in the datastore
+     * @param host the host with the datastore node
+     * @param ds the specified datastore
+     * @return true if the size fits on the specified ds.
+     */
     private boolean testOnDsNode(Integer sizeValue, Integer reservedStorage, HostElement host, DatastoreElement ds) {
         if (host.getDatastores()== null || host.getDatastores().isEmpty()) {
             return false;

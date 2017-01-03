@@ -15,7 +15,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * The class responsible for storing the so far calculated user priorities and 
+ * applying decay on them. The values are stored in a file.
+ * 
  * @author Andras Urge
  */
 public class UserFairshareRecordManager implements IUserFairshareRecordManager {
@@ -36,24 +38,46 @@ public class UserFairshareRecordManager implements IUserFairshareRecordManager {
         }
     }
     
+    /**
+     * Returns the fairshare priority stored for the user.
+     * 
+     * @param userId the ID of the user
+     * @return the stored fairshare priority of the user
+     */
     @Override
     public float getPriority(int userId) {
         String priority = properties.getProperty(Integer.toString(userId), "0");
         return Float.parseFloat(priority);
     }
     
+    /**
+     * Store the fairshare priority of the given user.
+     * 
+     * @param userId the ID of the user
+     * @param priority the fairshare priority to store
+     */
     @Override
     public void storePriority(int userId, float priority) {        
         properties.setProperty(Integer.toString(userId), Float.toString(priority));
         saveToFile();        
     }
 
+    /**
+     * Returns the last time when decay was applied on the stored fairshare priorities.
+     * 
+     * @return the last time when decay was applied
+     */
     @Override
     public long getLastDecayTime() {
         String lastDecayTime = properties.getProperty(LAST_DECAY_KEY, "0");
         return Long.parseLong(lastDecayTime);
     }
 
+    /**
+     * Divides all the stored fairshare priorities with the given decay value.
+     * 
+     * @param decayValue the value used to divide the priorities
+     */
     @Override
     public void applyDecay(int decayValue) {
         for(String key : properties.stringPropertyNames()) {
@@ -68,11 +92,17 @@ public class UserFairshareRecordManager implements IUserFairshareRecordManager {
         saveToFile();
     }
     
+    /**
+     * Removes all the stored fairshare priorities.
+     */
     @Override
     public void clearContent() {
         file.delete();
     }
     
+    /**
+     * Saves the values in the properties to the file.
+     */
     private void saveToFile() {
         try (FileOutputStream fileOut = new FileOutputStream(file)) {
             properties.store(fileOut, "User priorities");

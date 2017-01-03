@@ -5,6 +5,7 @@ import java.util.List;
 
 /**
  * This is an inteface for user pool.
+ * 
  * @author Gabriela Podolnikova
  */
 public interface IUserPool {

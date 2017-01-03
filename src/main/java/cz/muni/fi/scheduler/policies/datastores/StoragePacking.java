@@ -18,6 +18,13 @@ import java.util.List;
  */
 public class StoragePacking implements IStoragePolicy {
 
+    /**
+     * Selects the datastore with the less free space.
+     * @param datastores all the datastores to choose from.
+     * @param host the Host 
+     * @param schedulerData scheduler data containing current reservations for datastores.
+     * @return the RankPari with the selected datastore and assigned rank.
+     */
     @Override
     public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
         Integer lessFreeSpace = Integer.MAX_VALUE;
@@ -46,6 +53,11 @@ public class StoragePacking implements IStoragePolicy {
         return new RankPair(result, lessFreeSpace);
     }
     
+    /**
+     * Selects the best ranked datastore.
+     * @param values The pair of datastores and ranks.
+     * @return the best ranked datastore.
+     */
     @Override    
     public DatastoreElement getBestRankedDatastore(List<RankPair> values) {
         RankPair best = values.get(0);

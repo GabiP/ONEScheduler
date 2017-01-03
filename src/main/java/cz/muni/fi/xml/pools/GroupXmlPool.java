@@ -13,7 +13,10 @@ import java.util.List;
 import org.mapstruct.factory.Mappers;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Groups in the XML document are mapped to GroupElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 public class GroupXmlPool implements IGroupPool{

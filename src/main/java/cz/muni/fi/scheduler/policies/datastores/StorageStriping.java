@@ -17,6 +17,13 @@ import java.util.List;
  */
 public class StorageStriping implements IStoragePolicy {
 
+    /**
+     * Selects the datastore with the more free space.
+     * @param datastores all the datastores to choose from.
+     * @param host the Host 
+     * @param schedulerData scheduler data containing current reservations for datastores.
+     * @return the RankPari with the selected datastore and assigned rank.
+     */
     @Override
     public RankPair selectDatastore(List<DatastoreElement> datastores, HostElement host, SchedulerData schedulerData) {
         Integer moreFreeSpace = Integer.MIN_VALUE;
@@ -45,6 +52,11 @@ public class StorageStriping implements IStoragePolicy {
         return new RankPair(result, moreFreeSpace);
     }
     
+    /**
+     * Selects the best ranked datastore.
+     * @param values The pair of datastores and ranks.
+     * @return the best ranked datastore.
+     */
     @Override    
     public DatastoreElement getBestRankedDatastore(List<RankPair> values) {
         RankPair best = values.get(0);

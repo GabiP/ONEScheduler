@@ -22,7 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- *
+ * The class is responsible for creating beans for the basic scheduler components.
+ * 
  * @author Andras Urge
  */
 @Configuration
@@ -50,6 +51,11 @@ public class SchedulerConfig {
         properties = new PropertiesConfig("configuration.properties");
     }
     
+    /**
+     * Creates the scheduler instance.
+     * @return the scheduler instance.
+     * @throws LoadingFailedException 
+     */
     @Bean 
     public Scheduler scheduler() throws LoadingFailedException {
         return new Scheduler(authorizationManager(), 
@@ -67,6 +73,11 @@ public class SchedulerConfig {
                              schedulingConfig.limitChecker());
     }
     
+    /**
+     * Creates an instance of the placement policy given in configuration file.
+     * @return the placement policy
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IPlacementPolicy placementPolicy() throws LoadingFailedException {
         switch(properties.getString("hostPolicy")) {
@@ -81,6 +92,11 @@ public class SchedulerConfig {
         }
     }
     
+    /**
+     * Creates an instance of the storage policy given in configuration file.
+     * @return the storage policy
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IStoragePolicy storagePolicy() throws LoadingFailedException {
         switch(properties.getString("datastorePolicy")) {
@@ -93,6 +109,13 @@ public class SchedulerConfig {
         }
     }
     
+    /**
+     * Creates an instance of the authorization manager given.
+     * The returned instance depends on the configuration.
+     * 
+     * @return the authorization manager.
+     * @throws LoadingFailedException 
+     */
     @Bean 
     public IAuthorizationManager authorizationManager() throws LoadingFailedException {
         if (properties.getBoolean("testingMode")) {

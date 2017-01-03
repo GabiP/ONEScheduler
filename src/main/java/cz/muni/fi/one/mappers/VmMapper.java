@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.one.mappers;
 
 import cz.muni.fi.one.XpathLoader;
@@ -18,9 +13,9 @@ import org.opennebula.client.vm.VirtualMachine;
 /**
  * This class maps OpenNebula's VirtualMachine class to VmElement class.
  * Retreives from OpenNebula's VirtualMachine instance its attributes by using OpenNebula's Java API.
- * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * For further information of Java API please refer to: https://docs.opennebula.org/5.2/integration/system_interfaces/java.html
  * 
- * @author Andras Urge
+ * @author Gabriela Podolnikova
  */
 public class VmMapper {
     public static VmElement map(VirtualMachine vm) {

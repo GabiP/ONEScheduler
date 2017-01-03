@@ -24,11 +24,6 @@ public class DiskNode extends AbstractNode {
     @Override
     public void load(PoolElement vm, String xpathExpr) {
         size = XpathLoader.getIntOrZero(vm, xpathExpr + "/SIZE");
-        /*try {
-            datastore_id = Integer.parseInt(vm.xpath(xpathExpr + "/DATASTORE_ID"));
-        } catch (Exception e) {
-            datastore_id = null;
-        }*/
         datastore_id = XpathLoader.getInt(vm, xpathExpr + "/DATASTORE_ID");
         tmMadName = vm.xpath(xpathExpr + "/TM_MAD");
         clone = vm.xpath(xpathExpr + "/CLONE");

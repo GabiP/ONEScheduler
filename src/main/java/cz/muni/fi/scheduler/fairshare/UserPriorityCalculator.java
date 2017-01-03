@@ -20,9 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class is responsible to assign a priority to the users based on the 
- * history of their virtual machines. The lower the value, the higher priority
- * will the user get.
+ * This class is responsible to assign a  fairshare priority to the users based 
+ * on the history of their virtual machines. The lower the value, the higher 
+ * priority will the user get.
  * 
  * @author Andras Urge
  */
@@ -41,9 +41,9 @@ public class UserPriorityCalculator {
     }
     
     /**
-     * Calculates the priority for each inputted user.
+     * Calculates the fairshare priority for each provided user.
      * 
-     * @param userIds the users ids to get the priority
+     * @param userIds the user IDs
      * @return The user IDs paired with their priority
      */
     public Map<Integer, Float> getUserPriorities(Set<Integer> userIds) {
@@ -58,16 +58,32 @@ public class UserPriorityCalculator {
         return userPriorities;
     }  
     
+    /**
+     * Calculates the fairshare priority of the user for his virtual machines 
+     * that are not finished yet. This is equal to the sum of the fairshare usages
+     * of these virtual machines. 
+     * 
+     * @param userId the user's ID
+     * @return the current fairshare priority of the user
+     */
     private float calculateCurrentUserPriority(int userId) {
         List<VmElement> vms = vmPool.getVmsByUser(userId);
         
         float currentPriority = 0;
         for (VmElement vm : vms) {
-            currentPriority += getVmPriority(vm);  
+            currentPriority += getVmUsage(vm);  
         }
         return currentPriority;
     } 
     
+    /**
+     * Calculates the fairshare priority of the user for his VMs that are already 
+     * finished. This is equal to the sum of the fairshare usages of these virtual 
+     * machines. 
+     * 
+     * @param userId the user's ID
+     * @return the past fairshare priority of the user
+     */
     private float calculatePastUserPriority(int userId) {
         float pastPriority = userRecordManager.getPriority(userId);
         List<VmElement> vms;
@@ -78,12 +94,19 @@ public class UserPriorityCalculator {
             vms = getNewlyDoneVms(userId);              
         }  
         for (VmElement vm : vms) {
-            pastPriority += getVmPriority(vm);
+            pastPriority += getVmUsage(vm);
         }
         vmRecordManager.delete(VmListExtension.getVmIds(vms));
         return pastPriority;
     }
     
+    /**
+     * Returns the user's VMs that finished since the 
+     * last time when priority was calculated.
+     * 
+     * @param userId the user's ID
+     * @return the newly finished vms
+     */
     private List<VmElement> getNewlyDoneVms(int userId) {
         List<VmFairshareRecord> lastVmRecords = vmRecordManager.getRecords(userId); 
         List<Integer> currentVmIds = VmListExtension.getVmIds(vmPool.getVmsByUser(userId));
@@ -99,40 +122,54 @@ public class UserPriorityCalculator {
     } 
     
     /**
-     * Calculates the priority of a virtual machine.
+     * Calculates the fairshare usage of a virtual machine.
      * 
-     * @param vm to get the priority for
-     * @return The priority of the virtual machine
+     * @param vm the virtual machine
+     * @return the fairshare usage of the virtual machine
      */
-    private float getVmPriority(VmElement vm) {       
-        float pastVmPriority = calculatePastVmPriority(vm);  
-        float activeVmPriority = calculateActiveVmPriority(vm);
-        // unsless vm is DONE
+    private float getVmUsage(VmElement vm) {       
+        float pastVmUsage = calculatePastVmUsage(vm);  
+        float activeVmUsage = calculateActiveVmUsage(vm);
+        // unless vm is DONE
         if (vm.getState() != 6) {
-            VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, pastVmPriority);
+            VmFairshareRecord newRecord = vmRecordManager.createRecord(vm, pastVmUsage);
             vmRecordManager.storeRecord(newRecord);
         }
-        return activeVmPriority + pastVmPriority;
-    }  
+        return activeVmUsage + pastVmUsage;
+    } 
     
-    private float calculateActiveVmPriority(VmElement vm) {
-        float priority = 0;
+    /**
+     * Calculates the fairshare usage of a virtual machine for his active history 
+     * record if any.
+     * 
+     * @param vm the virtual machine
+     * @return the fairshare usage for the active history record
+     */
+    private float calculateActiveVmUsage(VmElement vm) {
+        float usage = 0;
         // if vm is currently running
         if (vm.getState() == 3) {
             HistoryNode lastHistory = vm.getHistories().get(vm.getHistories().size()-1);
             int historyRunTime = vm.getHistoryRuntime(lastHistory);            
-            priority += historyRunTime * penaltyCalculator.getPenalty(vm);
+            usage += historyRunTime * penaltyCalculator.getPenalty(vm);
         }
-        return priority;
-    }    
+        return usage;
+    }  
     
-    private float calculatePastVmPriority(VmElement vm) {
+    /**
+     * Calculates the fairshare usage of a virtual machine for his closed history 
+     * records.
+     * 
+     * @param vm the virtual machine
+     * @return the fairshare usage for the closed history records
+     */
+    private float calculatePastVmUsage(VmElement vm) {
         VmFairshareRecord vmRecord = vmRecordManager.getRecord(vm.getVmId());
         if (vmRecord == null) {
             vmRecord = new VmFairshareRecord(
                     vm.getVmId(), vm.getUid(), 0, -1, vm.getCpu(), vm.getMemory(), vm.getDiskSizes());
         }
-        float priority = vmRecord.getPriority();        
+        float priority = vmRecord.getUsage();        
         
         VmElement vmFromRecord = vmRecordManager.createVmFromRecord(vm, vmRecord); 
         for (HistoryNode history : vm.getClosedHistories()) {

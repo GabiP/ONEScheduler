@@ -13,10 +13,12 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import org.mapstruct.factory.Mappers;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Clusters in the XML document are mapped to ClusterElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 public class ClusterXmlPool implements IClusterPool {

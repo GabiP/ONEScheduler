@@ -4,7 +4,9 @@ import cz.muni.fi.one.XpathLoader;
 import org.opennebula.client.PoolElement;
 
 /**
- *
+ * This class represents a VM Quota.
+ * A user can have assigned quotas for VM usage.
+ * Loads the data from xml by using OpenNebula's API.
  * @author Gabriela Podolnikova
  */
 public class VmQuota extends AbstractNode {

@@ -73,6 +73,11 @@ public class ProcessorEquivalentCalculator implements IVmPenaltyCalculator {
         return memory;
     }  
     
+    /**
+     * Calculates the total amount of HDD storage in the system.
+     * 
+     * @return Total amount of HDD storage in the system
+     */
     private Integer getAvailableStorageCapacity() {
         int storage = 0;
         for (DatastoreElement ds : dsPool.getSystemDs()) {

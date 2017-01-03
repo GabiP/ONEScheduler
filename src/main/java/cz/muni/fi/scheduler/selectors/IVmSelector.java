@@ -6,7 +6,7 @@ import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**
- *
+ * This interface defines the order in which the VMs are selected to be processed.
  * @author Gabriela Podolnikova
  */
 public interface IVmSelector {

@@ -17,7 +17,8 @@ import org.opennebula.client.Pool;
 import org.opennebula.client.vm.VirtualMachinePool;
 
 /**
- *
+ * Class responsible for reading virtual machines from an XML file.
+ * 
  * @author Andras Urge
  */
 public class VmXmlPool implements IVmPool {
@@ -26,6 +27,12 @@ public class VmXmlPool implements IVmPool {
 
     VmXmlMapper vmXmlMapper = Mappers.getMapper(VmXmlMapper.class);
     
+    /**
+     * Loads the virtual machines from a file.
+     * 
+     * @param vmPoolPath path to the file
+     * @throws IOException 
+     */
     public VmXmlPool(String vmPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String vmPoolMessage = new String(Files.readAllBytes(Paths.get(vmPoolPath)));
@@ -33,6 +40,12 @@ public class VmXmlPool implements IVmPool {
         vms = vmXmlMapper.map(xmlList.getVms());
     }
     
+    /**
+     * Gets a virtual machine by the provided ID.
+     * 
+     * @param vmId the virtual machine ID
+     * @return virtual machine
+     */
     @Override
     public VmElement getVm(int vmId) {
         for (VmElement vm : vms) {                       
@@ -42,32 +55,78 @@ public class VmXmlPool implements IVmPool {
         }
         return null;
     }
-        
+    
+    /**
+     * Gets all the virtual machines except the ones in state DONE.
+     * 
+     * @return all not done virtual machines
+     */  
     @Override
     public List<VmElement> getVms() {
         return getVms(Pool.ALL, VirtualMachinePool.NOT_DONE);
     }
 
+    /**
+     * Gets all the virtual machines.
+     * 
+     * @return all the virtual machines
+     */
     @Override
     public List<VmElement> getAllVms() {
         return getVms(Pool.ALL, VirtualMachinePool.ALL_VM);
     }
 
+    /**
+     * Gets the provided user's virtual machines except the ones in state DONE.
+     * 
+     * @param userId
+     * @return user's not done virtual machines
+     */
     @Override
     public List<VmElement> getVmsByUser(int userId) {
         return getVms(userId, VirtualMachinePool.NOT_DONE);
     }
 
+    /**
+     * Gets the provided user's virtual machines.
+     * 
+     * @param userId
+     * @return user's virtual machines
+     */
     @Override
     public List<VmElement> getAllVmsByUser(int userId) {
         return getVms(userId, VirtualMachinePool.ALL_VM); 
     }
 
+    /**
+     * Gets all the virtual machines with the provided state.
+     * 
+     * @param state 
+     * @return virtual machines with state
+     */
     @Override
     public List<VmElement> getVmsByState(int state) {
         return getVms(Pool.ALL, state);
     }
 
+    /**
+     * Gets virtual machines by user and state.
+     * @param userId: >= 0            = UID User's Virtual Machines
+     *             Pool.ALL        = All Virtual Machines
+     *             
+     * @param state: 1 = pending
+     *             2 = hold
+     *             3 = active
+     *             4 = stopped
+     *             5 = suspended
+     *             6 = done
+     *             8 = poweroff
+     *             9 = undeployed
+     *             VirtualMachinePool.ALL_VM   = Flag for Virtual Machines in any state.
+     *             VirtualMachinePool.NOT_DONE = Flag for Virtual Machines in any state, except for DONE.
+     * 
+     * @return array of virtual machines
+     */
     @Override
     public List<VmElement> getVms(int userId, int state) {
         List<VmElement> result = new ArrayList<>();
@@ -95,6 +154,11 @@ public class VmXmlPool implements IVmPool {
         return result;
     }
 
+    
+    /**
+     * Goes through the pool and gets VMs with the rescheduling flag.
+     * @return the list of VmElements to be rescheduled
+     */
     @Override
     public List<VmElement> getReschedVms() {
         return vms.stream().filter(VmElement::isResched).collect(Collectors.toList());

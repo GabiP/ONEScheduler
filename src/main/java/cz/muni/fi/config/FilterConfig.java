@@ -26,7 +26,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- *
+ * The class is responsible for creating beans for filtering related classes.
+ * 
  * @author Andras Urge
  */
 @Configuration
@@ -49,6 +50,11 @@ public class FilterConfig {
         properties = new PropertiesConfig("configuration.properties");
     }
     
+    /**
+     * Returns an instance of the configured HostFilter.
+     * @return the host filter.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public HostFilter fairshareHostFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("hostFilters");
@@ -74,6 +80,11 @@ public class FilterConfig {
         return new HostFilter(filterStrategies);
     }
     
+    /**
+     * Returns an instance of the configured SchedulingFilter.
+     * @return the scheduling filter.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public SchedulingHostFilter schedulingHostFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("hostFilters");
@@ -101,6 +112,11 @@ public class FilterConfig {
         return new SchedulingHostFilter(filterStrategies, schedulingFilterStrategies);
     }
     
+    /**
+     * Returns an instance of the configured SchedulingDatastoreFilter.
+     * @return the scheduling filter for datastore.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public SchedulingDatastoreFilter schedulingDsFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("datastoreFilters");

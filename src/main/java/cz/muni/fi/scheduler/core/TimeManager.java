@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.core;
 
 import java.util.Date;
 
 /**
- *
+ * A singleton class used for managing scheduling related time information.
+ * 
  * @author Andras Urge
  */
 public class TimeManager {

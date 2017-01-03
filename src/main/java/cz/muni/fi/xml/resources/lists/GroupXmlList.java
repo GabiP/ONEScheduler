@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
+ * This class represents a list of groups retrived from xml.
+ * 
  * @author Gabriela Podolnikova
  */
 @JacksonXmlRootElement(localName = "GROUPPOOL")

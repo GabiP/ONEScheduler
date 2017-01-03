@@ -7,13 +7,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class implement the Queue by Queue policy.
  * @author Gabriela Podolnikova
  */
 public class QueueByQueue implements IVmSelector {
   
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
+    /**
+     * Selects VM by VM in one queue. When the current queue is empty, it continues with the next queue.
+     * It always dequeues the~first VM in the~first Queue until all queues are empty.
+     * @param queues the queues
+     * @return the selected VM
+     */
     @Override
     public VmElement selectVm(List<Queue> queues) {
         int i = 0;

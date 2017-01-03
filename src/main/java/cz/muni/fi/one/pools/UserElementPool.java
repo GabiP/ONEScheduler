@@ -44,15 +44,16 @@ public class UserElementPool implements IUserPool{
         }
     }
     
-    /**
-     * Goes through the pool and maps all the users.
-     * @return the list of UserElements
-     */
     @Override
     public List<UserElement> getUsers() {
         return Collections.unmodifiableList(users);
     }
     
+    /**
+     * Returns the specified user.
+     * @param id the id of the desired user.
+     * @return the user
+     */
     @Override
     public UserElement getUser(int id) {
         for (UserElement user: users) {

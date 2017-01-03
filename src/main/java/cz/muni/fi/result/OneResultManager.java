@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class serves for deploying the results from scheduling.
+ * This class serves for deploying the the matched VM on the resource in OpenNebula.
  * 
  * @author Gabriela Podolnikova
  */

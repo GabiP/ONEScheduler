@@ -14,7 +14,8 @@ import java.util.List;
 import org.mapstruct.Mapper;
 
 /**
- *
+ * This class maps the VmXml class to the VmElement class and vice versa.
+ * 
  * @author Andras Urge
  */
 @Mapper

@@ -89,6 +89,13 @@ public class AuthorizationManager implements IAuthorizationManager {
         return authorizedDatastoresByUser.get(id);
     }
     
+    /**
+     * Evaluates the given ACL rule.
+     *
+     * @param rights the substring from the rule defining rights
+     * @param resources the substring from the rule defining affected resources 
+     * @param users the list of users that the rule authorize.
+     */
     private void evaluateAcl(String rights, String resources, List<Integer> users) {
         if (rights.contains("MANAGE") && resources.contains("HOST")) {
             List<HostElement> authorizedHosts = evaluateHost(rights, resources);

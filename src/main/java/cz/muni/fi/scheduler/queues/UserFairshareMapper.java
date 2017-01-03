@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.queues;
 
 import cz.muni.fi.extensions.MapExtension;
@@ -15,7 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
+ * Class that maps virtual machines into queues based 
+ * on the fairshare priority of their users.
+ * 
  * @author Andras Urge
  */
 public class UserFairshareMapper implements IQueueMapper {
@@ -28,6 +25,14 @@ public class UserFairshareMapper implements IQueueMapper {
         this.percentages = percentages;
     }
 
+    /**
+     * Creates queues for the users of the provided VMs. The queues are filled
+     * with the the corresponding VMs and ordered by the fairshare priorities of
+     * the users.
+     * 
+     * @param vms the virtual machines to be mapped
+     * @return list of ordered queues
+     */
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         Map<Integer, Float> userPriorities = calculator.getUserPriorities(VmListExtension.getUserIds(vms));
@@ -44,7 +49,12 @@ public class UserFairshareMapper implements IQueueMapper {
         return queues;
     }
     
-
+    /**
+     * Adjusts the user priorities by the specified  fairshare percentages.
+     * 
+     * @param userPriorities the user priorities
+     * @return the adjusted user priorities
+     */
     private Map<Integer, Float> applyFairsharePercentages(Map<Integer, Float> userPriorities) {
         for (int userId : userPriorities.keySet()) {
             float modifier = percentages.getOrDefault(userId, 100f);
@@ -53,6 +63,15 @@ public class UserFairshareMapper implements IQueueMapper {
         return userPriorities;
     }
     
+    /**
+     * Creates a Queue for a user. The provided virtual machines are ordered by 
+     * their ID in the queue.
+     * 
+     * @param userId ID of the user
+     * @param priority the fairshare priority of the user
+     * @param userVms the user's VMs
+     * @return the Queue for the user
+     */
     private Queue createUserQueue(int userId, float priority, List<VmElement> userVms) {
         Collections.sort(userVms, (VmElement vm1, VmElement vm2) -> {
             return vm1.getVmId().compareTo(vm2.getVmId());

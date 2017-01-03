@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
  * This class represents OpenNebula's GroupPool containing all instances of groups in the system.
  * The pool is accessed through OpenNebula's Client. The Client represents the connection with the core of OpenNebula.
  * Each OpenNebula's instance of Group is mapped to our GroupElement.
+ * 
  * @author Gabriela Podolnikova
  */
 public class GroupElementPool implements IGroupPool {

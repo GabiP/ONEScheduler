@@ -6,7 +6,7 @@ import cz.muni.fi.scheduler.limits.data.NoLimitData;
 import cz.muni.fi.scheduler.elements.VmElement;
 
 /**
- *
+ * This class is used when we do not want to check the limits.
  * @author Gabriela Podolnikova
  */
 public class NoLimits implements ILimitChecker {

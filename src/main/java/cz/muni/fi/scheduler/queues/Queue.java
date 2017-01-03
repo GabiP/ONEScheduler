@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- *
+ * A Queue is represented by its assigned VMs, priority and name.
+ * Is used for grouping user's VMs by some defined policy.
+ * 
  * @author Gabriela Podolnikova
  */
 public class Queue {

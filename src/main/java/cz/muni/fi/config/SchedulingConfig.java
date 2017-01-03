@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- *  Configures scheduler's behavior.
+ * Configures scheduler's behavior.
  * 
  * @author Gabriela Podolnikova
  */
@@ -49,6 +49,11 @@ public class SchedulingConfig {
         fairshareProperties = new FairshareConfiguration("fairshare.properties");
     }
     
+    /**
+     * Creates an instance of the queue mapper policy given in configuration file.
+     * @return the queue mapper.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IQueueMapper queueMapper() throws LoadingFailedException {
         switch (properties.getString("queueMapper")) {
@@ -73,6 +78,11 @@ public class SchedulingConfig {
         }
     }
     
+    /**
+     * Creates an instance of the vm selection policy given in configuration file.
+     * @return the insance of vm selector.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IVmSelector vmSelector() throws LoadingFailedException {
         switch (properties.getString("vmSelector")) {
@@ -85,6 +95,11 @@ public class SchedulingConfig {
         }
     }
     
+    /**
+     * Creates an instance of the limit checking policy given in configuration file.
+     * @return the limit checker configured.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public ILimitChecker limitChecker() throws LoadingFailedException {
         switch (properties.getString("limitChecker")) {

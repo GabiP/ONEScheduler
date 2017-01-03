@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class implements the Round RObin algorithms.
  * @author Gabriela Podolnikova
  */
 public class RoundRobin implements IVmSelector {
@@ -16,6 +16,13 @@ public class RoundRobin implements IVmSelector {
     
     private int currentQueueIndex = 0; 
     
+    /**
+     * The algorithm remembers the index of the current queue and changes it for the next iteration.
+     * It tarts at the~first queue, calls dequeue to get the VM and increases the index of the current queue by one.
+     * When the index reaches the last queue, it resets its value to zero to point to the first queue again. The VM selections goes until all the queues are empty.
+     * @param queues
+     * @return 
+     */
     @Override
     public VmElement selectVm(List<Queue> queues) {
         Queue currentQueue = queues.get(currentQueueIndex);

@@ -5,7 +5,6 @@ import cz.muni.fi.scheduler.elements.nodes.DiskNode;
 import cz.muni.fi.scheduler.elements.nodes.NicNode;
 import cz.muni.fi.scheduler.elements.nodes.PciNode;
 import cz.muni.fi.scheduler.elements.nodes.HistoryNode;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -119,10 +118,20 @@ public class VmElement {
         return runTime;
     }
     
+    /**
+     * Returns the histories of the VM that are closed already.
+     * 
+     * @return the closed histories
+     */
     public List<HistoryNode> getClosedHistories() {
         return histories.stream().filter(HistoryNode::isClosed).collect(Collectors.toList());
     }
     
+    /**
+     * Returns the last closed history of the VM.
+     * 
+     * @return the last closed history
+     */
     public HistoryNode getLastClosedHistory() {
         for (int i=histories.size()-1; i>=0; i--) {
             HistoryNode history = histories.get(i);

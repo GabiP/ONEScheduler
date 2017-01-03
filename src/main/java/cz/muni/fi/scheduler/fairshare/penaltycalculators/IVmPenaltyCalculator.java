@@ -8,18 +8,19 @@ package cz.muni.fi.scheduler.fairshare.penaltycalculators;
 import cz.muni.fi.scheduler.elements.VmElement;
 
 /**
- *
- * @author andris
+ * Interface for calculating virtual machine penalties.
+ * 
+ * @author Andras Urge
  */
 public interface IVmPenaltyCalculator {
     
     /**
      * Returns a penalty calculated for the given virtual machine. The 
-     * implementation  of this method is defining the strategy of the 
-     * fair-share ordering.
+     * implementation  of this method is defining what kind of priorities 
+     * will the users of the virtual machines get.
      * 
      * @param vm for which the penalty is calculated
-     * @return Penalty for the virtual machine
+     * @return penalty for the virtual machine
      */
     float getPenalty(VmElement vm);
 }

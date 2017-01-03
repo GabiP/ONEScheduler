@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- *
+ * Maps ClusterXml to ClusterElement and vice-versa.
  * @author Gabriela Podolnikova
  */
 @Mapper

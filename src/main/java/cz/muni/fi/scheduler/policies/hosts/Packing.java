@@ -23,6 +23,12 @@ public class Packing implements IPlacementPolicy {
        
     protected final Logger log = LoggerFactory.getLogger(getClass());
     
+    /**
+     * Sorts the hosts by the free cpu.
+     * @param hosts the unsorted hosts
+     * @param schedulerData the current data
+     * @return the sorted hosts
+     */
     @Override
     public List<HostElement> sortHosts(List<HostElement> hosts, SchedulerData schedulerData) {
         List<HostElement> result = new ArrayList<>();

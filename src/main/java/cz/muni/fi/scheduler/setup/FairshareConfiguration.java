@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.setup;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Class holding information about all the fairshare related settings.
+ * 
  * @author Andras Urge
  */
 public class FairshareConfiguration {
@@ -31,10 +28,16 @@ public class FairshareConfiguration {
     private float ramWeight;
     private float hddWeight;
     
-    private Map<Integer, Float> userPercentages;
-    private Map<Integer, Float> userGroupPercentages;
+    private Map<Integer, Float> userPercentages = new HashMap<>();
+    private Map<Integer, Float> userGroupPercentages = new HashMap<>();
     
 
+    /**
+     * Loads the fairshare configuration from a file.
+     * 
+     * @param path path tho the configuration file
+     * @throws LoadingFailedException 
+     */
     public FairshareConfiguration(String path) throws LoadingFailedException {
         try {
             PropertiesConfig properties = new PropertiesConfig(path);
@@ -69,7 +72,19 @@ public class FairshareConfiguration {
     }
 
     private void loadFairsharePercentages(PropertiesConfig properties) {
-        //TODO: implement
+        for (String key : properties.keySet()) {
+            String[] parts = key.split("-");
+            switch (parts[0]) {
+                case "user":
+                    int userId = Integer.parseInt(parts[1]);
+                    userPercentages.put(userId, properties.getFloat(key));
+                    break;
+                case "userGroup":
+                    int groupId = Integer.parseInt(parts[1]);
+                    userGroupPercentages.put(groupId, properties.getFloat(key));
+                    break;
+            }
+        }
     }
     
     public String getPath() {

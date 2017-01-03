@@ -11,7 +11,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 /**
- *
+ * Maps HostXml to HostElement and vice-versa.
+ * 
  * @author Gabriela Podolnikova
  */
 @Mapper

@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- *
+ * This class represents matched resources for a given list of VMs.
+ * 
  * @author Gabriela Podolnikova
  */
 public class Match {

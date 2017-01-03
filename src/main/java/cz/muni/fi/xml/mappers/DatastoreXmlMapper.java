@@ -6,7 +6,8 @@ import java.util.List;
 import org.mapstruct.Mapper;
 
 /**
- *
+ * Maps DatastoreXml to DatastoreElement and vice-versa.
+ * 
  * @author Gabriela Podolnikova
  */
 @Mapper

@@ -48,6 +48,13 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         dsHostShare = getDsHostShare();        
     }    
     
+    /**
+     * Returns the best host penalty of the VM for all the hosts where it can
+     * be deployed.
+     * 
+     * @param vm
+     * @return the penalty for the vm
+     */
     @Override  
     public float getPenalty(VmElement vm) {
         List<HostElement> filteredHosts = hostFilter.getFilteredHosts(hosts, vm);
@@ -65,6 +72,12 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         return minPenalty;  
     }    
         
+    /**
+     * Returns the available HDD storage of the shared datastores divided by
+     * the number of hosts that can access the given datastore.
+     * 
+     * @return the storage the datastore provides to one host
+     */
     private Map<Integer, Float> getDsHostShare() {
         Map<Integer, Float> result = new HashMap<>();
         for (DatastoreElement ds : dsPool.getSystemDs()) {
@@ -80,6 +93,12 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         return result;
     }
     
+    /**
+     * Calculates how much available HDD storage is for the provided host.
+     * 
+     * @param host
+     * @return the available HDD storage 
+     */
     protected float getHostStorageShare(HostElement host) {
         float hostLocalStorage = 0;
         for (DatastoreNode ds : host.getDatastores()) {
@@ -95,5 +114,12 @@ public abstract class MinimumPenaltyCalculator implements IVmPenaltyCalculator {
         return hostLocalStorage + hostSharedDsStorage;
     }
     
+    /**
+     * Penalty calculated for the pair of a virtual machine and a host.
+     * 
+     * @param vm the virtual machine
+     * @param host the host
+     * @return the penalty of the vm for this host
+     */
     protected abstract float getHostPenalty(VmElement vm, HostElement host);
 }
