@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.scheduler.elementpools;
 
 import cz.muni.fi.scheduler.elements.VmElement;
 import java.util.List;
 
 /**
- *
+ * VM pool interface.
+ * 
  * @author Gabriela Podolnikova
  */
 public interface IVmPool {    
@@ -80,5 +76,9 @@ public interface IVmPool {
      */
     List<VmElement> getVms(int userId, int state);
     
+    /**
+     * Gets VMs with resched flag set on true.
+     * @return the VMs to be rescheduled.
+     */
     List<VmElement> getReschedVms();
 }

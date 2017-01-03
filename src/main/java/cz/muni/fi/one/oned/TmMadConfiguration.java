@@ -12,7 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class loads the TMAD configuration given in the configFiles package.
+ * 
  * @author Gabriela Podolnikova
  */
 public class TmMadConfiguration {
@@ -32,6 +33,11 @@ public class TmMadConfiguration {
 
     protected static final Logger log = LoggerFactory.getLogger(SetUp.class);
     
+    /**
+     * Loads all the tmMad configuration.
+     * @return the lists with tmMads.
+     * @throws IOException 
+     */
     private static List<TmMad> getTmMadConfig() throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String tmMadMessage = new String(Files.readAllBytes(Paths.get(CONFIG_DIRECTORY + File.separator + TM_MAD_CONF_FILE_NAME)));
@@ -43,6 +49,11 @@ public class TmMadConfiguration {
         return Collections.unmodifiableList(tmMadList);
     }
     
+    /**
+     * Returns whether the Datastore with the given tmMad name is shared or not.
+     * @param tmMadName the name of the driver
+     * @return the "YES" string for shared Datastore or "NO" if the given Datastore is not shared.
+     */
     public static String getSharedInfo(String tmMadName) {
         for (TmMad tmMad: tmMadList) {
             String name = tmMad.getName();
@@ -54,6 +65,11 @@ public class TmMadConfiguration {
         return null;
     }
     
+    /**
+     * Returns the Clone target info.
+     * @param tmMadName the name of the driver
+     * @return the configuration for the given driver name.
+     */
     public static String getCloneTargetInfo(String tmMadName) {
         for (TmMad tmMad: tmMadList) {
             String name = tmMad.getName();
@@ -65,6 +81,11 @@ public class TmMadConfiguration {
         return null;
     }
     
+    /**
+     * Returns the Ln target info.
+     * @param tmMadName the name of the driver
+     * @return the configuration for the given driver name.
+     */
     public static String getLnTargetInfo(String tmMadName) {
         for (TmMad tmMad: tmMadList) {
             String name = tmMad.getName();

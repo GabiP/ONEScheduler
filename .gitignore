@@ -11,3 +11,5 @@ userRecordsXml.txt
 .idea/
 ONEscheduler.iml
 userRecords.txt
+configFiles/configuration.properties
+nbactions.xml

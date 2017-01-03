@@ -17,6 +17,13 @@ public class FilterDatastoresBySchedulingRequirements implements IDatastoreFilte
     
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
 
+    /**
+     * Checks whether the given Datastore satisfies the given VM's requirements.
+     * @param vm the vm with specified requirements
+     * @param ds the ds to be checked
+     * @param host the host to be checked
+     * @return true if the Host is the required Host, false otherwise
+     */
     @Override
     public boolean test(VmElement vm, DatastoreElement ds, HostElement host){
         if (vm.getSchedDsRequirements() == null) {

@@ -24,6 +24,11 @@ public class QueueByUserMapper implements IQueueMapper {
         this.userPool = userPool;
     }
 
+    /**
+     * This class maps users to queues without the fairshare calculation.
+     * @param vms the VMs to be mapped
+     * @return the created queues
+     */
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         List<UserElement> users = getUsers(vms);

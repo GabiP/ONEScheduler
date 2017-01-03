@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.opennebula.client.ClientConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +70,12 @@ public class SetUp {
             
             //Plan migrations
             List<Match> migrations = scheduler.migrate();
-            printPlan(migrations);
-            //migrate
-            List<VmElement> failedMigrations = resultManager.migrate(migrations);
-            printFailedVms(failedMigrations);
+            if (!migrations.isEmpty()) {
+                printPlan(migrations);
+                //migrate
+                List<VmElement> failedMigrations = resultManager.migrate(migrations);
+                printFailedVms(failedMigrations);
+            }
             
             //Plan pendings
             List<Match> plan = scheduler.schedule();
@@ -131,7 +132,9 @@ public class SetUp {
     }
     
     private static void printFailedVms(List<VmElement> failedVms) {
-        System.out.println("Failed Vms: ");
-        failedVms.forEach(System.out::println);
+        if (!failedVms.isEmpty()){
+            System.out.println("Failed Vms: ");
+            failedVms.forEach(System.out::println);
+        }
     }
 }

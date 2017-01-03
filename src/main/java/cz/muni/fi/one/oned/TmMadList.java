@@ -6,7 +6,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import java.util.List;
 
 /**
- *
+ * This class is used for getting the driver's configuration list.
+ * 
  * @author Gabriela Podolnikova
  */
 @JacksonXmlRootElement(localName = "TM_MAD_CONFIGURATION")

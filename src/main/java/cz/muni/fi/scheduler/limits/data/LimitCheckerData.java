@@ -3,8 +3,8 @@ package cz.muni.fi.scheduler.limits.data;
 import cz.muni.fi.scheduler.elements.VmElement;
 
 /**
- *
- * @author gabi
+ * This interface represents the current data, that are tracked in the limit implementation.
+ * @author Gabriela Podolnikova
  */
 public interface LimitCheckerData {
     

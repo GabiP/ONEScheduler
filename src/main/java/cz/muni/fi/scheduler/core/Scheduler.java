@@ -28,12 +28,12 @@ import org.slf4j.LoggerFactory;
 /**
  * The class Scheduler is the core class responsible for all events during the scheduling.
  * Needs:
- * - all the pools
+ * - all pools
  * - authorization manager
- * - all the hosts and datastore filters
+ * - all hosts and datastore filters
  * - policy for host and datastore sorting/selection
- * - instance of: IQueueMapper, vmSelector and limitChecker
- * - creates an instance of SchedulerData 
+ * - instance of: QueueMapper, VmSelector and LimitChecker
+ * - creates an instance of SchedulerData to keep track of the current situation in the system. 
  * 
  * @author Gabriela Podolnikova
  */
@@ -90,9 +90,6 @@ public class Scheduler {
     
     /**
      * Queues with waiting VMs.
-     * Note: Load number of queues from configuration file.
-     * We will use list of LinkedLists for multiple queues.
-     * For concurrent queues we can use: ConcurrentLinkedQueue
      */
     private List<Queue> queues;
     
@@ -129,9 +126,9 @@ public class Scheduler {
     
     /**
      * This method is called to start the scheduling. (in SetUp class)
-     * Gets pending VMs and creates queues
-     * Calls to process the queues.
-     * @return the list woth all the matches that were created.
+     * Gets pending VMs and creates queues.
+     * Continues woth processing the queues.
+     * @return the list with all matched VMs.
      */
     public List<Match> schedule() {
         //get pendings, state = 1 is pending
@@ -140,6 +137,7 @@ public class Scheduler {
             log.info("No pendings");
             return null;
         }
+        authorizationManager.authorize(pendingVms);
         // VM queues construction
         queues = queueMapper.mapQueues(pendingVms);
         return processQueues(queues);
@@ -147,11 +145,11 @@ public class Scheduler {
     
     /**
      * Migrate is called before schedule.
-     * - Takes only those VMs with resched flag.
+     * - Takes only those VMs with rescheduling flag.
      * - Finds suitable hosts.
      * - Removes from suitable hosts those where the VM currently is.
      * - Creates match.
-     * @return all matches
+     * @return all matched VMs
      */
     public List<Match> migrate() {
         List<Match> migrations = new ArrayList<>();
@@ -169,12 +167,12 @@ public class Scheduler {
     }
     
     /**
-     * Iterates through all the queues with VMs
+     * Iterates through all the queues.
      * How the VM is selected is dependent on the vmSelector implementation.
      * For each VM:
-     *  - checks the image ds capacity
-     *  - prepare hosts (get those that are authorized and goes through the filters)
-     *  - process the VM --> get match
+     *  - checks the image datastore capacity
+     *  - prepare hosts (get those that are authorized and filters unsuitable hosts out)
+     *  - process the VM --> gets match
      *  - checks limit (dependent on the limitChecker implementation)
      *  - adds match to the plan
      * @param queues the queues in the system to be processed
@@ -204,7 +202,7 @@ public class Scheduler {
     /**
      * Checks the Image datastore.
      * The image datastore needs to be checked only for those disks in VM that
-     * has the CLONE_TARGET/LN_TARGET (depends wheter the VM is persistent) equals
+     * has the CLONE_TARGET/LN_TARGET (depends whether the VM is persistent) equals
      * to SELF.
      * It  means that the image of the disk is cloned in the image datastore.
      * @param vm the VM to be checked
@@ -226,7 +224,7 @@ public class Scheduler {
     }
     
     /**
-     * Gets only the disk and its capacity of those disks with cloning target SELF.
+     * Gets only disk and its capacity with cloning target SELF.
      * @param vm to get the disks
      * @return the map with datastore location of the image and the capacity needed by the disk.
      */
@@ -246,14 +244,13 @@ public class Scheduler {
     
     /**
      * For each VM prepares suitable hosts.
-     * Firt get the authorized hosts.
-     * Then filters them with selected filters.
+     * First, gets the authorized hosts for the user.
+     * Then filters the unsuitable hosts out.
      * @param vm the VM with the requirements
      * @return list of hosts that suits the requirements.
      */
     private List<HostElement> prepareHostsForVm(VmElement vm) {
-        authorizationManager.authorize(vm);
-        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts();
+        List<HostElement> authorizedHosts = authorizationManager.getAuthorizedHosts(vm.getUid());
         if (authorizedHosts.isEmpty()) {
             log.info("Empty authorized hosts.");
             return authorizedHosts;
@@ -263,16 +260,15 @@ public class Scheduler {
     }
 
     /**
-     * This method process the chosen vm.
-     * And does this:
-     * - takes a subset of hosts that are suitable for the virtual machine on the input
+     * This method process VM:
+     * - takes a subset of hosts that are suitable for the VM
      * - sorts the hosts by placement policy
-     * - filter and choose the best ranked ds for the VM.
+     * - filter and choose the best ranked datastore for the VM.
      * From the suitable hosts and datastores creates candidate pairs.
-     * If the candidates are no empty, then the match is created.
+     * If candidates are not empty, then the match is created.
      * @param vm the VM to be processed
      * @param hosts the hosts suitable for VM
-     * @return the macth for the vm
+     * @return the match for the vm
      */
     private Match processVm(VmElement vm, List<HostElement> hosts) {
         Match match = null;
@@ -284,7 +280,7 @@ public class Scheduler {
         List<HostElement> sortedHosts = placementPolicy.sortHosts(hosts, schedulerData);
         //filter and sort datastores for hosts
         LinkedHashMap<HostElement, RankPair> candidates = getCandidates(sortedHosts, vm);
-        // deploy if candidates is not empty
+        // deploy if candidates are not empty
         if (!candidates.isEmpty()) {
             //pick the host and datastore. We chose the best host, or the best datastore.
             match = createMatch(candidates);
@@ -295,7 +291,7 @@ public class Scheduler {
     }
     
     /**
-     * Needs to be called after each created match to
+     * Needs to be called after each created match, in order to
      * update the schedulerData:
      *  - host cpu
      *  - host memory
@@ -320,9 +316,8 @@ public class Scheduler {
      * It goes through the sorted hosts and for each host it filters its datastore
      * to suit the VM requirements.
      * The map is build like this:
-     * The hosts are the keys in this map and are sorted by the placement policy.
-     * To the each host there is a value assigned:
-     *  - the value is represented by the RankPair.
+     * The hosts are keys in this map and are sorted by the placement policy.
+     * To each host he RankPair is assigned.
      *  - the RankPair contains the suitable datastore and a number that represent its rank.
      *    The rank is calculated based upon the storage policy.
      * LinkedHashMap preserves order in which the objects are entered.
@@ -333,7 +328,7 @@ public class Scheduler {
     private LinkedHashMap<HostElement, RankPair> getCandidates(List<HostElement> sortedHosts, VmElement vm) {
         LinkedHashMap<HostElement, RankPair> candidates = new LinkedHashMap<>();
         for (HostElement host : sortedHosts) {
-            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(), host, vm, schedulerData);
+            List<DatastoreElement> filteredDatastores = datastoreFilter.filterDatastores(authorizationManager.getAuthorizedDs(vm.getUid()), host, vm, schedulerData);
             if (!filteredDatastores.isEmpty()) {
                 RankPair ds = storagePolicy.selectDatastore(filteredDatastores, host, schedulerData);
                 candidates.put(host, ds);
@@ -344,8 +339,8 @@ public class Scheduler {
     
     /**
      * Create Match from sorted candidates Map.
-     * preferHostFit == true --> we choose the best host from map (keys) -- first key = best ranked host
-     * preferHostFit == false --> we choose the best datastore from map (values) -- pick the best ranked datastore (using policy)
+     * preferHostFit == true --> we choose the best host from map (from keys) -- first key = best ranked host
+     * preferHostFit == false --> we choose the best datastore from map (from values) -- pick the best ranked datastore
      * @param sortedCandidates contains hosts with datastores
      * @return chosen match for vm
      */

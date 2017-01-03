@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * This interface represents the current data for quotas checking.
  * @author Gabriela Podolnikova
  */
 public class UserQuotasData implements LimitCheckerData {

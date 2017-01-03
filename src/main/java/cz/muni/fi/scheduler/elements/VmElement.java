@@ -296,7 +296,7 @@ public class VmElement {
     public String toString() {
         return "VM{" +
                 "id='" + getVmId() + '\'' +
-                ", name='" + name + '\'' +
+                /*", name='" + name + '\'' +
                 ", state=" + state +
                 ", lcm_state='" + lcm_state + '\'' +
                 ", cpu=" + getCpu() + '\'' +
@@ -308,7 +308,7 @@ public class VmElement {
                 ", pcis=" + pcis + '\'' +
                 ", disks=" + disks + '\'' +
                 ", histories=" + histories + '\'' +
-                ", nics=" + nics + '\'' +
+                ", nics=" + nics + '\'' +*/
                 '}';
     }
 

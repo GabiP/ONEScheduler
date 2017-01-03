@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.filters.datastores;
 
 import cz.muni.fi.scheduler.filters.datastores.strategies.IDatastoreFilterStrategy;
@@ -16,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class is used in order to obtain the result from all configured scheduling filters.
  * @author Gabriela Podolnikova
  */
 public class SchedulingDatastoreFilter {
@@ -34,7 +28,7 @@ public class SchedulingDatastoreFilter {
     }
     
     /**
-     * Filter datastores that belongs to the host and can host the vm.
+     * Filter datastores that belongs to the host that can host the vm.
      * @param datastores all system datastores in the system
      * @param host the host for matching the datastore
      * @param vm the vm to be tested
@@ -53,12 +47,13 @@ public class SchedulingDatastoreFilter {
     }
     
     /**
-     * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
+     * Goes through all filters and calls the test method.
+     * If the vm and host matches (given by the specified criteria in the filter), true is returned.
      * @param host the host to be tested
      * @param ds the datasotre to be tested
      * @param vm the virtual machine to be tested
      * @param schedulerData scheduler data with cached data
-     * @return true if the host and vm match, false othewise
+     * @return true if the host and vm match, false otherwise
      */
     public boolean isSuitableDatastore(HostElement host, DatastoreElement ds, VmElement vm, SchedulerData schedulerData) {
          boolean result = true;

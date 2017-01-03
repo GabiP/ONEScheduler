@@ -11,20 +11,26 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.mapstruct.factory.Mappers;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Datastores in the XML document are mapped to DatastoreElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 public class DatastoreXmlPool implements IDatastorePool {
     
-    private List<DatastoreElement> datastores;   
+    private List<DatastoreElement> datastores;
+    
+    DatastoreXmlMapper datastoreXmlMapper = Mappers.getMapper(DatastoreXmlMapper.class);
 
     public DatastoreXmlPool(String dsPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String dsPoolMessage = new String(Files.readAllBytes(Paths.get(dsPoolPath)));
         DatastoreXmlList xmlList = xmlMapper.readValue(dsPoolMessage, DatastoreXmlList.class);
-        datastores = DatastoreXmlMapper.map(xmlList.getDatastores());
+        datastores = datastoreXmlMapper.map(xmlList.getDatastores());
     }
                     
     @Override

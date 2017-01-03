@@ -85,21 +85,17 @@
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.21</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-jdk8</artifactId>
+            <version>1.1.0.Final</version>
+        </dependency>
 
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <source>8</source>
-                        <target>8</target>
-                    </configuration>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
@@ -116,11 +112,29 @@
                                 <version>5.2.0</version>
                                 <packaging>jar</packaging>
                                 <file>${basedir}/src/main/resources/org.opennebula.client.jar</file>
-                                <createChecksum>true</createChecksum>
-                                <generatePom>true</generatePom>
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin> 
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <source>1.8</source>
+                        <target>1.8</target>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                            <arg>-Amapstruct.defaultComponentModel=spring</arg>
+                        </compilerArgs>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>1.1.0.Final</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>

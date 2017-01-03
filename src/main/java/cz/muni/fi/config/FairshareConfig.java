@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.config;
 
 import cz.muni.fi.exceptions.LoadingFailedException;
@@ -19,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * The class responsible for creating beans for fairshare related classes.
+ * The class is responsible for creating beans for fairshare related classes.
  * 
  * @author Andras Urge
  */

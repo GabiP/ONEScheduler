@@ -4,6 +4,7 @@ import cz.muni.fi.exceptions.LoadingFailedException;
 import cz.muni.fi.one.pools.AclElementPool;
 import cz.muni.fi.one.pools.ClusterElementPool;
 import cz.muni.fi.one.pools.DatastoreElementPool;
+import cz.muni.fi.one.pools.GroupElementPool;
 import cz.muni.fi.one.pools.HostElementPool;
 import cz.muni.fi.one.pools.UserElementPool;
 import cz.muni.fi.one.pools.VmElementPool;
@@ -11,11 +12,13 @@ import cz.muni.fi.scheduler.setup.PropertiesConfig;
 import cz.muni.fi.scheduler.elementpools.IAclPool;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
+import cz.muni.fi.scheduler.elementpools.IGroupPool;
 import cz.muni.fi.scheduler.elementpools.IHostPool;
 import cz.muni.fi.scheduler.elementpools.IUserPool;
 import cz.muni.fi.scheduler.elementpools.IVmPool;
 import cz.muni.fi.xml.pools.ClusterXmlPool;
 import cz.muni.fi.xml.pools.DatastoreXmlPool;
+import cz.muni.fi.xml.pools.GroupXmlPool;
 import cz.muni.fi.xml.pools.HostXmlPool;
 import cz.muni.fi.xml.pools.UserXmlPool;
 import cz.muni.fi.xml.pools.VmXmlPool;
@@ -29,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * The class responsible for creating beans for the element pool classes.
+ * The instantiation depends on the configuration.
  * 
  * @author Andras Urge
  */
@@ -113,6 +117,19 @@ public class PoolConfig {
             }
         } else {
             return new DatastoreElementPool(client());
+        }        
+    }
+    
+    @Bean 
+    public IGroupPool groupPool() throws LoadingFailedException{
+        if (properties.getBoolean("testingMode")) {
+            try {
+                return new GroupXmlPool(properties.getString("grouppoolpath"));
+            } catch (IOException ex) {
+                throw new LoadingFailedException(ex.getMessage(), ex.getCause());
+            }
+        } else {
+            return new GroupElementPool(client());
         }        
     }
     

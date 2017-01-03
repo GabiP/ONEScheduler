@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * The class responsible for creating beans for filtering related classes.
+ * The class is responsible for creating beans for filtering related classes.
  * 
  * @author Andras Urge
  */
@@ -50,6 +50,11 @@ public class FilterConfig {
         properties = new PropertiesConfig("configuration.properties");
     }
     
+    /**
+     * Returns an instance of the configured HostFilter.
+     * @return the host filter.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public HostFilter fairshareHostFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("hostFilters");
@@ -75,6 +80,11 @@ public class FilterConfig {
         return new HostFilter(filterStrategies);
     }
     
+    /**
+     * Returns an instance of the configured SchedulingFilter.
+     * @return the scheduling filter.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public SchedulingHostFilter schedulingHostFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("hostFilters");
@@ -83,10 +93,10 @@ public class FilterConfig {
         for (String aFilterConfig : filterConfig) {
             switch (aFilterConfig) {
                 case HOST_CPU_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool()));
+                    schedulingFilterStrategies.add(new FilterHostByCpu(poolConfig.clusterPool(), properties.getBoolean("testingMode")));
                     break;
                 case HOST_MEMORY_FILTER:
-                    schedulingFilterStrategies.add(new FilterHostByMemory(poolConfig.clusterPool()));
+                    schedulingFilterStrategies.add(new FilterHostByMemory(poolConfig.clusterPool(), properties.getBoolean("testingMode")));
                     break;
                 case HOST_PCI_FILTER:
                     filterStrategies.add(new FilterHostByPci());
@@ -102,6 +112,11 @@ public class FilterConfig {
         return new SchedulingHostFilter(filterStrategies, schedulingFilterStrategies);
     }
     
+    /**
+     * Returns an instance of the configured SchedulingDatastoreFilter.
+     * @return the scheduling filter for datastore.
+     * @throws LoadingFailedException 
+     */
     @Bean
     public SchedulingDatastoreFilter schedulingDsFilter() throws LoadingFailedException {
         String[] filterConfig = properties.getStringArray("datastoreFilters");

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.config;
 
 import cz.muni.fi.scheduler.authorization.AuthorizationManager;
@@ -27,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 /**
- * The class responsible for creating beans for the basic scheduler components.
+ * The class is responsible for creating beans for the basic scheduler components.
  * 
  * @author Andras Urge
  */
@@ -56,6 +51,11 @@ public class SchedulerConfig {
         properties = new PropertiesConfig("configuration.properties");
     }
     
+    /**
+     * Creates the scheduler instance.
+     * @return the scheduler instance.
+     * @throws LoadingFailedException 
+     */
     @Bean 
     public Scheduler scheduler() throws LoadingFailedException {
         return new Scheduler(authorizationManager(), 
@@ -73,6 +73,11 @@ public class SchedulerConfig {
                              schedulingConfig.limitChecker());
     }
     
+    /**
+     * Creates an instance of the placement policy given in configuration file.
+     * @return the placement policy
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IPlacementPolicy placementPolicy() throws LoadingFailedException {
         switch(properties.getString("hostPolicy")) {
@@ -87,6 +92,11 @@ public class SchedulerConfig {
         }
     }
     
+    /**
+     * Creates an instance of the storage policy given in configuration file.
+     * @return the storage policy
+     * @throws LoadingFailedException 
+     */
     @Bean
     public IStoragePolicy storagePolicy() throws LoadingFailedException {
         switch(properties.getString("datastorePolicy")) {
@@ -99,12 +109,19 @@ public class SchedulerConfig {
         }
     }
     
+    /**
+     * Creates an instance of the authorization manager given.
+     * The returned instance depends on the configuration.
+     * 
+     * @return the authorization manager.
+     * @throws LoadingFailedException 
+     */
     @Bean 
     public IAuthorizationManager authorizationManager() throws LoadingFailedException {
         if (properties.getBoolean("testingMode")) {
             return new AuthorizationManagerXml(poolConfig.hostPool(), poolConfig.datastorePool());
         } else {
-            return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool());
+            return new AuthorizationManager(poolConfig.aclPool(), poolConfig.clusterPool(), poolConfig.hostPool(), poolConfig.datastorePool(), poolConfig.userPool(), poolConfig.groupPool());
         }        
     }
 }

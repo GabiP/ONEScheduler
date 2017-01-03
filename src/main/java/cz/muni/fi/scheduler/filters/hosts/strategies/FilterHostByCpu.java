@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Tests whether a VM can be hosted by the host.
  * @author Gabriela Podolnikova
  */
 public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
@@ -18,13 +18,22 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
     
     private IClusterPool clusterPool;
     
-    public FilterHostByCpu(IClusterPool clusterPool) {
+    private Boolean testingMode;
+    
+    public FilterHostByCpu(IClusterPool clusterPool, Boolean testingMode) {
         this.clusterPool = clusterPool;
+        this.testingMode = testingMode;
     }
     
     /**
      * Tests whether a VM can be hosted by the host.
      * Checks the cpu capacity on host.
+     * 
+     * Note that this implementation uses Max cpu and Used cpu from Host.
+     * The max cpu already descreases or increases its value by the reserved cpu
+     * in host or cluster template.
+     * 
+     * For the testing mode, the reservations are calculated here.
      * 
      * @param vm Vm to be checked
      * @param host Host to be checked
@@ -33,9 +42,13 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
      */
     @Override
     public boolean test(VmElement vm, HostElement host, SchedulerData schedulerData) {
-        Float reservation = getReservation(host);
+        Float reservation;
+        if (testingMode) {
+            reservation = getReservation(host);
+        } else {
+            reservation = 0.00f;
+        }
         Float actualCpuUsage = schedulerData.getReservedCpu(host) + host.getCpu_usage() + reservation;
-        log.info("Filtering Host " + host.getId() + " by cpu: " + host.getMax_cpu() + "-" + actualCpuUsage + "=" +(host.getMax_cpu() - actualCpuUsage) + ">=(?)" + vm.getCpu());
         return ((host.getMax_cpu() - actualCpuUsage) >= vm.getCpu());
     }
     
@@ -44,10 +57,8 @@ public class FilterHostByCpu implements ISchedulingHostFilterStrategy {
         ClusterElement cluster = clusterPool.getCluster(host.getClusterId());
         Float reservedClusterCpu = cluster.getReservedCpu();
         if (reservedCpu == 0) {
-            log.info("Reserved cluster cpu: " + reservedClusterCpu);
             return reservedClusterCpu;
         } else {
-            log.info("Reserved host cpu: " + reservedCpu);
             return reservedCpu;
         }
     }

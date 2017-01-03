@@ -5,11 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * This class creates one FIFO queue.
  * @author Gabriela Podolnikova
  */
 public class OneQueueMapper implements IQueueMapper {
 
+    /**
+     * Maps VMs into queues in FIFO fashion.
+     * @param vms the VMs to be mapped
+     * @return the created queues
+     */
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         List<Queue> result  = new ArrayList<>();

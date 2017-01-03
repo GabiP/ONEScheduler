@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.filters.hosts;
 
 import cz.muni.fi.scheduler.filters.hosts.strategies.ISchedulingHostFilterStrategy;
@@ -52,11 +46,11 @@ public class SchedulingHostFilter {
     }
     
     /**
-     * Goes through all filters and calls the test if the vm and host matches by the specified criteria in the filter.
+     * Goes through all filters and calls the test method.
      * @param h the host to be tested
      * @param vm the virtual machine to be tested
      * @param schedulerData ached data
-     * @return true if the host and vm match, false othewise
+     * @return true if the host and vm match, false otherwise
      */
     public boolean isSuitableHost(HostElement h, VmElement vm, SchedulerData schedulerData) {
          boolean result = true;

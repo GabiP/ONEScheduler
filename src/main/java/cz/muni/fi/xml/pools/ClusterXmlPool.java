@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.muni.fi.xml.pools;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,20 +12,26 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import org.mapstruct.factory.Mappers;
 
 /**
- *
+ * This class is used for loading the XML documents provided for the testing mode.
+ * Clusters in the XML document are mapped to ClusterElements.
+ * These elements are stored in the list containing all the elements in the XML document.
+ * 
  * @author Gabriela Podolnikova
  */
 public class ClusterXmlPool implements IClusterPool {
     
     private List<ClusterElement> clusters;
+    
+    ClusterXmlMapper clusterXmlMapper = Mappers.getMapper(ClusterXmlMapper.class);
 
     public ClusterXmlPool(String clusterPoolPath) throws IOException {
         XmlMapper xmlMapper = new XmlMapper();
         String clusterPoolMessage = new String(Files.readAllBytes(Paths.get(clusterPoolPath)));
         ClusterXmlList xmlList = xmlMapper.readValue(clusterPoolMessage, ClusterXmlList.class);
-        clusters =  ClusterXmlMapper.map(xmlList.getClusters());
+        clusters =  clusterXmlMapper.map(xmlList.getClusters());
     }
     
     @Override

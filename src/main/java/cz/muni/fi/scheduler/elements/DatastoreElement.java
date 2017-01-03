@@ -11,7 +11,7 @@ import java.util.Objects;
  * - System, to hold images for running VMs.
  * - Images, stores the disk images repository. Disk images are moved, or cloned to/from the System datastore when the VMs are deployed or shutdown; or when disks are attached or snapshoted.
  * - Files, This is a special datastore used to store plain files and not disk images. The plain files can be used as kernels, ramdisks or context files.
- * For more information see: http://docs.opennebula.org/4.12/administration/storage/sm.html
+ * For more information see: https://docs.opennebula.org/5.2/operation/host_cluster_management/datastore_guide.html
  * 
  * @author Gabriela Podolnikova
  */

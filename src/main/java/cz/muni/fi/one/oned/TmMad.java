@@ -3,6 +3,8 @@ package cz.muni.fi.one.oned;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 /**
+ * This class represents one TMMAD configuration.
+ * 
  * # Transfer Manager Driver Behavior Configuration
 #*******************************************************************************
 # The  configuration for each driver is defined in TM_MAD_CONF. These

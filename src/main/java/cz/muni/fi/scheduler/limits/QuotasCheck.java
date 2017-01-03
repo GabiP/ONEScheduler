@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class is used when we want to check the limits defined by the quotas.
+ * Quotas are defined for users.
+ * There exists two types of quotas: datastore and VM.
+ * 
  * @author Gabriela Podolnikova
  */
 public class QuotasCheck implements ILimitChecker {

@@ -1,15 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package cz.muni.fi.scheduler.core;
 
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 
 /**
- *
+ * This class represents the Datastore and its rank.
+ * The rank is an integer which value depends on the chosen storage policy.
+ * 
  * @author Gabriela Podolnikova
  */
 public class RankPair {

@@ -16,6 +16,12 @@ public class FilterHostBySchedulingRequirements implements IHostFilterStrategy {
 
     protected final Logger LOG = LoggerFactory.getLogger(getClass());
     
+    /**
+     * Checks whether the given Host satisfies the given VM's requirements.
+     * @param vm the vm with specified requirements
+     * @param host the host to be checked
+     * @return true if the Host is the required Host, false otherwise
+     */
     @Override
     public boolean test(VmElement vm, HostElement host) {
         if (vm.getSchedRequirements() == null) {

@@ -35,15 +35,19 @@ public class HostElement {
     private Integer max_disk;
     
     //in megabytes
+    //Increases/decreases value by the reservation
     private Integer max_mem;
 
     //number of cores
+    //Increases/decreases value by the reservation
     private Float max_cpu;
 
     private Integer free_disk;
     
+    //Does not increases/decreases value by the reservation
     private Integer free_mem;
 
+    //Does not increases/decreases value by the reservation
     private Float free_cpu;
 
     private Integer used_disk;
@@ -52,10 +56,12 @@ public class HostElement {
     
     private Integer used_cpu;
       
-    private Integer runningVms;
-    
+    private Integer runningVms;   
+
+    //Reserved cpu should be used when calculating with free cpu
     private Float reservedCpu;
     
+    //Reserved cpu should be used when calculating with free memory
     private Integer reservedMemory;
     
     private List<Integer> vms;

@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class implements the fixed number of queues policy.
  * @author Gabriela Podolnikova
  */
 public class FixedNumOfQueuesMapper implements IQueueMapper {
@@ -19,6 +19,12 @@ public class FixedNumOfQueuesMapper implements IQueueMapper {
         this.numberOfQueues = numberOfQueues;
     }
     
+    /**
+     * Creates the number of queues given in the configuration file.
+     * It takes VMs in not specified order and goes queue by queue until all pending VMs are in queues.
+     * @param vms to be mapped ti queues
+     * @return the list of queues.
+     */
     @Override
     public List<Queue> mapQueues(List<VmElement> vms) {
         List<Queue> output = createEmptyQueues();

@@ -7,12 +7,17 @@ import org.opennebula.client.cluster.Cluster;
 /**
  * This class maps OpenNebula's Cluster class to ClusterElement class.
  * Retreives from OpenNebula's Cluster instance its attributes by using OpenNebula's Java API.
- * For further information of Java API please refer to: http://docs.opennebula.org/doc/4.14/oca/java/
+ * For further information of Java API please refer to: https://docs.opennebula.org/5.2/integration/system_interfaces/java.html
  * 
  * @author Andras Urge
  */
 public class ClusterMapper {
     
+    /**
+     * Maps Cluster to ClusterElement.
+     * @param cluster the cluster to be mapped
+     * @return 
+     */
     public static ClusterElement map(Cluster cluster) {
         ClusterElement result = new ClusterElement();
         cluster.info();        

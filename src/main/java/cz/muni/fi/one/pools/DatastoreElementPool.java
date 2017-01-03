@@ -4,6 +4,7 @@ import cz.muni.fi.one.mappers.DatastoreMapper;
 import cz.muni.fi.scheduler.elementpools.IDatastorePool;
 import cz.muni.fi.scheduler.elements.DatastoreElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,17 +29,11 @@ public class DatastoreElementPool implements IDatastorePool {
     
     private final DatastorePool dp;
     
+    private List<DatastoreElement> datastores;
+    
     public DatastoreElementPool(Client oneClient) {
         dp = new DatastorePool(oneClient);
-    }
-
-    /**
-     * Goes through the pool and maps all datastores.
-     * @return the datastores
-     */
-    @Override
-    public List<DatastoreElement> getDatastores() {
-        List<DatastoreElement> datastores = new ArrayList<>();
+        datastores = new ArrayList<>();
         OneResponse dpr = dp.info();
         if (dpr.isError()) {
             log.error(dpr.getErrorMessage());
@@ -49,7 +44,15 @@ public class DatastoreElementPool implements IDatastorePool {
             DatastoreElement d = DatastoreMapper.map(element);
             datastores.add(d);
         }
-        return datastores;
+    }
+
+    /**
+     * Goes through the pool and maps all datastores.
+     * @return the datastores
+     */
+    @Override
+    public List<DatastoreElement> getDatastores() {
+        return Collections.unmodifiableList(datastores);
     }
     
     /**
@@ -59,8 +62,12 @@ public class DatastoreElementPool implements IDatastorePool {
      */
     @Override
     public DatastoreElement getDatastore(int id) {
-        dp.info();
-        return DatastoreMapper.map(dp.getById(id));
+        for (DatastoreElement ds : datastores) {
+            if (ds.getId() == id) {
+                return ds;
+            }
+        }
+        return null;
     }
     
     /**

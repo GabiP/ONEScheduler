@@ -4,6 +4,7 @@ import cz.muni.fi.one.mappers.ClusterMapper;
 import cz.muni.fi.scheduler.elementpools.IClusterPool;
 import cz.muni.fi.scheduler.elements.ClusterElement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import org.opennebula.client.Client;
@@ -26,8 +27,21 @@ public class ClusterElementPool implements IClusterPool {
     
     private final ClusterPool cp;
     
+    private List<ClusterElement> clusters;
+    
     public ClusterElementPool(Client oneClient) {
         cp = new ClusterPool(oneClient);
+        clusters = new ArrayList<>();
+        OneResponse cpr = cp.info();
+        if (cpr.isError()) {
+            log.error(cpr.getErrorMessage());
+        }
+        Iterator<Cluster> itr = cp.iterator();
+        while (itr.hasNext()) {
+            Cluster element = itr.next();
+            ClusterElement c = ClusterMapper.map(element);
+            clusters.add(c);
+        }
     }
 
     /**
@@ -36,25 +50,16 @@ public class ClusterElementPool implements IClusterPool {
      */
     @Override
     public List<ClusterElement> getClusters() {
-        List<ClusterElement> clusters = new ArrayList<>();
-        OneResponse cpr = cp.info();
-        if (cpr.isError()) {
-            log.error(cpr.getErrorMessage());
-        }
-        Iterator<Cluster> itr = cp.iterator();
-        while (itr.hasNext()) {
-            Cluster element = itr.next();
-            System.out.println("Cluster: " + element);
-            ClusterElement c = ClusterMapper.map(element);
-            System.out.println("Cluster: " + c);
-            clusters.add(c);
-        }
-        return clusters;
+        return Collections.unmodifiableList(clusters);
     }
 
     @Override
     public ClusterElement getCluster(int id) {
-        cp.info();
-        return ClusterMapper.map(cp.getById(id));
+        for (ClusterElement c : clusters) {
+            if (c.getId() == id) {
+                return c;
+            }
+        }
+        return null;
     }
 }
